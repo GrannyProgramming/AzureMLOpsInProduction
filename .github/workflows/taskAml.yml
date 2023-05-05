@@ -20,17 +20,17 @@ jobs:
         run: |
           sudo apt-get update
           pip3 install --upgrade pip
-          pip3 install yq
-          pip3 install azure-cli --upgrade
+          # pip3 install yq
+          # pip3 install azure-cli --upgrade
           # az extension add -n azure-cli-ml
           # az extension add -n azureml-ai-ml
           
           
           # pip3 install azure-cli-ml --upgrade
-          pip3 install azure-ai-ml
-          pip3 install mltable
+          # pip3 install azure-ai-ml
+          # pip3 install mltable
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
-          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt-add-repository https://cli.github.com/packages/any/
           sudo apt-get update
           sudo apt-get install gh
 

@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install dependencies
-        run: python3 installDependencies.py
+        run: python3 ../utils/installDependencies.py
 
 
           

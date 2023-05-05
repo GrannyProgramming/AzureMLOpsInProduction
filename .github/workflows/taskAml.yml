@@ -18,11 +18,9 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: python3 .github/utils/installDependencies.py
-      - name: Set Env Variables 
-        run: python3 .github/utils/createEnvVariables.py
-        env:
-          file: variables/${{ matrix.environment }}/parameters
-           
+      - name: Set Env Variables
+        run: python3 .github/utils/set_env_variables.py variables/${{ matrix.environment }}/parameters.json
+               
       
         # - name: Create or update Azure service principal
       #   env:

@@ -41,4 +41,4 @@ secrets = {
     'AZURE_TENANT_ID': output['tenantId']
 }
 for name, value in secrets.items():
-    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo gh_address --silent'])
+    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo $gh_address --silent'])

@@ -24,13 +24,9 @@ jobs:
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
                
-      
-        # - name: Create or update Azure service principal
-      #   env:
-      #     AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #   run: |
-      #     python my_script.py
-      #   shell: bash
+      - name: Create or update Azure service principal
+        run: python3 .github/utils/createServicePrincipal.py
+        
       
 
 

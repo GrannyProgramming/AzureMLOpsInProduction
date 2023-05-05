@@ -19,6 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
+          pip3 install --upgrade pip
           pip install yq
           pip install azure-cli-ml --upgrade
           pip install azureml-ai-ml 

@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [dev, test, prod]
+        environment: [dev] #[dev, test, prod]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,13 +22,10 @@ jobs:
           pip3 install --upgrade pip
           pip install yq
           pip install azure-cli
-          print(1)
+          
           pip install azure-cli-ml --upgrade
-          print(2)
           pip install azureml-ai-ml 
-          print(3)
           pip install mltable
-          print(4)
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
           sudo apt-get update

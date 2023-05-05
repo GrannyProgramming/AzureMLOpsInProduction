@@ -33,21 +33,12 @@ result = subprocess.run([
     '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
 ], capture_output=True, text=True)
 
-# Print the output
-print(result.stdout)
-
-# Try to parse the output as JSON
-try:
-    output = json.loads(result.stdout)
-except json.JSONDecodeError:
-    print('Failed to parse output as JSON')
-    exit(1)
-
-# Store the credentials in GitHub secrets
+# Parse the output and store the credentials in GitHub secrets
+output = json.loads(result.stdout)
 secrets = {
     'AZURE_CLIENT_ID': output['clientId'],
     'AZURE_CLIENT_SECRET': output['clientSecret'],
     'AZURE_TENANT_ID': output['tenantId']
 }
 for name, value in secrets.items():
-    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo $gh_address --silent'])
+    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo gh_address --silent'])

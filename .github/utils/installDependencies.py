@@ -17,7 +17,7 @@ def install_dependencies():
     subprocess.run(['sudo', 'dd', 'of=/usr/share/keyrings/githubcli-archive-keyring.gpg'], input=curl_process.stdout)
     subprocess.run(['sudo', 'chmod', 'go+r', '/usr/share/keyrings/githubcli-archive-keyring.gpg'])
     subprocess.run(['echo', f"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"], stdout=subprocess.PIPE, shell=True)
-    subprocess.run(['sudo', 'tee', '/etc/apt/sources.list.d/github-cli.list'], input=subprocess.PIPE, stdin=subprocess.PIPE)
+    subprocess.run(['sudo', 'tee', '/etc/apt/sources.list.d/github-cli.list'], stdin=subprocess.PIPE)
     subprocess.run(['sudo', 'apt', 'update'])
     subprocess.run(['sudo', 'apt', 'install', 'gh', '-y'])
 

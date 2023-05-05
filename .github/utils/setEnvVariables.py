@@ -12,7 +12,7 @@ def main():
     with env_file.open() as f:
         env_vars = json.load(f)
     for key, value in env_vars.items():
-        print(f"Setting environment variable {key}")
+        print(f"Setting environment variable {key.upper()}")
         print(f"Value: {value}")
         os.environ[key.upper()] = value
 

@@ -1,3 +1,5 @@
+'''This code installs various dependencies and the Github CLI'''
+
 import subprocess
 
 def install_dependencies():
@@ -9,7 +11,7 @@ def install_dependencies():
     subprocess.run(['pip3', 'install', 'azure-cli-ml', '--upgrade'])
     subprocess.run(['pip3', 'install', 'azure-ai-ml'])
     subprocess.run(['pip3', 'install', 'mltable'])
-    if subprocess.run(['type', '-p', 'curl']).returncode != 0:
+    if subprocess.run(['which', 'curl']).returncode != 0:
         subprocess.run(['sudo', 'apt', 'update'])
         subprocess.run(['sudo', 'apt', 'install', 'curl', '-y'])
     subprocess.run(['curl', '-fsSL', 'https://cli.github.com/packages/githubcli-archive-keyring.gpg'], stdout=subprocess.PIPE)

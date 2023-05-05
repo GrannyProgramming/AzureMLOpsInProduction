@@ -1,6 +1,11 @@
 # import subprocess
 import os
 # import json
+import os
+
+for key, value in os.environ.items():
+    print(f"{key}={value}")
+
 
 # Replace these values with your own
 subscription_ids = os.environ["SUBSCRIPTION_ID"]

@@ -12,12 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-      - name: Install dependencies
-        run: python3 .github/utils/installDependencies.py
+      
+      # - name: Install dependencies
+      #   run: python3 .github/utils/installDependencies.py
+      
       - name: Set Env Variables
         run: python3 .github/utils/set_env_variables.py variables/${{ matrix.environment }}/parameters.json
                

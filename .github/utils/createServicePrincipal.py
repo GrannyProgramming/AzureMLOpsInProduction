@@ -7,7 +7,7 @@ sp_name = subprocess.check_output(['bash', '-c', 'echo "amcgsp" $ENVIRONMENT']).
 # Check if the service principal already exists
 result = subprocess.run([
     'az', 'ad', 'sp', 'show',
-    '--id', 'http://my-service-principal'
+    '--id', '{sp_name}'
 ], capture_output=True, text=True)
 if result.returncode == 0:
     # The service principal already exists, so check if its credentials are stored in GitHub secrets
@@ -29,7 +29,7 @@ result = subprocess.run([
     'az', 'ad', 'sp', 'create-for-rbac',
     '--role', 'Contributor',
     '--scopes', f'/subscriptions/{subscription_id}',
-    '--name', 'amcgsp001$ENVIRONMENT',
+    '--name', f'{sp_name}',
     '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
 ], capture_output=True, text=True)
 

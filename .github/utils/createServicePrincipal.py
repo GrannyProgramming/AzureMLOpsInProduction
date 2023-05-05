@@ -7,7 +7,7 @@ import os
 github_url = os.environ["GH_ADDRESS"]
 
 # Define the required GitHub CLI command to create a token
-gh_cli_command = 'gh auth login --with-token --silent --json'
+gh_cli_command = 'gh auth login --with-token -s repo --json'
 
 # Execute the GitHub CLI command and capture the output
 output1 = subprocess.check_output(gh_cli_command.split()).decode('utf-8')

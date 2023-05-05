@@ -15,6 +15,7 @@ def main():
         print(f"Setting environment variable {key.upper()}")
         print(f"Value: {value}")
         os.environ[key.upper()] = value
+        print(os.environ[key.upper()])
 
 if __name__ == "__main__":
     main()

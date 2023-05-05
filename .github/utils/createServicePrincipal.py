@@ -8,8 +8,8 @@ for key, value in os.environ.items():
 
 
 # Replace these values with your own
-subscription_ids = os.environ["SUBSCRIPTION_ID"]
-sp_names = os.environ["SP_NAME"]
+# subscription_ids = os.environ["SUBSCRIPTION_ID"]
+# sp_names = os.environ["SP_NAME"]
 
 # # Create a new GitHub App
 # app_create_command = f"gh auth login"

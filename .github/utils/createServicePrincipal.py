@@ -2,20 +2,20 @@ import subprocess
 import json
 import requests
 import os
-# Define the required GitHub API parameters
 
+# Define the required GitHub API parameters
 github_url = os.environ["GH_ADDRESS"]
 
 # Define the required GitHub CLI command to create a token
-gh_cli_command = 'gh auth login --with-token --silent'
+gh_cli_command = 'gh auth login --with-token --silent --json'
 
 # Execute the GitHub CLI command and capture the output
 output1 = subprocess.check_output(gh_cli_command.split()).decode('utf-8')
 
 # Parse the output to retrieve the token
-token = output1.strip()
+token = json.loads(output1)['token']
 
-az_cli_command = 'az ad sp create-for-rbac -n os.environ["SP_NAME"] --sdk-auth'
+az_cli_command = f'az ad sp create-for-rbac -n {os.environ["SP_NAME"]} --sdk-auth'
 
 # Execute the Azure CLI command and capture the output
 output = subprocess.check_output(az_cli_command.split()).decode('utf-8')
@@ -36,7 +36,7 @@ secrets = {
 
 # Loop through the secrets and create/update them on GitHub
 for name, value in secrets.items():
-    secret_url = github_url + name
+    secret_url = github_url + '/' + name
     data = {'encrypted_value': value.encode('utf-8').hex()}
     headers = {'Authorization': f'token {token}'}
     response = requests.put(secret_url, headers=headers, json=data)

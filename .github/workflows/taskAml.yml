@@ -18,8 +18,8 @@ jobs:
         with:
           python-version: 3.9
       
-      # - name: Install dependencies
-      #   run: python3 .github/utils/installDependencies.py
+      - name: Install dependencies
+        run: python3 .github/utils/installDependencies.py
       
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json

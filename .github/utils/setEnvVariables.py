@@ -15,6 +15,7 @@ def main():
         env_var = f"{key.upper()}={value}"
         print(f"Setting environment variable {env_var}")
         os.system(f"echo {env_var} >> $GITHUB_ENV")
+    
 
 if __name__ == "__main__":
     main()

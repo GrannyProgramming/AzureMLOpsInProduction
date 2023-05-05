@@ -1,27 +1,45 @@
-import subprocess
-import os
 import json
+import subprocess
 
+# Get the Azure subscription ID from an environment variable
+subscription_id = subprocess.check_output(['bash', '-c', 'echo $AZURE_SUBSCRIPTION_ID']).decode().strip()
+sp_name = subprocess.check_output(['bash', '-c', 'echo $SP_NAME']).decode().strip()
+gh_address = subprocess.check_output(['bash', '-c', 'echo $GH_ADDRESS']).decode().strip()
+# Check if the service principal already exists
+result = subprocess.run([
+    'az', 'ad', 'sp', 'show',
+    '--id', sp_name
+], capture_output=True, text=True)
+if result.returncode == 0:
+    # The service principal already exists, so check if its credentials are stored in GitHub secrets
+    existing_secrets = {}
+    for name in ['AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_TENANT_ID']:
+        try:
+            value = subprocess.check_output(['bash', '-c', f'gh secret get {name} --repo gh_address--silent'], text=True)
+            existing_secrets[name] = value.strip()
+        except subprocess.CalledProcessError:
+            pass
 
-# Replace these values with your own
-subscription_id = os.environ["SUBSCRIPTION_ID"]
-sp_name = os.environ["SP_NAME"]
+    if len(existing_secrets) == 3:
+        # All three secrets are already set, so exit without creating a new service principal
+        print('Service principal already exists and secrets are set')
+        exit(0)
 
-# Create a new GitHub App
-app_create_command = f"gh auth login"
-subprocess.run(app_create_command, capture_output=True, shell=True)
+# Create a service principal with a random password
+result = subprocess.run([
+    'az', 'ad', 'sp', 'create-for-rbac',
+    '--role', 'Contributor',
+    '--scopes', f'/subscriptions/{subscription_id}',
+    '--name', sp_name,
+    '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
+], capture_output=True, text=True)
 
-# Create a new Azure Service Principal
-az_create_command = f"az ad sp create-for-rbac --name {sp_name} --role Contributor --scopes /subscriptions/{subscription_id} --sdk-auth"
-az_response = subprocess.run(az_create_command, capture_output=True, shell=True)
-
-# Get the Azure credentials
-az_credentials = az_response.stdout.decode("utf-8")
-
-# Login to Azure using the service principal
-az_login_command = f"az login --service-principal -u {json.loads(az_credentials)['clientId']} -p {json.loads(az_credentials)['clientSecret']} --tenant {json.loads(az_credentials)['tenantId']}"
-subprocess.run(az_login_command, shell=True)
-
-# Set the Azure subscription context
-az_set_subscription_command = f"az account set --subscription {subscription_id}"
-subprocess.run(az_set_subscription_command, shell=True)
+# Parse the output and store the credentials in GitHub secrets
+output = json.loads(result.stdout)
+secrets = {
+    'AZURE_CLIENT_ID': output['clientId'],
+    'AZURE_CLIENT_SECRET': output['clientSecret'],
+    'AZURE_TENANT_ID': output['tenantId']
+}
+for name, value in secrets.items():
+    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo  --silent'])

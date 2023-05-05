@@ -26,7 +26,8 @@ jobs:
                
       - name: Create or update Azure service principal
         run: python3 .github/utils/createServicePrincipal.py
-        
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
       
 
 

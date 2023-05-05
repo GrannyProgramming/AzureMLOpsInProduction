@@ -3,7 +3,7 @@ import subprocess
 
 # Get the Azure subscription ID from an environment variable
 subscription_id = subprocess.check_output(['bash', '-c', 'echo $AZURE_SUBSCRIPTION_ID']).decode().strip()
-
+sp_name = subprocess.check_output(['bash', '-c', 'echo "amcgsp" $ENVIRONMENT']).decode().strip()
 # Check if the service principal already exists
 result = subprocess.run([
     'az', 'ad', 'sp', 'show',
@@ -29,7 +29,7 @@ result = subprocess.run([
     'az', 'ad', 'sp', 'create-for-rbac',
     '--role', 'Contributor',
     '--scopes', f'/subscriptions/{subscription_id}',
-    '--name', 'http://my-service-principal',
+    '--name', 'amcgsp001$ENVIRONMENT',
     '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
 ], capture_output=True, text=True)
 

@@ -1,45 +1,47 @@
-import json
 import subprocess
+import json
+import requests
+import os
+# Define the required GitHub API parameters
 
-# Get the Azure subscription ID from an environment variable
-subscription_id = subprocess.check_output(['bash', '-c', 'echo $AZURE_SUBSCRIPTION_ID']).decode().strip()
-sp_name = subprocess.check_output(['bash', '-c', 'echo $SP_NAME']).decode().strip()
-gh_address = subprocess.check_output(['bash', '-c', 'echo $GH_ADDRESS']).decode().strip()
-# Check if the service principal already exists
-result = subprocess.run([
-    'az', 'ad', 'sp', 'show',
-    '--id', sp_name
-], capture_output=True, text=True)
-if result.returncode == 0:
-    # The service principal already exists, so check if its credentials are stored in GitHub secrets
-    existing_secrets = {}
-    for name in ['AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_TENANT_ID']:
-        try:
-            value = subprocess.check_output(['bash', '-c', f'gh secret get {name} --repo gh_address--silent'], text=True)
-            existing_secrets[name] = value.strip()
-        except subprocess.CalledProcessError:
-            pass
+github_url = os.environ["GH_ADDRESS"]
 
-    if len(existing_secrets) == 3:
-        # All three secrets are already set, so exit without creating a new service principal
-        print('Service principal already exists and secrets are set')
-        exit(0)
+# Define the required GitHub CLI command to create a token
+gh_cli_command = 'gh auth login --with-token --silent'
 
-# Create a service principal with a random password
-result = subprocess.run([
-    'az', 'ad', 'sp', 'create-for-rbac',
-    '--role', 'Contributor',
-    '--scopes', f'/subscriptions/{subscription_id}',
-    '--name', sp_name,
-    '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
-], capture_output=True, text=True)
+# Execute the GitHub CLI command and capture the output
+output1 = subprocess.check_output(gh_cli_command.split()).decode('utf-8')
 
-# Parse the output and store the credentials in GitHub secrets
-output = json.loads(result.stdout)
+# Parse the output to retrieve the token
+token = output1.strip()
+
+az_cli_command = 'az ad sp create-for-rbac -n os.environ["SP_NAME"] --sdk-auth'
+
+# Execute the Azure CLI command and capture the output
+output = subprocess.check_output(az_cli_command.split()).decode('utf-8')
+
+# Parse the output to retrieve the necessary information
+credentials = json.loads(output)
+client_id = credentials['clientId']
+client_secret = credentials['clientSecret']
+tenant_id = credentials['tenantId']
+subscription_id = credentials['subscriptionId']
+
 secrets = {
-    'AZURE_CLIENT_ID': output['clientId'],
-    'AZURE_CLIENT_SECRET': output['clientSecret'],
-    'AZURE_TENANT_ID': output['tenantId']
+    'AZURE_CLIENT_ID': client_id,
+    'AZURE_CLIENT_SECRET': client_secret,
+    'AZURE_TENANT_ID': tenant_id,
+    'AZURE_SUBSCRIPTION_ID': subscription_id
 }
+
+# Loop through the secrets and create/update them on GitHub
 for name, value in secrets.items():
-    subprocess.run(['bash', '-c', f'echo "{value}" | gh secret set {name} --repo  --silent'])
+    secret_url = github_url + name
+    data = {'encrypted_value': value.encode('utf-8').hex()}
+    headers = {'Authorization': f'token {token}'}
+    response = requests.put(secret_url, headers=headers, json=data)
+
+    if response.status_code == 204:
+        print(f'Successfully created/updated secret: {name}')
+    else:
+        print(f'Failed to create/update secret: {name}')

@@ -4,6 +4,7 @@ import subprocess
 # Get the Azure subscription ID from an environment variable
 subscription_id = subprocess.check_output(['bash', '-c', 'echo $AZURE_SUBSCRIPTION_ID']).decode().strip()
 sp_name = subprocess.check_output(['bash', '-c', 'echo "amcgsp" $ENVIRONMENT']).decode().strip()
+
 # Check if the service principal already exists
 result = subprocess.run([
     'az', 'ad', 'sp', 'show',
@@ -29,9 +30,11 @@ result = subprocess.run([
     'az', 'ad', 'sp', 'create-for-rbac',
     '--role', 'Contributor',
     '--scopes', f'/subscriptions/{subscription_id}',
-    '--name', f'{sp_name}',
+    '--name', sp_name,
     '--query', '{clientId: appId, clientSecret: password, tenantId: tenant}'
 ], capture_output=True, text=True)
+
+print(result.stdout)  # Print the output to check if it's a valid JSON string
 
 # Parse the output and store the credentials in GitHub secrets
 output = json.loads(result.stdout)

@@ -14,7 +14,7 @@ def main():
     for key, value in env_vars.items():
         print(f"Setting environment variable {key}")
         print(f"Value: {value}")
-        os.environ[key] = value
+        os.environ[key.upper()] = value
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,7 @@ import os
 import json
 
 # Replace these values with your own
-subscription_id = os.environ["subscription_id"]
+subscription_id = os.environ["SUBSCRIPTION_ID"]
 sp_name = os.environ["SP_NAME"]
 
 # Create a new GitHub App

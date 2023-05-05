@@ -2,6 +2,7 @@
     "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
     "resource_group": "clitesting",
     "workspace": "clitest-amcg",
-    "gh_address": "https://github.com/GrannyProgramming/ds-aml-mlops"
+    "gh_address": "https://github.com/GrannyProgramming/ds-aml-mlops",
+    "sp_name": "amcg-sp-001"
 }
   

@@ -22,7 +22,7 @@ jobs:
       #   run: python3 .github/utils/installDependencies.py
       
       - name: Set Env Variables
-        run: python3 .github/utils/set_env_variables.py variables/${{ matrix.environment }}/parameters.json
+        run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters.json
                
       
         # - name: Create or update Azure service principal

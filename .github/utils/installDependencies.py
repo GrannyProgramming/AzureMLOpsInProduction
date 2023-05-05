@@ -3,14 +3,12 @@
 import subprocess
 
 def install_dependencies():
-    subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
-    subprocess.run(['pip3', 'install', 'yq'])
-    subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
-    subprocess.run(['az', 'extension', 'add', '-n', 'azure-cli-ml'])
-    subprocess.run(['az', 'extension', 'add', '-n', 'azureml-ai-ml'])
-    subprocess.run(['pip3', 'install', 'azure-cli-ml', '--upgrade'])
-    subprocess.run(['pip3', 'install', 'azure-ai-ml'])
-    subprocess.run(['pip3', 'install', 'mltable'])
+    # subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
+    # subprocess.run(['pip3', 'install', 'yq'])
+    # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
+    # subprocess.run(['pip3', 'install', 'azure-cli-ml', '--upgrade'])
+    # subprocess.run(['pip3', 'install', 'azure-ai-ml'])
+    # subprocess.run(['pip3', 'install', 'mltable'])
     if subprocess.run(['which', 'curl']).returncode != 0:
         subprocess.run(['sudo', 'apt', 'update'])
         subprocess.run(['sudo', 'apt', 'install', 'curl', '-y'])

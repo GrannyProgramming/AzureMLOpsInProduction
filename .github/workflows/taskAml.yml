@@ -29,8 +29,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_OWNER: ${{ github.repository_owner }}
           GH_REPO: ${{ github.repository }}
-        run: |
           ENVIRONMENT: ${{ matrix.environment }}
+        run: |          
           python3 .github\utils\createServicePrincipal.py
 
 

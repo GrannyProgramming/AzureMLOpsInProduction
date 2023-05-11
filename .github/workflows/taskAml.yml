@@ -28,7 +28,14 @@ jobs:
         run: python3 .github/utils/createServicePrincipal.py
         env:
           ENVIRONMENT: ${{ matrix.environment }}
-      
+      - name: Run script
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_OWNER: ${{ github.repository_owner }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          ENVIRONMENT: ${{ matrix.environment }}
+          python3 .github\utils\createServicePrincipal.py
 
 
           

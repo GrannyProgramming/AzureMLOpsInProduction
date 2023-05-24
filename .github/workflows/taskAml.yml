@@ -24,11 +24,15 @@ jobs:
       
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
-               
+
       - name: Azure login
         run: |
-          az login --service-principal --username ${{ secrets.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
-
+          echo ${{ secrets.ARM_CLIENT_ID }}
+          az login --service-principal \
+          --username "${{ secrets.ARM_CLIENT_ID }}" \
+          --password "${{ secrets.ARM_CLIENT_SECRET }}" \
+          --tenant "${{ secrets.ARM_TENANT_ID }}"
+      
 
           
 

@@ -1,3 +1,5 @@
+# Potentially make this a helper function in the future
+
 import argparse
 import json
 import os

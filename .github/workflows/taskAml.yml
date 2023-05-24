@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+    
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,14 +25,9 @@ jobs:
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
                
-      - name: Create or update Azure service principal
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_OWNER: ${{ github.repository_owner }}
-          GH_REPO: ${{ github.repository }}
-          ENVIRONMENT: ${{ matrix.environment }}
-        run: |          
-          python3 .github/utils/createServicePrincipal.py
+      - name: Azure login
+        run: |
+          az login --service-principal --username ${{ secrets.ARM_CLIENT_ID }} --password ${{ secrets.ARM_CLIENT_SECRET }} --tenant ${{ secrets.ARM_TENANT_ID }}
 
 
           

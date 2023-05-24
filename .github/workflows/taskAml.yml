@@ -22,7 +22,6 @@ jobs:
       - name: Install dependencies
         run: python3 .github/utils/installDependencies.py
       
-      ## commenting out until needed further down the line 
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
 

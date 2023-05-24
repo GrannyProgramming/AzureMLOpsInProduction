@@ -22,8 +22,9 @@ jobs:
       - name: Install dependencies
         run: python3 .github/utils/installDependencies.py
       
-      - name: Set Env Variables
-        run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
+      ## commenting out until needed further down the line 
+      # - name: Set Env Variables
+      #   run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
 
       - name: Azure login
         run: |
@@ -33,7 +34,14 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
-# infra - Done
+      - name: Compile Bicep templates
+        run: |
+          bicep build ./core/infra/main.bicep
+    
+#       - name: Deploy Bicep templates
+#         run: |
+#           az deployment sub create --location  --template-file  --parameters 
+
 
 # Skip?
 # Generate AAD Tokens 

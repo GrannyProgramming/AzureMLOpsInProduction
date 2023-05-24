@@ -1,0 +1,15 @@
+{
+    "resourceGroupName": {
+      "value": "amcg-rg-aml-001-dev"
+    },
+    "workspaceName": {
+      "value": "amcg-rg-aml-ws-001-dev"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "prefix": {
+        "value": "amcg"
+    }
+  }
+  

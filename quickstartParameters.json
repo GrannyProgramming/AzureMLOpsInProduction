@@ -1,0 +1,18 @@
+{
+    "dev": {
+      "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
+      "gh_address": "https://github.com/GrannyProgramming/ds-aml-mlops",
+      "sp_name": "amcg-sp-001-dev"
+    },
+    "test": {
+      "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
+      "gh_address": "https://github.com/GrannyProgramming/ds-aml-mlops",
+      "sp_name": "amcg-sp-001-test"
+    },
+    "prod": {
+      "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
+      "gh_address": "https://github.com/GrannyProgramming/ds-aml-mlops",
+      "sp_name": "amcg-sp-001-prod"
+    }
+  }
+  

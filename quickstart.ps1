@@ -1,48 +1,67 @@
+'''
+Azure CLI (az): The Azure CLI is a command-line tool that you can use to manage Azure resources. It is used in this script to login to your Azure account, set your subscription, and create a service principal. You can install it by following the instructions on this page: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+
+GitHub CLI (gh): GitHub CLI brings GitHub to your terminal. It reduces context switching, helps you focus, and enables you to more easily script and create automation. It is used in this script to set GitHub secrets. You can install it by following the instructions on this page: https://cli.github.com/manual/installation 
+
+Restart terminal after installing all the above
+'''
+
 # Define the variables
 $PARAMS_FILE = $args[0]  # Accept the JSON file as the first command-line argument
 
 # Check if the parameters file is provided
-if ($PARAMS_FILE) {
-    # Load the JSON content
-    $jsonContent = Get-Content -Path $PARAMS_FILE | ConvertFrom-Json
-
-    # Extract the variables from the JSON content
-    $SUBSCRIPTION_ID = $jsonContent.subscription_id
-    $SP_NAME = $jsonContent.sp_name
-    $GH_URL = $jsonContent.gh_address
-} else {
-    # If the parameters file is not provided, prompt for user input
-    $SUBSCRIPTION_ID = Read-Host -Prompt "Enter Your Azure Subscription ID"
-    $SP_NAME = Read-Host -Prompt "Enter Your Service Principal Name"
-    $GH_URL = Read-Host -Prompt "Enter Your GitHub URL"
+if (!$PARAMS_FILE -or !(Test-Path $PARAMS_FILE)) {
+    Write-Error "Please provide a valid JSON file as the first command-line argument"
+    Exit 1
 }
 
-# Remove the 'https://github.com/' part
-$GH_URL = $GH_URL -replace 'https://github.com/', ''
+# Load the JSON content
+$jsonContent = Get-Content -Path $PARAMS_FILE | ConvertFrom-Json
 
-# Extract GH_OWNER and GH_REPO
-$GH_OWNER, $GH_REPO = $GH_URL -split '/', 2
+# Authenticate with GitHub
+gh auth login
 
-# Login to Azure
-az login
+# Initialize service principal name and credentials
+$previousSPName = $null
+$clientId = $null
+$clientSecret = $null
+$tenantId = $null
 
-# Set the subscription ID
-az account set --subscription $SUBSCRIPTION_ID
+# Iterate through each environment from the JSON file
+foreach ($env in $jsonContent.PSObject.Properties.Name) {
+    $envDetails = $jsonContent.$env
 
-# Create the service principal
-$sp = az ad sp create-for-rbac --name $SP_NAME --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | ConvertFrom-Json
+    # Extract the variables from the JSON content
+    $SUBSCRIPTION_ID = $envDetails.subscription_id
+    $SP_NAME = $envDetails.sp_name
+    $GH_URL = $envDetails.gh_address
 
-# Save the service principal credentials to GitHub Secrets
-$clientId = $sp.appId
-$clientSecret = $sp.password
-$tenantId = $sp.tenant
+    # Remove the 'https://github.com/' part
+    $GH_OWNER, $GH_REPO = ($GH_URL -replace 'https://github.com/', '') -split '/', 2
 
-gh auth login 
+    # Login to Azure
+    az login
 
-# Set the GitHub secrets using GitHub CLI
-gh secret set ARM_CLIENT_ID -r "$GH_OWNER/$GH_REPO" --body "$clientId"
-gh secret set ARM_CLIENT_SECRET -r "$GH_OWNER/$GH_REPO" --body "$clientSecret"
-gh secret set ARM_TENANT_ID -r "$GH_OWNER/$GH_REPO" --body "$tenantId"
+    # Set the subscription ID
+    az account set --subscription $SUBSCRIPTION_ID
 
-echo "Service principal created and saved in GitHub Secrets"
-echo $sp
+    # Create the service principal and extract the credentials if the SP name is different from the previous one
+    if ($SP_NAME -ne $previousSPName) {
+        $sp = az ad sp create-for-rbac --name $SP_NAME --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | ConvertFrom-Json
+        $clientId = $sp.appId
+        $clientSecret = $sp.password
+        $tenantId = $sp.tenant
+
+        # Update the previous SP name
+        $previousSPName = $SP_NAME
+    }
+
+    # Create the environment
+    gh api repos/$GH_OWNER/$GH_REPO/environments -X POST -F name=$env
+
+    gh secret set ARM_CLIENT_ID -r "$GH_OWNER/$GH_REPO" --body $clientId --env=$env
+    gh secret set ARM_CLIENT_SECRET -r "$GH_OWNER/$GH_REPO" --body $clientSecret --env=$env
+    gh secret set ARM_TENANT_ID -r "$GH_OWNER/$GH_REPO" --body $tenantId --env=$env
+}
+
+echo "Service principals created and saved in GitHub Secrets"

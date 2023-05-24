@@ -33,6 +33,28 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
+# infra - Done
 
-          
+# Skip?
+# Generate AAD Tokens 
+# RBAC Assignments  
+
+# Maybe Skip?
+# Generate Python Wheel Files 
+# PAT Token 
+# Git Config
+# Create Repos    
+# Secret Scopes        
+# Repo Pull  
+
+# ToDo
+# Create Cluster  - Done 
+# Create mltable - Done 
+# Create data asseets  - Done 
+# Create environments - Done 
+# Create pipeline - Started
+# Create components - Started
+# Model deployment - Not Started
+# Monitoring - Not Started
+
 

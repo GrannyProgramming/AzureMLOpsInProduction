@@ -53,4 +53,4 @@ gh secret set ARM_CLIENT_SECRET -r "$GH_OWNER/$GH_REPO" --body "$clientSecret"
 gh secret set ARM_TENANT_ID -r "$GH_OWNER/$GH_REPO" --body "$tenantId"
 gh secret set AZURE_CREDENTIALS -r "$GH_OWNER/$GH_REPO" --body ($sp | ConvertTo-Json)
 
-echo "Service principal created and saved in GitHub Secrets"
+echo "Service principal created and saved in GitHub Secretss"

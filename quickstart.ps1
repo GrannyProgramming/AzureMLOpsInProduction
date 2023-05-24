@@ -1,11 +1,3 @@
-'''
-Azure CLI (az): The Azure CLI is a command-line tool that you can use to manage Azure resources. It is used in this script to login to your Azure account, set your subscription, and create a service principal. You can install it by following the instructions on this page: https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
-
-GitHub CLI (gh): GitHub CLI brings GitHub to your terminal. It reduces context switching, helps you focus, and enables you to more easily script and create automation. It is used in this script to set GitHub secrets. You can install it by following the instructions on this page: https://cli.github.com/manual/installation 
-
-Restart terminal after installing all the above
-'''
-
 # Define the variables
 $PARAMS_FILE = $args[0]  # Accept the JSON file as the first command-line argument
 
@@ -38,12 +30,12 @@ az login
 az account set --subscription $SUBSCRIPTION_ID
 
 # Create the service principal
-$sp = az ad sp create-for-rbac --name $SP_NAME --sdk-auth | ConvertFrom-Json
+$sp = az ad sp create-for-rbac --name $SP_NAME --role Owner --scopes /subscriptions/$SUBSCRIPTION_ID | ConvertFrom-Json
 
 # Save the service principal credentials to GitHub Secrets
-$clientId = $sp.clientId
-$clientSecret = $sp.clientSecret
-$tenantId = $sp.tenantId
+$clientId = $sp.appId
+$clientSecret = $sp.password
+$tenantId = $sp.tenant
 
 gh auth login 
 
@@ -51,6 +43,6 @@ gh auth login
 gh secret set ARM_CLIENT_ID -r "$GH_OWNER/$GH_REPO" --body "$clientId"
 gh secret set ARM_CLIENT_SECRET -r "$GH_OWNER/$GH_REPO" --body "$clientSecret"
 gh secret set ARM_TENANT_ID -r "$GH_OWNER/$GH_REPO" --body "$tenantId"
-gh secret set AZURE_CREDENTIALS -r "$GH_OWNER/$GH_REPO" --body ($sp | ConvertTo-Json)
 
-echo "Service principal created and saved in GitHub Secretss"
+echo "Service principal created and saved in GitHub Secrets"
+echo $sp

@@ -22,7 +22,7 @@ resource azResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   location: location
 }
 
-module keyvault 'modules/keyvault.bicep' = {
+module keyvault 'modules/keyVault.bicep' = {
   name: 'kv-${name}-deployment'
   dependsOn: [
     azResourceGroup
@@ -49,7 +49,7 @@ module storage 'modules/storageAccount.bicep' = {
   }
 }
 
-module containerRegistry 'modules/containerregistry.bicep' = {
+module containerRegistry 'modules/containerRegistry.bicep' = {
   name: 'cr${name}-deployment'
   dependsOn: [
     azResourceGroup
@@ -62,7 +62,7 @@ module containerRegistry 'modules/containerregistry.bicep' = {
   }
 }
 
-module applicationInsights 'modules/applicationinsights.bicep' = {
+module applicationInsights 'modules/applicationInsights.bicep' = {
   name: 'appi-${name}-deployment'
   dependsOn: [
     azResourceGroup

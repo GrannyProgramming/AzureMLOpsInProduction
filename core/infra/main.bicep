@@ -74,18 +74,19 @@ module applicationInsights 'modules/applicationInsights.bicep' = {
   }
 }
 
-module logAnalytics './modules/logAnalytics.bicep' = {
-  dependsOn: [
-    azResourceGroup 
-  ]
-  name: 'logAnalyticsModule'
-  scope: resourceGroup(resourceGroupName)
-  params: {
-    location: location
-    prefix: 'law-${name}'
-    tags: tags
-  }
-}
+// TODO: Add support for Log Analytics, needs to be in separate resource group, check if already created and then linked to all aml workspaces 
+// module logAnalytics './modules/logAnalytics.bicep' = {
+//   dependsOn: [
+//     azResourceGroup 
+//   ]
+//   name: 'logAnalyticsModule'
+//   scope: resourceGroup(resourceGroupName)
+//   params: {
+//     location: location
+//     prefix: 'law-${name}'
+//     tags: tags
+//   }
+// }
 
 module amlWorkspace './modules/amlWorkspace.bicep' = {
   name: 'mlw-${name}-deployment'
@@ -97,7 +98,7 @@ module amlWorkspace './modules/amlWorkspace.bicep' = {
     tags: tags
 
     // dependent resources
-    logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
+    // logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
     applicationInsightsId: applicationInsights.outputs.applicationInsightsId
     containerRegistryId: containerRegistry.outputs.containerRegistryId
     keyVaultId: keyvault.outputs.keyvaultId
@@ -110,5 +111,4 @@ module amlWorkspace './modules/amlWorkspace.bicep' = {
     applicationInsights
     storage
   ]
-  
 }

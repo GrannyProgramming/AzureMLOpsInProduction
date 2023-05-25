@@ -20,7 +20,7 @@ param keyVaultId string
 param storageAccountId string
 
 @description('Resource ID of the log analytic workspace resource')
-param logAnalyticsWorkspaceId string
+// param logAnalyticsWorkspaceId string
 
 param prefix string 
 var uniqueSuffix = substring(uniqueString(resourceGroup().id), 0, 4)
@@ -46,23 +46,3 @@ resource machineLearning 'Microsoft.MachineLearningServices/workspaces@2022-05-0
 }
 
 output machineLearningId string = machineLearning.id
-
-resource amlWorkspaceDiagnostics 'Microsoft.Insights/diagnosticSettings@2017-05-01-preview' = {
-  dependsOn: [machineLearning]
-  name: 'diagnostics'
-  properties: {
-    workspaceId: logAnalyticsWorkspaceId
-    logs: [
-      {
-        category: 'Audit'
-        enabled: true
-      }
-    ]
-    metrics: [
-      {
-        timeGrain: 'AllMetrics'
-        enabled: true
-      }
-    ]
-  }
-}

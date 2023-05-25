@@ -9,6 +9,10 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08
   name: logAnalyticsWorkspaceName
   location: location
   tags: tags
+  properties: {
+    sku: {
+      name: 'Basic'
+    }
+  }
 }
-
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id

@@ -41,16 +41,7 @@ jobs:
         run: |
           python3 .github/utils/createAzureResources.py
           
-
-
-# RBAC Assignments: Nice to have, not essential right now , to implement we would need to set up security groups or managed identity and assign roles to them. 
-# Generate Python Wheel Files  
-# Git Config for AML 
-# Create Repos in AML
-# Secret Scopes/GH Token? Not sure if I need to save the sp details to key vault for the git integration between aml and gh. Same for gh token.  
-# Repo Pull  - get most up to date repo? do we need? needs checking.
-
-# ToDo
+# ToDo (High priority)
 # Create Cluster  - Done 
 # Create mltable - Done 
 # Create data asseets  - Done 
@@ -59,5 +50,24 @@ jobs:
 # Create components - Started (50%, needs debugging)
 # Model deployment - Not Started
 # Monitoring - Not Started
+# Testing - Not Started
+          # Unit testing - Not Started
+          # Integration testing - Not Started
+          # End to end testing - Not Started
+# CI/CD - Not Started
 
 
+
+# ToDo after the core is up and running (Medium priority)
+# RBAC Assignments: Nice to have, not essential right now , to implement we would need to set up security groups or managed identity and assign roles to them. 
+# Generate Python Wheel Files  
+# Git Config for AML 
+# Create Repos in AML
+# Secret Scopes/GH Token? Not sure if I need to save the sp details to key vault for the git integration between aml and gh. Same for gh token.  
+# Repo Pull  - get most up to date repo? do we need? needs checking.
+
+# Future/tidy-up (Low priority)
+# Optimising the accelerator
+# Terraform for infra
+# Managed identity & Access management
+# Advanced datascience features - triton, onnx, ray, azure arc, tpi, etc.,

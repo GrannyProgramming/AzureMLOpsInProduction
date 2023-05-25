@@ -39,7 +39,7 @@ jobs:
     
       - name: Deploy Bicep templates
         run: |
-          python3 .github/utils/createAzureResources variables/${{ matrix.environment }}/parameters/parameters.json
+          python3 .github\utils\createAzureResources.py variables/${{ matrix.environment }}/parameters/parameters.json
           
 
 

@@ -21,8 +21,8 @@ def get_location_from_parameters_file(parameters_file):
     with parameters_file_path.open('r') as f:
         parameters = json.load(f)
 
-    if 'location' in parameters and 'value' in parameters['location']:
-        return parameters['location']['value']
+    if 'parameters' in parameters and 'location' in parameters['parameters'] and 'value' in parameters['parameters']['location']:
+        return parameters['parameters']['location']['value']
     else:
         raise Exception('Location is not specified in the parameters file')
 

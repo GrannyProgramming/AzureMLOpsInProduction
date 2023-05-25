@@ -1,15 +1,14 @@
 {
-    "resourceGroupName": {
-      "value": "amcg-rg-aml-001-dev"
-    },
-    "workspaceName": {
-      "value": "amcg-rg-aml-ws-001-dev"
-    },
-    "location": {
-      "value": "eastus2"
-    },
-    "prefix": {
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "prefix": {
         "value": "amcg"
+      },
+      "location": {
+        "value": "eastus"
+      }
     }
   }
+  
   

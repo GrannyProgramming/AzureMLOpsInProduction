@@ -18,7 +18,6 @@ var name = toLower('${prefix}')
 resource azResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   dependsOn: []
   name: resourceGroupName
-  // Location of the Resource Group Does Not Have To Match That of The Resouces Within. Metadata for all resources within groups can reside in 'uksouth' below
   location: location
 }
 

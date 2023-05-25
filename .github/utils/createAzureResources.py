@@ -46,8 +46,8 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(description='Create a Bicep deployment.')
-    parser.add_argument('--template-file', default=get_env_variable('TEMPLATE_FILE'), help='Bicep template file')
-    parser.add_argument('--parameters', default=get_env_variable('PARAMETERS'), help='Parameters for the Bicep file')
+    parser.add_argument('--template-file', default=get_env_variable('BICEP_MAIN_PATH'), help='Bicep template file')
+    parser.add_argument('--parameters', default=get_env_variable('BICEP_PARAMETER_PATH'), help='Parameters for the Bicep file')
 
     args = parser.parse_args()
 

@@ -1,5 +1,5 @@
 {
     "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
-    "bicepMainPath":"./core/infra/main.bicep",
-    "bicepParameterPath": ".core/infra/parameters/dev/bicep.parameters.json/"
+    "bicep_main_path":"./core/infra/main.bicep",
+    "bicep_parameter_path": ".core/infra/parameters/dev/bicep.parameters.json/"
 }

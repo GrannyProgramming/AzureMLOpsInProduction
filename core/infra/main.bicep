@@ -3,6 +3,9 @@ targetScope = 'subscription'
 
 param resourceGroupName string
 param location string
+param logAnalyticsWorkspaceName string
+param logAnalyticsResourceGroupName string
+
 
 @minLength(2)
 @maxLength(10)
@@ -74,20 +77,6 @@ module applicationInsights 'modules/applicationInsights.bicep' = {
   }
 }
 
-// TODO: Add support for Log Analytics, needs to be in separate resource group, check if already created and then linked to all aml workspaces 
-// module logAnalytics './modules/logAnalytics.bicep' = {
-//   dependsOn: [
-//     azResourceGroup 
-//   ]
-//   name: 'logAnalyticsModule'
-//   scope: resourceGroup(resourceGroupName)
-//   params: {
-//     location: location
-//     prefix: 'law-${name}'
-//     tags: tags
-//   }
-// }
-
 module amlWorkspace './modules/amlWorkspace.bicep' = {
   name: 'mlw-${name}-deployment'
   scope: resourceGroup(resourceGroupName)
@@ -111,4 +100,23 @@ module amlWorkspace './modules/amlWorkspace.bicep' = {
     applicationInsights
     storage
   ]
+}
+
+resource logAnalyticsResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  dependsOn: []
+  name: logAnalyticsResourceGroupName
+  location: location
+}
+
+module logAnalyticsWorkspace './modules/logAnalytics.bicep' = {
+  dependsOn: [
+    logAnalyticsResourceGroup
+  ]
+  name: logAnalyticsWorkspaceName
+  scope: resourceGroup(logAnalyticsResourceGroupName)
+  params: {
+    location: location
+    prefix: 'la-${name}'
+    tags: tags
+  }
 }

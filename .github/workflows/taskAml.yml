@@ -39,7 +39,7 @@ jobs:
     
       - name: Deploy Bicep templates
         run: |
-          python3 .github\utils\createAzureResources.py variables/${{ matrix.environment }}/parameters/parameters.json
+          python3 .github/utils/createAzureResources.py variables/${{ matrix.environment }}/parameters/parameters.json
           
 
 
@@ -60,8 +60,8 @@ jobs:
 # Create mltable - Done 
 # Create data asseets  - Done 
 # Create environments - Done 
-# Create pipeline - Started
-# Create components - Started
+# Create pipeline - Started (50%, needs debugging)
+# Create components - Started (50%, needs debugging)
 # Model deployment - Not Started
 # Monitoring - Not Started
 

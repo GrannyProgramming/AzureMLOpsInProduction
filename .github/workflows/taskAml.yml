@@ -50,7 +50,7 @@ jobs:
 # Create pipeline - Started (50%, needs debugging)
 # Create components - Started (50%, needs debugging)
 # Model deployment - Not Started
-# Monitoring - Not Started
+# Monitoring - Not Started (created the LAW and seperate rg)
 # Testing - Not Started
           # Unit testing - Not Started
           # Integration testing - Not Started

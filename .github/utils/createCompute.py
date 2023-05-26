@@ -1,11 +1,12 @@
-import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
+import os
 import json 
 
 ENVIRONMENT = os.environ['ENVIRONMENT']
 SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
+
 # Authenticate the client using the DefaultAzureCredential object
 credential = DefaultAzureCredential()
 script_dir = os.path.dirname(os.path.abspath(__file__))  # directory of the current script
@@ -25,14 +26,23 @@ with open(config_file, "r") as f:
 client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}')
             
 for compute_config in config["computes"]:
-    compute_type = compute_config["type"].lower()
-    compute_name = compute_config["name"]
+    compute_type = compute_config.pop("type").lower()
+    compute_name = compute_config.pop("name")
 
     # Check if the compute already exists
-    if client.get_compute(compute_name) is not None:
-        print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
-        continue
+    try:
+        if client.compute.get(compute_name) is not None:
+            print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
+            continue
+    except Exception as e:
+        # Exception would be raised if compute does not exist
+        pass
 
     # Create the compute
     if compute_type in compute_types:
+        # use **kwargs to handle optional parameters
         compute = compute_types[compute_type](name=compute_name, **compute_config)
+        
+        # Create the compute instance
+        client.compute.create_or_update(compute)
+        print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")

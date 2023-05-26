@@ -19,8 +19,8 @@ jobs:
         with:
           python-version: 3.9
       
-      # - name: Install dependencies
-      #   run: python3 .github/utils/installDependencies.py
+      - name: Install dependencies
+        run: python3 .github/utils/installDependencies.py
       
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
@@ -37,9 +37,9 @@ jobs:
         run: |
           bicep build ./core/infra/main.bicep
     
-      - name: Deploy Bicep templates
-        run: |
-          python3 .github/utils/createAzureResources.py
+      # - name: Deploy Bicep templates
+      #   run: |
+      #     python3 .github/utils/createAzureResources.py
           
       - name: Create AML Clusters
         env:

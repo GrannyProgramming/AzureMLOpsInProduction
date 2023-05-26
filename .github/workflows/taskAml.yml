@@ -26,12 +26,18 @@ jobs:
         run: |
           python3 .github/utils/pyWheels/setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
+      
+      - name: Check Python Interpreter
+        run: |
+          which python
+          which python3
 
       - name: Set Env Variables
         run: | 
           pip list
           pip show workflowhelperfunc
-          python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
+          python -c "import workflowhelperfunc"
+          # python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
           # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
           # python -c "from workflowhelperfunc.workflowhelper import *"
         # python3.9 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json

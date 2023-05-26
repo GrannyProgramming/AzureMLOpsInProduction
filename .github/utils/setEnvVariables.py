@@ -1,5 +1,5 @@
 import sys
-from workflowHelperFunc.your_module import load_and_set_env_vars
+from workflowHelperFunc.workflowHelper import load_and_set_env_vars
 from pathlib import Path
 
 def main():

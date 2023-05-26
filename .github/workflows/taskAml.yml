@@ -44,7 +44,7 @@ jobs:
       - name: Create AML Clusters
         env:
           ENVIRONMENT: ${{ matrix.environment }}
-        run: |
+        run: | 
           python3 .github/utils/createCompute.py
 
 # ToDo (High priority)

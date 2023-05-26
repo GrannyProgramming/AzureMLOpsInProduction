@@ -31,9 +31,9 @@ jobs:
         run: | 
           pip list
           
-          # python -c "from workflowhelperfunc.workflowhelper import *" # No module named 'workflowhelperfunc
-          python -c "from workflowHelperFunc.workflowHelper import *"
-
+          python -c "from workflowhelperfunc.workflowhelper import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
+          # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
+          # python -c "from workflowhelperfunc.workflowhelper import *"
         # python3.9 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
       
       # - name: Build wheel

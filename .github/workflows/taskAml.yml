@@ -30,7 +30,7 @@ jobs:
       - name: Set Env Variables
         run: | 
           pip list
-          
+          pip show workflowhelperfunc
           python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
           # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
           # python -c "from workflowhelperfunc.workflowhelper import *"

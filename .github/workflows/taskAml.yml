@@ -24,7 +24,7 @@ jobs:
 
       - name: Build wheel and install helper functions
         run: |
-          python3 .github/utils/pyWheels/setup.py bdist_wheel
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python .github/utils/pyWheels/setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
       
       - name: Check Python Interpreter
@@ -36,7 +36,7 @@ jobs:
         run: | 
           pip list
           pip show workflowhelperfunc
-          python -c "import workflowhelperfunc"
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc"
           # python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
           # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
           # python -c "from workflowhelperfunc.workflowhelper import *"

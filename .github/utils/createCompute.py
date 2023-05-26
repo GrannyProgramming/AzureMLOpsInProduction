@@ -19,7 +19,7 @@ compute_types = {
 }
 
 with open(config_file, "r") as f:
-    config = json.load(f)
+    config = json.load(f) 
 
 # Create a MLClient object with the authenticated credential
 client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}')

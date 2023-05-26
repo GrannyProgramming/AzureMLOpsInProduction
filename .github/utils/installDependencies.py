@@ -7,7 +7,7 @@ import subprocess
 
 def install_dependencies():
     subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
-    subprocess.run(['pip3', 'install', 'yq'])
+    subprocess.run(['pip3', 'install', 'yq']) 
     # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
     # subprocess.run(['pip3', 'install', 'azure-cli']) # removed --upgrade for faster build times, revert when final push
     subprocess.run(['az', 'extension', 'add', '-n', 'azure-cli-ml'])

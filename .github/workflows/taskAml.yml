@@ -30,7 +30,8 @@ jobs:
       - name: Set Env Variables
         run: | 
           pip list
-          python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
+          python -c "from workflowhelperfunc.workflowhelper import load_and_set_env_vars"
+          python3.9 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
       
       # - name: Build wheel
       #   run: python setup.py bdist_wheel

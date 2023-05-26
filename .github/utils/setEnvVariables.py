@@ -3,6 +3,7 @@ from workflowHelperFunc.workflowHelper import load_and_set_env_vars
 from pathlib import Path
 
 def main():
+    print("Python path:", sys.path)
     # The first argument (sys.argv[1]) is the command line argument
     vars_or_path = sys.argv[1]
 

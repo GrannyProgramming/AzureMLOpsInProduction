@@ -44,5 +44,5 @@ for compute_config in config["computes"]:
         compute = compute_types[compute_type](name=compute_name, **compute_config)
         
         # Create the compute instance
-        client.compute.create_or_update(compute)
+        client.compute.begin_create_or_update(compute)
         print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")

@@ -9,7 +9,7 @@
             "value": "eastus"
         },
         "prefix": {
-            "value": "amcg001"
+            "value": "amcg0001"
         },
         "tags": {
             "value": {
@@ -20,7 +20,7 @@
             "value": "law"
         },
         "logAnalyticsResourceGroupName": {
-            "value": "law-aml-rg"
+            "value": "law-rg"
         }
     }
 }

@@ -30,7 +30,13 @@ jobs:
       - name: Set Env Variables
         run: | 
           pip list
-          python -c "from workflowhelperfunc.workflowhelper import *"
+
+          python -c "\
+          try:\
+              from workflowhelperfunc.workflowhelper import *;\
+          except ModuleNotFoundError:\
+              print('The workflowhelperfunc module could not be imported.')\
+              "python -c "from workflowHelperFunc.workflowHelper import *";\
 
         # python3.9 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
       

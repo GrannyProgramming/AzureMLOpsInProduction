@@ -41,6 +41,11 @@ def create_bicep_deployment(location, template_file, parameters):
     cmd = f'az deployment sub create --location {location} --template-file {template_file} --parameters {parameters}'
     return run_command(cmd)
 
+def set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group):
+    """Set the AML workspace and its resource group as defaults using the Azure CLI."""
+    run_command(f'az configure --defaults group={resource_group}')
+    run_command(f'az configure --defaults workspace={workspace}')
+
 def main():
     """Main function."""
     logging.basicConfig(level=logging.INFO)
@@ -54,6 +59,30 @@ def main():
     try:
         location = get_location_from_parameters_file(args.parameters)
         output = create_bicep_deployment(location, args.template_file, args.parameters)
+        
+        # Parse workspace and resource group from output
+        output_json = json.loads(output)
+        workspace = output_json['properties']['outputs']['workspaceName']['value']
+        resource_group = output_json['properties']['outputs']['resourceGroupName']['value']
+
+        # Set workspace and resource group as defaults
+        set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group)
+
+        # Check if workspace and resource group are set as defaults
+        default_settings = json.loads(run_command('az configure --list-defaults -o json'))
+        default_workspace = next((x for x in default_settings if x['name'] == 'workspace'), None)
+        default_resource_group = next((x for x in default_settings if x['name'] == 'group'), None)
+
+        if default_workspace and default_workspace['value'] == workspace:
+            logging.info(f"Default workspace is set to: {workspace}")
+        else:
+            logging.error("Default workspace is not set correctly")
+
+        if default_resource_group and default_resource_group['value'] == resource_group:
+            logging.info(f"Default resource group is set to: {resource_group}")
+        else:
+            logging.error("Default resource group is not set correctly")
+        
         logging.info(f'Command succeeded with output:\n{output}')
     except Exception as e:
         logging.error(f'Failed to create Bicep deployment: {e}')

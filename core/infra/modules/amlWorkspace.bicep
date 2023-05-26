@@ -46,3 +46,4 @@ resource machineLearning 'Microsoft.MachineLearningServices/workspaces@2022-05-0
 }
 
 output machineLearningId string = machineLearning.id
+output machineLearningName string = machineLearning.name

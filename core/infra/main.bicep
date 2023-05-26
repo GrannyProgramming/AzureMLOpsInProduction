@@ -120,3 +120,5 @@ module logAnalyticsWorkspace './modules/logAnalytics.bicep' = {
     tags: tags
   }
 }
+output workspaceName string = amlWorkspace.outputs.machineLearningName
+output resourceGroupName string = azResourceGroup.name

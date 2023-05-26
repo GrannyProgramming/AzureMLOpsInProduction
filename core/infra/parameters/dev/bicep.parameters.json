@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceGroupName": {
-            "value": "aml-dev-rg"
+            "value": "aml-dev-rg-001"
         },
         "location": {
             "value": "eastus"
         },
         "prefix": {
-            "value": "amcg0001"
+            "value": "amcg0002"
         },
         "tags": {
             "value": {

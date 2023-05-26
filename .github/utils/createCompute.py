@@ -8,7 +8,10 @@ ENVIRONMENT = os.environ['ENVIRONMENT']
 SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
 # Authenticate the client using the DefaultAzureCredential object
 credential = DefaultAzureCredential()
-config_file = os.path.join(os.getcwd(), "..", "..", "variables", f'{ENVIRONMENT}', "compute", "compute.json")
+
+script_dir = os.path.dirname(os.path.abspath(__file__))  # directory of the current script
+root_dir = os.path.join(script_dir, '..', '..')  # root directory of the project
+config_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "compute.json")
 
 compute_types = {
     "amlcompute": AmlCompute,

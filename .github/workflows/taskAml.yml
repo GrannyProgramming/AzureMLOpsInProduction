@@ -25,8 +25,7 @@ jobs:
       - name: Build wheel and install helper functions
         run: |
           python3 .github/utils/pyWheels/setup.py bdist_wheel
-          python3 -m pip install .github/utils/pyWheels/dist/*.whl
-       
+          for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
 
       - name: Set Env Variables
         run: python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json

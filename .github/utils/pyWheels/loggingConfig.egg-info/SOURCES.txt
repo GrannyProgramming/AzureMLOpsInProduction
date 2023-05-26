@@ -1,6 +1,0 @@
-loggingConfig.py
-setup.py
-loggingConfig.egg-info/PKG-INFO
-loggingConfig.egg-info/SOURCES.txt
-loggingConfig.egg-info/dependency_links.txt
-loggingConfig.egg-info/top_level.txt

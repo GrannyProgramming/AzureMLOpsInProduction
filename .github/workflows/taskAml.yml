@@ -43,16 +43,17 @@ jobs:
           
         
 # ToDo (High priority)
-# Create Cluster  - Done 
-# Create mltable - Done 
+# Create Cluster  - Done
+# Create mltable - Done
 # Create data asseets  - Done 
-# Create environments - Done 
+# Create environments - Done
 # Create pipeline - Started (50%, needs debugging)
 # Create components - Started (50%, needs debugging)
+# PYwheel - Check if  
 # Model deployment - Not Started
 # Monitoring - Not Started (created the LAW and seperate rg)
 # Testing - Not Started
-          # Unit testing - Not Started
+          # Unit testing - Not Started "Mocking"
           # Integration testing - Not Started
           # End to end testing - Not Started
 # CI/CD - Not Started
@@ -74,3 +75,4 @@ jobs:
 # Managed identity & Access management
 # RBAC Assignments: Nice to have, not essential right now , to implement we would need to set up security groups or managed identity and assign roles to them. 
 # Advanced datascience features - triton, onnx, ray, azure arc, tpi, etc.,
+# enTERPRISE 

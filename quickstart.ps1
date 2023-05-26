@@ -65,3 +65,10 @@ foreach ($env in $jsonContent.PSObject.Properties.Name) {
 }
 
 echo "Service principals created and saved in GitHub Secrets"
+
+
+## Convert to ps core 7 test and review 
+## if ($main_sp_name_obj_id -eq "None" ) { $main_sp_name_obj_id=( az ad sp show --id $Client_ID --query "{roleBeneficiaryObjID:objectId}" -o tsv ) }
+# add below 
+# $environments = @('sandbox', 'development', 'uat', 'production')
+

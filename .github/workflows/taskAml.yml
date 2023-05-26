@@ -42,9 +42,9 @@ jobs:
           python3 .github/utils/createAzureResources.py
           
       - name: Create AML Clusters
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
         run: |
-          env:
-            ENVIRONMENT: ${{ matrix.environment }}
           python3 .github/utils/createCompute.py
 
 # ToDo (High priority)

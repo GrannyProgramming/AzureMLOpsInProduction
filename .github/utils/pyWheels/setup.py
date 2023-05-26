@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='workflowHelperFunc',
+    name='workflowhelperfunc',
     version='1.0.1',
     author='amcg809',
     author_email='amcg809@gmail.com',

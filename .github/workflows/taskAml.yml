@@ -36,7 +36,9 @@ jobs:
         run: | 
           pip list
           pip show workflowhelperfunc
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc"
+          python -c 'from workflowhelperfunc.core import *'
+
+          # /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc"
           # python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
           # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
           # python -c "from workflowhelperfunc.workflowhelper import *"

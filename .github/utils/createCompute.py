@@ -59,7 +59,7 @@ for compute_config in config["computes"]:
     if compute_type in compute_types:
         # Remove the 'name' key from the compute_config dictionary
         compute_name = compute_config.pop("name")
-         
+        compute_type = compute_config.pop("type")
         # Create a new compute instance with the specified name and configuration
         compute = compute_types[compute_type](name=compute_name, **compute_config)
 

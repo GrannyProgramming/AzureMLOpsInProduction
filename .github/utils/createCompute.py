@@ -42,8 +42,8 @@ client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}', w
 # Loop through each compute configuration
 for compute_config in config["computes"]:
     # Extract the compute type and name from the configuration
-    compute_type = compute_config.get("type").lower()
-    compute_name = compute_config.get("name")
+    compute_type = compute_config.pop("type").lower()
+    compute_name = compute_config.pop("name")
 
     # Try to get the compute from the Azure ML service
     try:
@@ -57,9 +57,6 @@ for compute_config in config["computes"]:
 
     # If the compute type is recognized, create a new compute
     if compute_type in compute_types:
-        # Remove the 'name' key from the compute_config dictionary
-        compute_name = compute_config.pop("name")
-        compute_type = compute_config.pop("type")
         # Create a new compute instance with the specified name and configuration
         compute = compute_types[compute_type](name=compute_name, **compute_config)
 

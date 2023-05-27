@@ -16,7 +16,7 @@
             "tier": "Dedicated"
         },
         {
-            "name": "kubernetes-compute001",
+            "name": "kubernetes-compute002",
             "type": "kubernetescompute",
             "namespace": "default"            
         }

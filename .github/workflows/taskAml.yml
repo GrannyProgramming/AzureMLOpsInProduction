@@ -39,8 +39,8 @@ jobs:
           find . -type f
 
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import sys; print(sys.path)"
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc.workflowhelper"    
-
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc.workflowhelper"
+          
       - name: Check Python Interpreter
         run: |
           which python

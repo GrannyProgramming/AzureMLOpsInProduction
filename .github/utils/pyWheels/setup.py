@@ -6,7 +6,7 @@ setup(
     author='amcg809',
     author_email='amcg809@gmail.com',
     description='A helper function for the workflow (Logging, setEnvVariables, etc.))',
-    packages=find_packages(),
+    packages=['workflowhelperfunc'],   # Explicitly include the package
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
@@ -14,4 +14,3 @@ setup(
     ],
     python_requires='>=3.8',
 )
- 

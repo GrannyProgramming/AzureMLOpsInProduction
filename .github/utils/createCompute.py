@@ -43,7 +43,8 @@ for compute_config in config["computes"]:
     # Create the compute
     if compute_type in compute_types:
         # use **kwargs to handle optional parameters
-        compute = compute_types[compute_type](name=compute_name, **compute_config)
+        compute = compute_types[compute_type](workspace=client.workspace, name=compute_name, **compute_config)
+
         
         # Create the compute instance
         client.compute.begin_create_or_update(compute)

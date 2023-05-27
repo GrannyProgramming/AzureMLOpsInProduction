@@ -26,7 +26,7 @@ jobs:
         run: |
           cd .github/utils/pyWheels
           python3 setup.py bdist_wheel
-          for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done
+          for whl in $(find dist -name "*.whl"); do python -m pip install $whl; done
       
       - name: Set Env Variables
         run: | 

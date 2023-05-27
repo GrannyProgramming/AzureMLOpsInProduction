@@ -25,10 +25,9 @@ jobs:
       - name: Build wheel and install helper functions
         run: |
           ls
-          cd ./.github/utils/pyWheels/Helper_Functions
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python setup.py bdist_wheel
+          ls
           for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c 'from workflowhelperfunc import *'
 
       - name: Check Python Interpreter
         run: |

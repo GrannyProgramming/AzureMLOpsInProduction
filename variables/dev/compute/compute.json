@@ -1,7 +1,7 @@
 {
     "computes": [
         {
-            "name": "kubernetes-compute001",
+            "name": "k8-compute-001",
             "type": "kubernetescompute",
             "namespace": "default"
         }

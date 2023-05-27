@@ -9,7 +9,7 @@
           {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
+              "name": { "type": "string", "minLength": 2, "maxLength": 16, "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" },
               "type": { "const": "amlcompute" },
               "size": { "type": "string" },
               "min_instances": { "type": "integer", "minimum": 0 },
@@ -29,7 +29,7 @@
           {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
+              "name": { "type": "string", "minLength": 2, "maxLength": 16, "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" },
               "type": { "const": "computeinstance" },
               "size": { "type": "string" },
               "idle_time_before_shutdown_minutes": { "type": "integer", "minimum": 0 },
@@ -50,7 +50,7 @@
           {
             "type": "object",
             "properties": {
-              "name": { "type": "string" },
+              "name": { "type": "string", "minLength": 2, "maxLength": 16, "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" },
               "type": { "const": "kubernetescompute" },
               "namespace": { "type": "string" },
               "properties": { "type": "object" },

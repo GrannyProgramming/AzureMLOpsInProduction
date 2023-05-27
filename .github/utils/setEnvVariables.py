@@ -7,7 +7,10 @@ def main():
     print("Python path:", sys.path)
 
     file_path = sys.argv[1]
-    var_list = ast.literal_eval(sys.argv[2])
+    var_list = None
+
+    if len(sys.argv) > 2:  # check if var_list is provided
+        var_list = ast.literal_eval(sys.argv[2])
 
     load_and_set_env_vars(file_path, var_list)
 

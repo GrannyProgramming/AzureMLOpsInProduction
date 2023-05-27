@@ -19,34 +19,24 @@ def setup_logging(log_file_path: str, level: str = "INFO") -> None:
     console.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     logging.getLogger().addHandler(console)
 
-def load_env_vars_from_file(file_path):
-    env_file = Path(file_path)
-    with env_file.open() as f:
-        return json.load(f)
-
-def load_env_vars_from_args(var_list):
-    env_vars = {}
-    for var in var_list:
-        key, value = var.split("=")
-        env_vars[key] = value
-    return env_vars
-
-def set_env_vars(env_vars):
-    for key, value in env_vars.items():
-        env_var = f"{key.upper()}={value}"
-        print(f"Setting environment variable {env_var}")
-        os.system(f"echo {env_var} >> $GITHUB_ENV")
 
 def load_and_set_env_vars(file_path=None, var_list=None):
     env_vars = {}
 
+    # Load from file
     if file_path:
-        env_vars.update(load_env_vars_from_file(file_path))
+        with open(file_path, 'r') as f:
+            env_vars.update(json.load(f))
 
+    # Load from args
     if var_list:
-        env_vars.update(load_env_vars_from_args(var_list))
-
-    set_env_vars(env_vars)
+        env_vars.update(dict(var.split("=") for var in var_list))
+    
+    # Set env vars
+    for key, value in env_vars.items():
+        env_var = f"{key.upper()}={value}"
+        print(f"Setting environment variable {env_var}")
+        os.system(f"echo {env_var} >> $GITHUB_ENV")
 
 def validate_config(config_path, schema_path):
     # Load the schema

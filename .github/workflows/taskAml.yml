@@ -26,7 +26,7 @@ jobs:
         run: |
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python .github/utils/pyWheels/setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
-          python -c 'from workflowhelperfunc.core import *'
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c 'from workflowhelperfunc.core import *'
 
       - name: Check Python Interpreter
         run: |

@@ -12,8 +12,7 @@
         {    
             "name":  "cpu-instance002",
             "type":  "computeinstance",
-            "size": "STANDARD_DS3_V2",
-            "tier": "Dedicated"
+            "size": "STANDARD_DS3_V2"
         },
         {
             "name": "kubernetes-compute001",

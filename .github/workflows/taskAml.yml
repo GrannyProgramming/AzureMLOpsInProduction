@@ -27,7 +27,11 @@ jobs:
           ls
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python setup.py bdist_wheel
           ls
-          for whl in $(find dist -name "*.whl"); do python3 -m pip install $whl; done       
+          for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done   
+          pip list
+          pip show workflowhelperfunc
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import sys; print(sys.path)"
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc"    
 
       - name: Check Python Interpreter
         run: |

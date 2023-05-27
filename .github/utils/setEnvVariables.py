@@ -4,6 +4,8 @@ from pathlib import Path
 
 def main():
     print("Python path:", sys.path)
+
+    load_and_set_env_vars(sys.argv[1], sys.argv[2])
     # The first argument (sys.argv[1]) is the command line argument
     vars_or_path = sys.argv[1]
 

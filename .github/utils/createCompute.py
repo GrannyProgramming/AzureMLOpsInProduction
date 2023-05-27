@@ -3,6 +3,7 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
+from workflowhelperfunc.workflowhelper import validate_config
 
 ENVIRONMENT = os.environ['ENVIRONMENT']
 SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
@@ -14,7 +15,8 @@ credential = DefaultAzureCredential()
 script_dir = os.path.dirname(os.path.abspath(__file__))  # directory of the current script
 root_dir = os.path.join(script_dir, '..', '..')  # root directory of the project
 config_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "compute.json")
-
+schema_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "computeSchema.json")
+validate_config(config_file, schema_file)
 compute_types = {
     "amlcompute": AmlCompute,
     "computeinstance": ComputeInstance,
@@ -28,8 +30,8 @@ with open(config_file, "r") as f:
 client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}', workspace_name=f'{WORKSPACE_NAME}', resource_group_name=f'{RESOURCE_GROUP}')
             
 for compute_config in config["computes"]:
-    compute_type = compute_config.pop("type").lower()
-    compute_name = compute_config.pop("name")
+    compute_type = compute_config.get("type").lower()
+    compute_name = compute_config.get("name")
 
     # Check if the compute already exists
     try:
@@ -43,9 +45,9 @@ for compute_config in config["computes"]:
     # Create the compute
     if compute_type in compute_types:
         # use **kwargs to handle optional parameters
-        compute = compute_types[compute_type](workspace=client.workspace, name=compute_name, **compute_config)
+        compute_config_filtered = {key: value for key, value in compute_config.items() if key not in ['type', 'name']}
+        compute = compute_types[compute_type](name=compute_name, **compute_config_filtered)
 
-        
         # Create the compute instance
         client.compute.begin_create_or_update(compute)
         print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")

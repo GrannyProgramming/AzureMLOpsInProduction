@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "computes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "const": "amlcompute" },
+              "size": { "type": "string" },
+              "min_instances": { "type": "integer", "minimum": 0 },
+              "max_instances": { "type": "integer", "minimum": 0 },
+              "idle_time_before_scale_down": { "type": "integer", "minimum": 0 },
+              "tier": { "type": "string" },
+              "ssh_public_access_enabled": { "type": "boolean" },
+              "ssh_settings": { "type": "object" },
+              "network_settings": { "type": "object" },
+              "identity": { "type": "object" },
+              "enable_node_public_ip": { "type": "boolean" },
+              "tags": { "type": "object" }
+            },
+            "required": ["name", "type"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "const": "computeinstance" },
+              "size": { "type": "string" },
+              "idle_time_before_shutdown_minutes": { "type": "integer", "minimum": 0 },
+              "tier": { "type": "string" },
+              "ssh_public_access_enabled": { "type": "boolean" },
+              "create_on_behalf_of": { "type": "object" },
+              "network_settings": { "type": "object" },
+              "ssh_settings": { "type": "object" },
+              "schedules": { "type": "object" },
+              "identity": { "type": "object" },
+              "setup_scripts": { "type": "object" },
+              "enable_node_public_ip": { "type": "boolean" },
+              "custom_applications": { "type": "array" },
+              "tags": { "type": "object" }
+            },
+            "required": ["name", "type"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "const": "kubernetescompute" },
+              "namespace": { "type": "string" },
+              "properties": { "type": "object" },
+              "identity": { "type": "object" },
+              "tags": { "type": "object" }
+            },
+            "required": ["name", "type"],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": ["computes"],
+  "additionalProperties": false
+}

@@ -2,6 +2,8 @@ import logging
 import json
 import os
 from pathlib import Path
+from jsonschema import validate, exceptions
+
 
 def setup_logging(log_file_path: str, level: str = "INFO") -> None:
     # Configure logging
@@ -45,3 +47,19 @@ def load_and_set_env_vars(file_path=None, var_list=None):
         env_vars.update(load_env_vars_from_args(var_list))
 
     set_env_vars(env_vars)
+
+def validate_config(config_path, schema_path):
+    # Load the schema
+    with open(schema_path, 'r') as file:
+        schema = json.load(file)
+
+    # Load the config file
+    with open(config_path, 'r') as file:
+        config = json.load(file)
+
+    try:
+        # Validate the config against the schema
+        validate(instance=config, schema=schema)
+        print("JSON config is valid.")
+    except exceptions.ValidationError as e:
+        print(f"JSON config is invalid: {e.message}")

@@ -4,6 +4,7 @@ import subprocess
 import argparse
 import logging
 from pathlib import Path
+from workflowhelperfunc.workflowhelper import load_and_set_env_vars
 
 def get_env_variable(var_name):
     """Get environment variable or raise exception if it's not present."""
@@ -64,7 +65,8 @@ def main():
         output_json = json.loads(output)
         workspace = output_json['properties']['outputs']['workspaceName']['value']
         resource_group = output_json['properties']['outputs']['resourceGroupName']['value']
-
+        # Set these vars in gh environment
+        env_vars = load_and_set_env_vars(['workspace', 'resource_group'])
         # Set workspace and resource group as defaults
         set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group)
 

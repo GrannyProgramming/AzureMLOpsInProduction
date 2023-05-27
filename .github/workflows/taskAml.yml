@@ -31,41 +31,28 @@ jobs:
       - name: Set Env Variables
         run: | 
           python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
+
+      - name: Azure login
+        run: |
+          echo ${{ secrets.ARM_CLIENT_ID }}
+          az login --service-principal \
+          --username "${{ secrets.ARM_CLIENT_ID }}" \
+          --password "${{ secrets.ARM_CLIENT_SECRET }}" \
+          --tenant "${{ secrets.ARM_TENANT_ID }}"
       
-      # - name: Build wheel
-      #   run: python setup.py bdist_wheel
-  
-      # - name: Install wheel
-      #   run : pip install dist/*.whl
-  
-      # - name: Set environment variables
-      #   run: |
-      #       from YourPackageName.load_and_set_env_vars import load_and_set_env_vars
-      #       load_and_set_env_vars(file_path='env.json')
-      #   shell: python
+      - name: Compile Bicep templates
+        run: |
+          bicep build ./core/infra/main.bicep
 
-
-      # - name: Azure login
-      #   run: |
-      #     echo ${{ secrets.ARM_CLIENT_ID }}
-      #     az login --service-principal \
-      #     --username "${{ secrets.ARM_CLIENT_ID }}" \
-      #     --password "${{ secrets.ARM_CLIENT_SECRET }}" \
-      #     --tenant "${{ secrets.ARM_TENANT_ID }}"
-      
-      # - name: Compile Bicep templates
-      #   run: |
-      #     bicep build ./core/infra/main.bicep
-
-      #   # - name: Deploy Bicep templates
-      # #   run: |
-      # #     python3 .github/utils/createAzureResources.py
+      - name: Deploy Bicep templates
+        run: |
+          python3 .github/utils/createAzureResources.py
           
-      # - name: Create AML Clusters
-      #   env:
-      #     ENVIRONMENT: ${{ matrix.environment }}
-      #   run: | 
-      #     python3 .github/utils/createCompute.py
+      - name: Create AML Clusters
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+        run: | 
+          python3 .github/utils/createCompute.py
 
 
 # ToDo (High priority)

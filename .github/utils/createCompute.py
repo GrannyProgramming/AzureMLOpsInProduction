@@ -6,6 +6,8 @@ import json
 
 ENVIRONMENT = os.environ['ENVIRONMENT']
 SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
+WORKSPACE = os.environ['WORKSPACE']
+RESOURCE_GROUP = os.environ['RESOURCE_GROUP']
 
 # Authenticate the client using the DefaultAzureCredential object
 credential = DefaultAzureCredential()
@@ -23,7 +25,7 @@ with open(config_file, "r") as f:
     config = json.load(f) 
 
 # Create a MLClient object with the authenticated credential
-client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}')
+client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}', workspace_name=f'{WORKSPACE}', resource_group_name=f'{RESOURCE_GROUP}')
             
 for compute_config in config["computes"]:
     compute_type = compute_config.pop("type").lower()

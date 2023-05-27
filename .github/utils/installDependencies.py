@@ -10,9 +10,9 @@ def install_dependencies():
     # subprocess.run(['pip3', 'install', 'yq']) 
     subprocess.run(['pip3', 'install', 'wheel'])
     # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
-    # subprocess.run(['pip3', 'install', 'azure-ai-ml'] )
+    subprocess.run(['pip3', 'install', 'azure-ai-ml'] )
     # subprocess.run(['pip3', 'install', 'mltable'])
-    # subprocess.run(['pip3', 'install', 'requests'])   
+    subprocess.run(['pip3', 'install', 'requests'])   
     # if subprocess.run(['which', 'bicep']).returncode != 0:
     #     subprocess.run(['curl', '-Lo', '/usr/local/bin/bicep', 'https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64'])
     #     subprocess.run(['chmod', '+x', '/usr/local/bin/bicep'])

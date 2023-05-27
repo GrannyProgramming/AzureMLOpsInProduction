@@ -25,39 +25,12 @@ jobs:
       - name: Build wheel and install helper functions
         run: |
           cd .github/utils/pyWheels
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python setup.py bdist_wheel
+          python3 setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done
-          pip list
-          pip show workflowhelperfunc
-          
-          pip show workflowhelperfunc
-          mkdir temp_dir
-          cp ./dist/*.whl temp_dir
-          cd temp_dir
-          unzip *.whl
-          find . -type f
-          
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import sys; print(sys.path)"
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc.workflowhelper"          
-          
-      - name: Check Python Interpreter
-        run: |
-          which python
-          which python3
-
-      - name: Print PYTHONPATH
-        run: echo $PYTHONPATH
       
       - name: Set Env Variables
         run: | 
-          pip list
-          pip show workflowhelperfunc
-          # python -c 'from workflowhelperfunc.core import *' #ModuleNotFoundError: No module named 'workflowhelperfunc'
-          # /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc"
-          # python -c "from workflowhelperfunc import *" # ModuleNotFoundError: No module named 'workflowhelperfunc
-          # python -c "from workflowHelperFunc.workflowHelper import *" # ModuleNotFoundError: No module named 'workflowHelperFunc'
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "from workflowhelperfunc.workflowhelper import *"
-        # python3.9 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
+          python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json
       
       # - name: Build wheel
       #   run: python setup.py bdist_wheel

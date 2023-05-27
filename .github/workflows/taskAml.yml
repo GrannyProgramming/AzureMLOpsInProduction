@@ -30,7 +30,7 @@ jobs:
       
       - name: Set Env Variables
         run: | 
-          python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json ['workspace_name=mlw-amcg0002-gwxp', 'resource_group=aml-dev-rg-001']
+          python3 .github/utils/setEnvVariables.py variables/${{ matrix.environment }}/parameters/parameters.json "['workspace_name=mlw-amcg0002-gwxp', 'resource_group=aml-dev-rg-001']"
 
       - name: Azure login
         run: |

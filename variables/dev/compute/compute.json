@@ -1,7 +1,7 @@
 {
     "computes": [
         {   
-            "name":  "cpu-cluster002",
+            "name":  "cpu-cluster001",
             "type":  "amlcompute",
             "size": "STANDARD_DS3_V2",
             "min_instances": 0,
@@ -10,7 +10,7 @@
             "tier": "Dedicated"
         },  
         {    
-            "name":  "cpu-instance002",
+            "name":  "cpu-instance001",
             "type":  "computeinstance",
             "size": "STANDARD_DS3_V2"
         },

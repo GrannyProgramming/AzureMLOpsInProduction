@@ -24,12 +24,10 @@ jobs:
 
       - name: Build wheel and install helper functions
         run: |
-          # pip show workflowhelperfunc
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python .github/utils/pyWheels/setup.py bdist_wheel
-          for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done   
-          pip uninstall workflowhelperfunc --y
           for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done
           pip list
+          pip show workflowhelperfunc
           
           pip show workflowhelperfunc
           mkdir temp_dir
@@ -38,8 +36,9 @@ jobs:
           unzip *.whl
           find . -type f
 
+          
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import sys; print(sys.path)"
-          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc.workflowhelper"
+          /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -c "import workflowhelperfunc.workflowhelper"          
           
       - name: Check Python Interpreter
         run: |

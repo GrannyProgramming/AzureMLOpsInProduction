@@ -57,8 +57,11 @@ for compute_config in config["computes"]:
 
     # If the compute type is recognized, create a new compute
     if compute_type in compute_types:
-        # use **kwargs to handle optional parameters
-        compute = compute_types[compute_type](**compute_config)
+        # Remove the 'name' key from the compute_config dictionary
+        compute_name = compute_config.pop("name")
+        
+        # Create a new compute instance with the specified name and configuration
+        compute = compute_types[compute_type](name=compute_name, **compute_config)
 
         # Begin creating or updating the compute in the Azure ML service
         client.compute.begin_create_or_update(compute)

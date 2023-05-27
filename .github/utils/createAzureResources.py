@@ -66,7 +66,7 @@ def main():
         workspace = output_json['properties']['outputs']['workspaceName']['value']
         resource_group = output_json['properties']['outputs']['resourceGroupName']['value']
         # Set these vars in gh environment
-        load_and_set_env_vars(None, [f'{workspace}', f'{resource_group}'])
+        load_and_set_env_vars(None, [f'workspace_name={workspace}', f'resource_group={resource_group}'])
         # Set workspace and resource group as defaults
         set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group)
 

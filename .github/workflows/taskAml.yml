@@ -24,6 +24,7 @@ jobs:
 
       - name: Build wheel and install helper functions
         run: |
+          cd .github/utils/pyWheels
           /opt/hostedtoolcache/Python/3.9.16/x64/bin/python .github/utils/pyWheels/setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do /opt/hostedtoolcache/Python/3.9.16/x64/bin/python -m pip install $whl; done
           pip list

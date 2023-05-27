@@ -33,7 +33,6 @@
               "type": { "const": "computeinstance" },
               "size": { "type": "string" },
               "idle_time_before_shutdown_minutes": { "type": "integer", "minimum": 0 },
-              "tier": { "type": "string" },
               "ssh_public_access_enabled": { "type": "boolean" },
               "create_on_behalf_of": { "type": "object" },
               "network_settings": { "type": "object" },

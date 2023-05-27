@@ -3,10 +3,11 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
+from workflowhelperfunc.workflowhelper import validate_config
 
 ENVIRONMENT = os.environ['ENVIRONMENT']
 SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
-WORKSPACE = os.environ['WORKSPACE']
+WORKSPACE_NAME = os.environ['WORKSPACE_NAME']
 RESOURCE_GROUP = os.environ['RESOURCE_GROUP']
 
 # Authenticate the client using the DefaultAzureCredential object
@@ -14,6 +15,8 @@ credential = DefaultAzureCredential()
 script_dir = os.path.dirname(os.path.abspath(__file__))  # directory of the current script
 root_dir = os.path.join(script_dir, '..', '..')  # root directory of the project
 config_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "compute.json")
+schema_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "computeSchema.json")
+validate_config(config_file, schema_file)
 
 compute_types = {
     "amlcompute": AmlCompute,
@@ -25,11 +28,11 @@ with open(config_file, "r") as f:
     config = json.load(f) 
 
 # Create a MLClient object with the authenticated credential
-client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}'. workspae )
+client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}', workspace_name=f'{WORKSPACE_NAME}', resource_group_name=f'{RESOURCE_GROUP}')
             
 for compute_config in config["computes"]:
-    compute_type = compute_config.pop("type").lower()
-    compute_name = compute_config.pop("name")
+    compute_type = compute_config.get("type").lower()
+    compute_name = compute_config.get("name")
 
     # Check if the compute already exists
     try:
@@ -44,7 +47,7 @@ for compute_config in config["computes"]:
     if compute_type in compute_types:
         # use **kwargs to handle optional parameters
         compute = compute_types[compute_type](name=compute_name, **compute_config)
-        
+
         # Create the compute instance
         client.compute.begin_create_or_update(compute)
         print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")

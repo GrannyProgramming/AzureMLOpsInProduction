@@ -1,24 +1,10 @@
 {
-    "computes": [
-        {   
-            "name":  "cpu-cluster002",
-            "type":  "amlcompute",
-            "size": "STANDARD_DS3_V2",
-            "min_instances": 0,
-            "max_instances": 4,
-            "idle_time_before_scale_down": 180,
-            "tier": "Dedicated"
-        },  
+    "computes": [  
         {    
             "name":  "cpu-instance002",
             "type":  "computeinstance",
             "size": "STANDARD_DS3_V2",
             "tier": "Dedicated"
-        },
-        {
-            "name": "kubernetes-compute002",
-            "type": "kubernetescompute",
-            "namespace": "default"            
         }
     ]
 }

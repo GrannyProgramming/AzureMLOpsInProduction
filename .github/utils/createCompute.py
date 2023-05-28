@@ -1,5 +1,5 @@
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml import MLClient
+from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
@@ -85,7 +85,7 @@ def main():
                 },
             ]
 
-            k8s_compute = client.load_compute(source=None, params_override=compute_config)
+            k8s_compute = load_compute(source=None, params_override=compute_config)
             client.begin_create_or_update(k8s_compute)
             print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 

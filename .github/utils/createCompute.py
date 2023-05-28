@@ -81,7 +81,7 @@ for compute_config in config["computes"]:
         compute_params = [
             {"name": f'{compute_name}'},
             {"type": f'{compute_type}'},
-            {
+            { 
                 "resource_id": f'{cluster_id}'
             },
         ]

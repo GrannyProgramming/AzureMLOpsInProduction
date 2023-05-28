@@ -82,14 +82,14 @@ def main():
 
         if compute_type == "kubernetes":
             cluster_id = create_kubernetes_cluster(compute_name, resource_group)
-            compute_params = [
-                {"name": f'{compute_name}'},
-                {"type": f'{compute_type}'},
-                { 
-                    "resource_id": f'{cluster_id}'
-                },
-            ]
-            k8s_compute = compute_types[compute_type](load_compute(source=None, params_override=compute_params))
+            # compute_params = [
+            #     {"name": f'{compute_name}'},
+            #     {"type": f'{compute_type}'},
+            #     { 
+            #         "resource_id": f'{cluster_id}'
+            #     },
+            # ]
+            k8s_compute = compute_types[compute_type](name=compute_name, resource_id=cluster_id)
             client.begin_create_or_update(k8s_compute)
             print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 

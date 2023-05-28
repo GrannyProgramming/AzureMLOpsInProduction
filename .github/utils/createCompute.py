@@ -1,10 +1,10 @@
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml import MLClient, load_compute
+from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
 import subprocess
-from workflowhelperfunc.workflowhelper import validate_config, load_config
+from workflowhelperfunc.workflowhelper import validate_config
 
 
 def get_cluster_id(compute_name, resource_group):
@@ -27,6 +27,12 @@ def get_config_and_schema_files(root_dir, environment):
     config_file = os.path.join(root_dir, "variables", f'{environment}', "compute", "compute.json")
     schema_file = os.path.join(root_dir, "variables", f'{environment}', "compute", "computeSchema.json")
     return config_file, schema_file
+
+
+def load_config(config_file):
+    with open(config_file, "r") as f:
+        return json.load(f)
+
 
 def handle_existing_compute(compute_type, compute_name, client, resource_group):
     try:
@@ -76,7 +82,6 @@ def main():
 
         if compute_type == "kubernetes":
             cluster_id = create_kubernetes_cluster(compute_name, resource_group)
-
             compute_params = [
                 {"name": f'{compute_name}'},
                 {"type": f'{compute_type}'},
@@ -84,9 +89,8 @@ def main():
                     "resource_id": f'{cluster_id}'
                 },
             ]
-
-            k8s_compute = load_compute(source=None, params_override=compute_config)
-            client.begin_create_or_update(k8s_compute)
+            k8s_compute = client.load_compute(source=None, params_override=compute_params)
+            client.begin_create_or_update(compute_types[compute_type](k8s_compute))
             print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 
         elif compute_type in compute_types:

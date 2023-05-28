@@ -63,7 +63,7 @@ for compute_config in config["computes"]:
             print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
             continue
 
-        elif compute_type == 'kubernetescompute':
+        elif compute_type == 'kubernetes':
             # Create a Kubernetes cluster if the compute type is Kubernetes and does not exist
             create_cluster_command = f"az aks create --resource-group {RESOURCE_GROUP} --name {compute_name} --node-count 1 --enable-addons monitoring --generate-ssh-keys"
             subprocess.run(create_cluster_command, shell=True)
@@ -76,7 +76,7 @@ for compute_config in config["computes"]:
         pass
 
     # If the compute type is recognized, create a new compute
-    if compute_type == "kubernetescompute":
+    if compute_type == "kubernetes":
         compute_params = [
             {"name": f'{compute_name}'},
             {"type": f'{compute_type}'},
@@ -89,7 +89,7 @@ for compute_config in config["computes"]:
         client.begin_create_or_update(k8s_compute)
         print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 
-    elif (compute_type in compute_types) and compute_types != "kubernetescompute":
+    elif (compute_type in compute_types) and compute_types != "kubernetes":
         # Create a new compute instance with the specified name and configuration
         compute = compute_types[compute_type](name=compute_name, **compute_config)
 

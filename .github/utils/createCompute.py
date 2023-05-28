@@ -4,98 +4,96 @@ from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
 import subprocess
-from workflowhelperfunc.workflowhelper import validate_config, get_cluster_id
+from workflowhelperfunc.workflowhelper import validate_config, load_config
 
-# Retrieve environment variables
-ENVIRONMENT = os.environ['ENVIRONMENT']
-SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
-WORKSPACE_NAME = os.environ['WORKSPACE_NAME']
-RESOURCE_GROUP = os.environ['RESOURCE_GROUP']
 
-# Authenticate the client using the DefaultAzureCredential object
-credential = DefaultAzureCredential()
+def get_cluster_id(compute_name, resource_group):
+    get_cluster_id_command = f"az aks show --name {compute_name} --resource-group {resource_group} --query id -o tsv"
+    id_process = subprocess.run(get_cluster_id_command, shell=True, check=True, text=True, capture_output=True)
+    return id_process.stdout.strip()
 
-# Define the directory of the current script and the root directory of the project
-script_dir = os.path.dirname(os.path.abspath(__file__))
-root_dir = os.path.join(script_dir, '..', '..')
 
-# Define the path to the configuration file and the schema file
-config_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "compute.json")
-schema_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "computeSchema.json")
+def get_env_variables():
+    return os.environ['ENVIRONMENT'], os.environ['SUBSCRIPTION_ID'], os.environ['WORKSPACE_NAME'], os.environ['RESOURCE_GROUP']
 
-# Validate the configuration file against the schema
-validate_config(config_file, schema_file)
 
-# get_location_command = f"az group show --name {RESOURCE_GROUP} --query location -o tsv"
-# location_process = subprocess.run(get_location_command, shell=True, check=True, text=True, capture_output=True)
-# LOCATION = location_process.stdout.strip()
+def get_directory_structure():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.join(script_dir, '..', '..')
+    return script_dir, root_dir
 
-# Define a dictionary that maps compute types to their corresponding Azure classes
-compute_types = {
-    "amlcompute": AmlCompute,
-    "computeinstance": ComputeInstance,
-    "kubernetes": KubernetesCompute
-}
 
-# Load the compute configurations from the config file
-with open(config_file, "r") as f:
-    config = json.load(f)
+def get_config_and_schema_files(root_dir, environment):
+    config_file = os.path.join(root_dir, "variables", f'{environment}', "compute", "compute.json")
+    schema_file = os.path.join(root_dir, "variables", f'{environment}', "compute", "computeSchema.json")
+    return config_file, schema_file
 
-# Create a MLClient object with the authenticated credential
-client = MLClient(credential=credential, subscription_id=f'{SUBSCRIPTION_ID}', workspace_name=f'{WORKSPACE_NAME}', resource_group_name=f'{RESOURCE_GROUP}')
-
-# Loop through each compute configuration
-for compute_config in config["computes"]:
-    # Extract the compute type and name from the configuration
-    compute_type = compute_config.pop("type").lower()
-    compute_name = compute_config.pop("name")
-
-    # Try to get the compute from the Azure ML service
+def handle_existing_compute(compute_type, compute_name, client, resource_group):
     try:
-        if compute_type=='kubernetes' and client.compute.get(compute_name) is not None:
-            # If the compute already exists, print a message and move to the next configuration
-            cluster_id=get_cluster_id(compute_name, RESOURCE_GROUP)
+        if compute_type == 'kubernetes' and client.compute.get(compute_name) is not None:
+            cluster_id = get_cluster_id(compute_name, resource_group)
             print(f"{compute_type.capitalize()} compute '{compute_name}' already exists. ID: {cluster_id}")
-            continue
-
-        elif compute_type!='kubernetes' and client.compute.get(compute_name) is not None:
-            # If the compute already exists, print a message and move to the next configuration
+            return True
+        elif client.compute.get(compute_name) is not None:
             print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
-            continue
-
-        elif compute_type == 'kubernetes':
-            # Create a Kubernetes cluster if the compute type is Kubernetes and does not exist
-            create_cluster_command = f"az aks create --resource-group {RESOURCE_GROUP} --name {compute_name} --node-count 1 --enable-addons monitoring --generate-ssh-keys"
-            subprocess.run(create_cluster_command, shell=True)
-            cluster_id=get_cluster_id(compute_name, RESOURCE_GROUP)
-            print(f"Kubernetes cluster '{compute_name}' resource ID: {cluster_id}")
-            
-
+            return True
     except Exception as e:
         print(f"Error occurred: {e}")
-        # If an exception is raised, it likely means the compute does not exist
-        pass
+        return False
+    return False
 
-    # If the compute type is recognized, create a new compute
-    if compute_type == "kubernetes":
-        compute_params = [
-            {"name": f'{compute_name}'},
-            {"type": f'{compute_type}'},
-            { 
-                "resource_id": f'{cluster_id}'
-            },
-        ]
 
-        k8s_compute = client.load_compute(source=None, params_override=compute_config)
-        client.begin_create_or_update(k8s_compute)
-        print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+def create_kubernetes_cluster(compute_name, resource_group):
+    create_cluster_command = f"az aks create --resource-group {resource_group} --name {compute_name} --node-count 1 --enable-addons monitoring --generate-ssh-keys"
+    subprocess.run(create_cluster_command, shell=True)
+    cluster_id = get_cluster_id(compute_name, resource_group)
+    print(f"Kubernetes cluster '{compute_name}' resource ID: {cluster_id}")
+    return cluster_id
 
-    elif compute_type in compute_types:
-        # Create a new compute instance with the specified name and configuration
-        compute = compute_types[compute_type](name=compute_name, **compute_config)
 
-        # Begin creating or updating the compute in the Azure ML service
-        client.compute.begin_create_or_update(compute)
+def main():
+    environment, subscription_id, workspace_name, resource_group = get_env_variables()
+    script_dir, root_dir = get_directory_structure()
+    config_file, schema_file = get_config_and_schema_files(root_dir, environment)
+    validate_config(config_file, schema_file)
+    config = load_config(config_file)
 
-        # Print a message indicating that the compute has been created
-        print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+    credential = DefaultAzureCredential()
+    client = MLClient(credential=credential, subscription_id=f'{subscription_id}', workspace_name=f'{workspace_name}', resource_group_name=f'{resource_group}')
+    
+    compute_types = {
+        "amlcompute": AmlCompute,
+        "computeinstance": ComputeInstance,
+        "kubernetes": KubernetesCompute
+    }
+
+    for compute_config in config["computes"]:
+        compute_type = compute_config.pop("type").lower()
+        compute_name = compute_config.pop("name")
+
+        if handle_existing_compute(compute_type, compute_name, client, resource_group):
+            continue
+
+        if compute_type == "kubernetes":
+            cluster_id = create_kubernetes_cluster(compute_name, resource_group)
+
+            compute_params = [
+                {"name": f'{compute_name}'},
+                {"type": f'{compute_type}'},
+                { 
+                    "resource_id": f'{cluster_id}'
+                },
+            ]
+
+            k8s_compute = client.load_compute(source=None, params_override=compute_config)
+            client.begin_create_or_update(k8s_compute)
+            print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+
+        elif compute_type in compute_types:
+            compute = compute_types[compute_type](name=compute_name, **compute_config)
+            client.compute.begin_create_or_update(compute)
+            print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+
+
+if __name__ == "__main__":
+    main()

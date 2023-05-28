@@ -54,7 +54,6 @@ def validate_config(config_path, schema_path):
     except exceptions.ValidationError as e:
         print(f"JSON config is invalid: {e.message}")
 
-def get_cluster_id(compute_name, resource_group):
-    get_cluster_id_command = f"az aks show --name {compute_name} --resource-group {resource_group} --query id -o tsv"
-    id_process = subprocess.run(get_cluster_id_command, shell=True, check=True, text=True, capture_output=True)
-    return id_process.stdout.strip()
+def load_config(config_file):
+    with open(config_file, "r") as f:
+        return json.load(f)

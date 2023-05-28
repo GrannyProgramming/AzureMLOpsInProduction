@@ -69,9 +69,10 @@ for compute_config in config["computes"]:
             subprocess.run(create_cluster_command, shell=True)
             cluster_id=get_cluster_id(compute_name, RESOURCE_GROUP)
             print(f"Kubernetes cluster '{compute_name}' resource ID: {cluster_id}")
-            pass
+            
 
     except Exception as e:
+        print(f"Error occurred: {e}")
         # If an exception is raised, it likely means the compute does not exist
         pass
 
@@ -89,7 +90,7 @@ for compute_config in config["computes"]:
         client.begin_create_or_update(k8s_compute)
         print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 
-    elif (compute_type in compute_types) and compute_types != "kubernetes":
+    elif compute_type in compute_types:
         # Create a new compute instance with the specified name and configuration
         compute = compute_types[compute_type](name=compute_name, **compute_config)
 

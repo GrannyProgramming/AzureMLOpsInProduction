@@ -1,6 +1,6 @@
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml import MLClient
-from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute, load_compute
+from azure.ai.ml import MLClient, load_compute
+from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
 import subprocess

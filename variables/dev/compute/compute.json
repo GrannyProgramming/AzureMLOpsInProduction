@@ -10,7 +10,7 @@
             "tier": "Dedicated"
         },  
         {    
-            "name":  "cpu-instance002",
+            "name":  "cpu-instance001",
             "type":  "computeinstance",
             "size": "STANDARD_DS3_V2",
             "idle_time_before_shutdown_minutes": 30

@@ -89,8 +89,8 @@ def main():
                     "resource_id": f'{cluster_id}'
                 },
             ]
-            k8s_compute = load_compute(source=None, params_override=compute_params)
-            client.begin_create_or_update(compute_types[compute_type](k8s_compute))
+            k8s_compute = compute_types[compute_type](load_compute(source=None, params_override=compute_params))
+            client.begin_create_or_update(k8s_compute)
             print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
 
         elif compute_type in compute_types:

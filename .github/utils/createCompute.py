@@ -1,10 +1,10 @@
 from azure.identity import DefaultAzureCredential
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
+from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute, load_compute
 import os
 import json 
 import subprocess
-from workflowhelperfunc.workflowhelper import validate_config
+from workflowhelperfunc.workflowhelper import validate_config, get_cluster_id
 
 # Retrieve environment variables
 ENVIRONMENT = os.environ['ENVIRONMENT']
@@ -34,7 +34,7 @@ validate_config(config_file, schema_file)
 compute_types = {
     "amlcompute": AmlCompute,
     "computeinstance": ComputeInstance,
-    "kubernetescompute": KubernetesCompute
+    "kubernetes": KubernetesCompute
 }
 
 # Load the compute configurations from the config file
@@ -52,20 +52,44 @@ for compute_config in config["computes"]:
 
     # Try to get the compute from the Azure ML service
     try:
-        if client.compute.get(compute_name) is not None:
+        if compute_type=='kubernetes' and client.compute.get(compute_name) is not None:
+            # If the compute already exists, print a message and move to the next configuration
+            cluster_id=get_cluster_id(compute_name, RESOURCE_GROUP)
+            print(f"{compute_type.capitalize()} compute '{compute_name}' already exists. ID: {cluster_id}")
+            continue
+
+        elif compute_type!='kubernetes' and client.compute.get(compute_name) is not None:
             # If the compute already exists, print a message and move to the next configuration
             print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
             continue
-        if compute_type == 'kubernetescompute':
-            # Create a Kubernetes cluster if the compute type is Kubernetes
+
+        elif compute_type == 'kubernetescompute':
+            # Create a Kubernetes cluster if the compute type is Kubernetes and does not exist
             create_cluster_command = f"az aks create --resource-group {RESOURCE_GROUP} --name {compute_name} --node-count 1 --enable-addons monitoring --generate-ssh-keys"
             subprocess.run(create_cluster_command, shell=True)
+            cluster_id=get_cluster_id(compute_name, RESOURCE_GROUP)
+            print(f"Kubernetes cluster '{compute_name}' resource ID: {cluster_id}")
+            pass
+
     except Exception as e:
         # If an exception is raised, it likely means the compute does not exist
         pass
 
     # If the compute type is recognized, create a new compute
-    if compute_type in compute_types:
+    if compute_type == "kubernetescompute":
+        compute_params = [
+            {"name": f'{compute_name}'},
+            {"type": f'{compute_type}'},
+            {
+                "resource_id": f'{cluster_id}'
+            },
+        ]
+
+        k8s_compute = load_compute(source=None, params_override=compute_config)
+        client.begin_create_or_update(k8s_compute)
+        print(f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+
+    elif (compute_type in compute_types) and compute_types != "kubernetescompute":
         # Create a new compute instance with the specified name and configuration
         compute = compute_types[compute_type](name=compute_name, **compute_config)
 

@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 from jsonschema import validate, exceptions
-
+import subprocess
 
 def setup_logging(log_file_path: str, level: str = "INFO") -> None:
     # Configure logging
@@ -53,3 +53,8 @@ def validate_config(config_path, schema_path):
         print("JSON config is valid.")
     except exceptions.ValidationError as e:
         print(f"JSON config is invalid: {e.message}")
+
+def get_cluster_id(compute_name, resource_group):
+    get_cluster_id_command = f"az aks show --name {compute_name} --resource-group {resource_group} --query id -o tsv"
+    id_process = subprocess.run(get_cluster_id_command, shell=True, check=True, text=True, capture_output=True)
+    return id_process.stdout.strip()

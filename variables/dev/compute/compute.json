@@ -2,7 +2,7 @@
     "computes": [
         {
             "name": "k8-compute-002",
-            "type": "kubernetescompute",
+            "type": "kubernetes",
             "provisioning_state": "Succeeded"
         }
     ]

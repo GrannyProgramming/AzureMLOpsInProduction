@@ -3,6 +3,7 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance, KubernetesCompute
 import os
 import json 
+import subprocess
 from workflowhelperfunc.workflowhelper import validate_config
 
 # Retrieve environment variables
@@ -24,6 +25,10 @@ schema_file = os.path.join(root_dir, "variables", f'{ENVIRONMENT}', "compute", "
 
 # Validate the configuration file against the schema
 validate_config(config_file, schema_file)
+
+# get_location_command = f"az group show --name {RESOURCE_GROUP} --query location -o tsv"
+# location_process = subprocess.run(get_location_command, shell=True, check=True, text=True, capture_output=True)
+# LOCATION = location_process.stdout.strip()
 
 # Define a dictionary that maps compute types to their corresponding Azure classes
 compute_types = {
@@ -51,6 +56,10 @@ for compute_config in config["computes"]:
             # If the compute already exists, print a message and move to the next configuration
             print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
             continue
+        if compute_type == 'kubernetescompute':
+            # Create a Kubernetes cluster if the compute type is Kubernetes
+            create_cluster_command = f"az aks create --resource-group {RESOURCE_GROUP} --name {compute_name} --node-count 1 --enable-addons monitoring --generate-ssh-keys"
+            subprocess.run(create_cluster_command, shell=True)
     except Exception as e:
         # If an exception is raised, it likely means the compute does not exist
         pass

@@ -1,9 +1,9 @@
 {
     "computes": [
         {
-            "name": "k8-compute-001",
+            "name": "k8-compute-002",
             "type": "kubernetescompute",
-            "namespace": "default"
+            "provisioning_state": "Succeeded"
         }
     ]
 }

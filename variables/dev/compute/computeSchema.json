@@ -52,6 +52,11 @@
             "properties": {
               "name": { "type": "string", "minLength": 2, "maxLength": 16, "pattern": "^[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]$" },
               "type": { "const": "kubernetescompute" },
+              "location": { "type": ["string", "null"] },
+              "description": { "type": ["string", "null"] },
+              "resource_id": { "type": ["string", "null"] },
+              "created_on": { "type": ["string", "null"], "format": "date-time" },
+              "provisioning_state": { "type": ["string", "null"] },
               "namespace": { "type": "string" },
               "properties": { "type": "object" },
               "identity": { "type": "object" },

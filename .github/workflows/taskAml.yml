@@ -42,7 +42,7 @@ jobs:
       
       - name: Json schema validation
         run: |
-          python3 .github/utils/jsonSchemaValidation.py variables/${{ matrix.environment }}
+          python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}
 
       # commented for faster compile in gh actions
       # - name: Compile Bicep templates

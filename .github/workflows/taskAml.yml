@@ -40,6 +40,7 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
+      # This needs rethinking, as when moving between the JSON-schema files will be replicated
       - name: Json schema validation
         run: |
           python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}
@@ -61,6 +62,9 @@ jobs:
           python3 .github/utils/createCompute.py
 
       # Create mltable, OPTIONAL
+      # Does this make sense to have here? As it will mean it will be created everytime the pipeline is run.
+      # This will refresh the mltable everytime the pipeline is run though, which is good.
+      # Myabe just leave it in here as an example of how to create an mltable.  
       - name: Create an mltable 
         env:
           ENVIRONMENT: ${{ matrix.environment }}
@@ -72,7 +76,7 @@ jobs:
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
-          python3 .github/utils/createDataAssets.py variables/dev/dataAssests/dataAssets.json
+          python3 .github/utils/createDataAsset.py variables/dev/dataAssests/dataAssets.json
 
 # ToDo (High priority)
 # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute.
@@ -81,7 +85,6 @@ jobs:
 # Create environments - Done
 # Create pipeline - Started (50%, needs debugging)
 # Create components - Started (50%, needs debugging)
-# PYwheel - Check if  
 # Model deployment - Not Started
 # Monitoring - Not Started (created the LAW and seperate rg)
 # Testing - Not Started

@@ -1,3 +1,4 @@
 # placeholder 
 # going to come back to this in a bit
-#bored of making it for now.
+# Documentation isn't great on this, so I'm going to have to do some digging
+# Moving on for now though 

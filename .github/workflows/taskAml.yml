@@ -60,6 +60,13 @@ jobs:
         run: | 
           python3 .github/utils/createCompute.py
 
+      # Create mltable
+      - name: Create mltable
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+        run: | 
+          python3 dataEngineer/createMlTable.py dataScience/src/data
+
   
 
 # ToDo (High priority)

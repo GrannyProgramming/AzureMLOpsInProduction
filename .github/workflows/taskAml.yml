@@ -40,6 +40,11 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
+      - name: Json schema validation
+        run: |
+          python3 .github/utils/jsonSchemaValidation.py variables/${{ matrix.environment }}
+
+      # commented for faster compile in gh actions
       # - name: Compile Bicep templates
       #   run: |
       #     bicep build ./core/infra/main.bicep
@@ -47,16 +52,18 @@ jobs:
       # - name: Deploy Bicep templates
       #   run: |
       #     python3 .github/utils/createAzureResources.py
-          
-      - name: Create AML Clusters
+
+      # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute. Create seperate script for this.
+      - name: Create AML instance/compute Clusters
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
           python3 .github/utils/createCompute.py
 
+  
 
 # ToDo (High priority)
-# Create Cluster  - Done
+# Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute.
 # Create mltable - Done
 # Create data asseets  - Done 
 # Create environments - Done

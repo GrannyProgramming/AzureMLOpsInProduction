@@ -14,11 +14,6 @@
             "type":  "computeinstance",
             "size": "STANDARD_DS3_V2",
             "idle_time_before_shutdown_minutes": 30
-        },
-        {    
-        "name": "k8-compute-001",
-        "type": "kubernetes",
-        "provisioning_state": "Succeeded"
         }
     ]
 }

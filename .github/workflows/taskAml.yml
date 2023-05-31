@@ -60,20 +60,19 @@ jobs:
         run: | 
           python3 .github/utils/createCompute.py
 
-      # Create mltable
-      - name: Create an mltable
+      # Create mltable, OPTIONAL
+      - name: Create an mltable 
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
           python3 dataEngineer/createMlTable.py dataScience/src/data
 
-      # Create data asseets
-      - name: Create an mltable
+      # Create data asseets, 
+      - name: Create data asseets
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
-          python3 dataEngineer/createMlTable.py dataScience/src/data
-
+          python3 .github/utils/createDataAssets.py variables/dev/dataAssests/dataAssets.json
 
 # ToDo (High priority)
 # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute.

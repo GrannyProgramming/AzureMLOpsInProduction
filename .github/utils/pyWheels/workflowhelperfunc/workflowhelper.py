@@ -38,22 +38,6 @@ def load_and_set_env_vars(file_path=None, var_list=None):
         print(f"Setting environment variable {env_var}")
         os.system(f"echo {env_var} >> $GITHUB_ENV")
 
-def validate_config(config_path, schema_path):
-    # Load the schema
-    with open(schema_path, 'r') as file:
-        schema = json.load(file)
-
-    # Load the config file
-    with open(config_path, 'r') as file:
-        config = json.load(file)
-
-    try:
-        # Validate the config against the schema
-        validate(instance=config, schema=schema)
-        print("JSON config is valid.")
-    except exceptions.ValidationError as e:
-        print(f"JSON config is invalid: {e.message}")
-
 def load_config(config_file):
     with open(config_file, "r") as f:
         return json.load(f)

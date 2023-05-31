@@ -45,13 +45,13 @@ jobs:
           python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}
 
       # commented for faster compile in gh actions
-      # - name: Compile Bicep templates
-      #   run: |
-      #     bicep build ./core/infra/main.bicep
+      - name: Compile Bicep templates
+        run: |
+          bicep build ./core/infra/main.bicep
 
-      # - name: Deploy Bicep templates
-      #   run: |
-      #     python3 .github/utils/createAzureResources.py
+      - name: Deploy Bicep templates
+        run: |
+          python3 .github/utils/createAzureResources.py
 
       # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute. Create seperate script for this.
       - name: Create AML instance/compute Clusters

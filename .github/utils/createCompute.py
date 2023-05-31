@@ -3,7 +3,6 @@ from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities import AmlCompute, ComputeInstance
 import os
 import json 
-from workflowhelperfunc.workflowhelper import validate_config
 
 class ComputeManager:
     """A class used to manage Azure ML compute resources.
@@ -87,9 +86,7 @@ class ComputeManager:
         return False
 
     def execute(self):
-        """Execute the main logic: validate the configuration file against the schema and create compute if it doesn't exist."""
-        validate_config(self.config_file, self.schema_file)
-
+        """Execute the main logic: """
         for compute_config in self.config["computes"]:
             compute_type = compute_config.pop("type").lower()
             compute_name = compute_config.pop("name")

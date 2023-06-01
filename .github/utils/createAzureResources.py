@@ -6,7 +6,6 @@ import logging
 from pathlib import Path
 from workflowhelperfunc.workflowhelper import load_and_set_env_vars
 
-
 class BicepDeployment:
     """A class for creating a Bicep deployment."""
 

@@ -78,7 +78,7 @@ jobs:
         run: | 
           python3 .github/utils/createDataAsset.py variables/dev/dataAssests/dataAssets.json
 
-# ToDo (High priority)
+# ToDo (Core - High priority)
 # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute.
 # Create mltable - Done
 # Create data asseets  - Done 
@@ -86,25 +86,31 @@ jobs:
 # Create pipeline - Started (50%, needs debugging)
 # Create components - Started (50%, needs debugging)
 # Model deployment - Not Started
-# Monitoring - Not Started (created the LAW and seperate rg)
+# Monitoring - 20% (created the LAW and seperate rg)
 # Testing - Not Started
           # Unit testing - Not Started "Mocking"
           # Integration testing - Not Started
           # End to end testing - Not Started
 # CI/CD - Not Started
+          # Git Config for AML 
+          # Create Repos in AML 
+          # Repo Pull  - get most up to date repo? do we need? needs checking.
+          # Use gh CLI for branch creation, testing etc
 
-
-
-# ToDo after the core is up and running (Medium priority)
-# add gh environments for dev, test, prod (90% done, just needs testing and to publish repo from private into public)
-# Generate Python Wheel Files (50% done, needs testing)  
-# analytic workspace - Adding in log analytic workspace for monitoring multiple AML instances, use cli for this 
+# Nice to haves (Medium priority)
+# RETRAINING - Not Started
+# feature tables - Not Started
+# Generate Python Wheel Files same as Cia (50% done, needs testing)  
 # Git Config for AML 
-# Create Repos in AML
-# Secret Scopes/GH Token? Not sure if I need to save the sp details to key vault for the git integration between aml and gh. Same for gh token.  
+# Create Repos in AML 
 # Repo Pull  - get most up to date repo? do we need? needs checking.
 
-# Future/tidy-up (Low priority)
+
+
+# ToDo (Long-Term priority)
+# add gh environments for dev, test, prod (90% done, just needs testing and to publish repo from private into public)
+# Secret Scopes/GH Token? Not sure if I need to save the sp details to key vault for the git integration between aml and gh. Same for gh token.  
+# Repo Pull  - get most up to date repo? do we need? needs checking.
 # Optimising the accelerator
 # Terraform for infra
 # Managed identity & Access management

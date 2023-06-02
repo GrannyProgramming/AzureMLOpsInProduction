@@ -1,3 +1,4 @@
+''''This code creates/overwrites ML table from NYC taxi data.'''
 import argparse
 import mltable
 import pandas as pd
@@ -16,10 +17,16 @@ def create_directories(save_dir):
     # Define subdirectories for MLTable 
     mltable_dir = save_dir / "MLTable"
     
+    # Check if a file with the same name exists
+    if mltable_dir.is_file():
+        print(f"A file with the same name '{mltable_dir}' already exists. Deleting it.")
+        mltable_dir.unlink()
+    
     # Create the subdirectories if they do not exist
     mltable_dir.mkdir(parents=True, exist_ok=True)
     
     return mltable_dir
+
 
 def load_data():
     """
@@ -66,8 +73,6 @@ def save_data(tbl, mltable_dir):
     # Save the ML table
     tbl.save(str(mltable_dir))
 
-    # Convert the ML table to a pandas dataframe and save as Parquet
-    df = tbl.to_pandas()
 
 def main():
     """

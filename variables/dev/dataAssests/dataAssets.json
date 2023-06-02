@@ -2,13 +2,13 @@
     "data": [
         {
             "type": "uri_file",
-            "name": "",
+            "name": "This is an example uri_file def.",
             "description": "<description>",
             "path": "<uri>"
         },
         {
             "type": "uri_folder",
-            "name": "dataScience/src/data",
+            "name": "This is an example uri_folder def.",
             "description": "<description goes here>",
             "path": "<path>"
         },

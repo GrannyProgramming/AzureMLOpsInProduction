@@ -27,14 +27,29 @@ class SchemaValidator:
         """
         Derive the schema path from the json file path.
         """
+        # Split the directory path into components
+        dir_components = dir_path.split(os.sep)
+
+        # Replace the first directory with 'json-schema'
+        try:
+            dir_components[1] = 'json-schema'
+        except IndexError:
+            print(f"Error: The path '{dir_path}' does not have the expected structure. Skipping this path.")
+            return None
+
         # Get the base name of the JSON file and remove the '.json' extension
-        schema_dir_name = os.path.splitext(json_file)[0]
-        
-        # Construct the schema file path
-        schema_file = schema_dir_name + 'Schema.json'
-        schema_path = os.path.join(self.root_dir, 'json-schema', schema_dir_name, schema_file)
+        schema_file_name = os.path.splitext(json_file)[0] + 'Schema.json'
+
+        # Reconstruct the schema file path
+        schema_path = os.path.join(*dir_components, schema_file_name)
+
+        # Check if schema file exists
+        if not os.path.isfile(schema_path):
+            print(f"Error: Schema file '{schema_path}' does not exist. Skipping this path.")
+            return None
 
         return schema_path
+
 
 
 

@@ -1,20 +1,19 @@
-import subprocess
-import logging
-from workflowhelperfunc.workflowhelper import setup_logger, log_event
+'''
+This code installs various dependencies and the Github CLI
 
+'''
+
+import subprocess
 
 def install_dependencies():
-    """
-    Install required dependencies.
-    """
     subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
     subprocess.run(['pip', 'install', 'jsonschema'])
-    # subprocess.run(['pip3', 'install', 'yq'])
+    # subprocess.run(['pip3', 'install', 'yq']) 
     subprocess.run(['pip3', 'install', 'wheel'])
     # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
-    # subprocess.run(['pip3', 'install', 'azure-ai-ml'])
+    # subprocess.run(['pip3', 'install', 'azure-ai-ml'] )
     subprocess.run(['pip3', 'install', 'mltable'])
-    # subprocess.run(['pip3', 'install', 'requests'])
+    # subprocess.run(['pip3', 'install', 'requests'])   
     subprocess.run(['pip3', 'install', 'pandas'])
     subprocess.run(['pip3', 'install', 'azureml-dataprep[pandas]'])
     # if subprocess.run(['which', 'bicep']).returncode != 0:
@@ -32,13 +31,4 @@ def install_dependencies():
     # subprocess.run(['sudo', 'apt', 'update'])
     # subprocess.run(['sudo', 'apt', 'install', 'gh', '-y'])
 
-    log_event(logger, 'info', "Dependencies installed successfully.")
-
-
-if __name__ == "__main__":
-    logger = setup_logger(__name__)
-
-    try:
-        install_dependencies()
-    except Exception as e:
-        log_event(logger, 'error', f"An error occurred during dependency installation: {str(e)}")
+install_dependencies()

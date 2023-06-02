@@ -19,7 +19,7 @@ class SchemaValidator:
 
         for dir_path, dirs, files in os.walk(self.root_dir):
             for file in files:
-                if file.endswith('.json'):
+                if file.endswith('.json') and file != "parameters.json":
                     json_files.append((dir_path, file))
         return json_files
 
@@ -50,9 +50,6 @@ class SchemaValidator:
 
         return schema_path
 
-
-
-
     @staticmethod
     def validate_json_with_schema(json_filepath, schema_filepath):
         """
@@ -80,8 +77,6 @@ class SchemaValidator:
             schema_filepath = self.get_schema_path(dir_path, json_file)
             if schema_filepath is not None:
                 self.validate_json_with_schema(json_filepath, schema_filepath)
-
-
 
 if __name__ == "__main__":
     """Main execution of the script: Initialize the SchemaValidator and execute it."""

@@ -5,7 +5,7 @@ from pathlib import Path
 
 def create_directories(save_dir):
     """
-    Create necessary directories.
+    Create necessary directories based on the type of the provided file path.
 
     Args:
         save_dir (str): The directory where the processed table will be saved.
@@ -17,12 +17,17 @@ def create_directories(save_dir):
     mltable_dir = save_dir / "MLTable"
     uri_dir = save_dir / "URI"
 
-    # Check if the directories already exist
-    if not mltable_dir.exists():
-        mltable_dir.mkdir(parents=True, exist_ok=True)
-    
-    if not uri_dir.exists():
-        uri_dir.mkdir(parents=True, exist_ok=True)
+    # Check the type of the provided file path
+    if mltable_dir.is_file():
+        # Provided path is an MLTable file
+        mltable_dir = mltable_dir.parent
+    elif uri_dir.is_file():
+        # Provided path is a URI file
+        uri_dir = uri_dir.parent
+
+    # Create the necessary directories
+    mltable_dir.mkdir(parents=True, exist_ok=True)
+    uri_dir.mkdir(parents=True, exist_ok=True)
 
     return mltable_dir, uri_dir
 

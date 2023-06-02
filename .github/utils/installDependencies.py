@@ -9,7 +9,7 @@ def install_dependencies():
     subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
     subprocess.run(['pip', 'install', 'jsonschema'])
     # subprocess.run(['pip3', 'install', 'yq']) 
-    # subprocess.run(['pip3', 'install', 'wheel'])
+    subprocess.run(['pip3', 'install', 'wheel'])
     # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])
     # subprocess.run(['pip3', 'install', 'azure-ai-ml'] )
     subprocess.run(['pip3', 'install', 'mltable'])

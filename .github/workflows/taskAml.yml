@@ -23,16 +23,16 @@ jobs:
         run: python3 .github/utils/installDependencies.py
       
         # Fully complete&refactored&commented / Needs testing added
-      - name: Json schema validation
-        run: |
-          python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}        
-
-        # Fully complete&refactored&commented / Needs testing added
       - name: Build wheel and install helper functions
         run: |
           cd .github/utils/pyWheels
           python3 setup.py bdist_wheel
           for whl in $(find dist -name "*.whl"); do python -m pip install $whl; done
+
+      # Fully complete&refactored&commented / Needs testing added
+      - name: Json schema validation
+        run: |
+          python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}        
 
         # small script, no need to improve / Needs testing added
       - name: Set Env Variables

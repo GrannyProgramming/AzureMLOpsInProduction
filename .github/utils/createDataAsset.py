@@ -1,36 +1,18 @@
 import json
-from azure.ai.machinelearning import MLClient
-from azure.ai.machinelearning.entities import Dataset, Datastore
+import logging
+from azure.ai.ml import MLClient
+from azure.ai.ml.entities import Dataset, Datastore
 from azure.ai.ml.constants import AssetTypes
+from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
 
 class DataAssetManager:
-    """
-    A class to manage Azure ML data assets.
-
-    Attributes
-    ----------
-    config_file : str
-        Path to the configuration file.
-    client : MLClient
-        The Azure ML client.
-    existing_assets : dict
-        Dictionary to cache the results of client.get_data_asset().
-
-    Methods
-    -------
-    load_config():
-        Load the configuration file.
-    check_asset_exists(data_name: str) -> bool:
-        Check if the data asset already exists.
-    create_data_asset(data_config: dict):
-        Create a data asset if it doesn't exist.
-    execute():
-        Main method to run the program.
-    """
+    """Manage Azure ML Data Assets."""
 
     def __init__(self, config_file):
         """
+        Initialize the DataAssetManager.
+
         Parameters
         ----------
         config_file : str
@@ -40,13 +22,34 @@ class DataAssetManager:
         self.client = MLClient()
         self.existing_assets = {}
 
+        self.logger = setup_logger(__name__)
+
     def load_config(self):
-        """Load the configuration file."""
+        """
+        Load the configuration file.
+
+        Returns
+        -------
+        dict
+            Configuration data loaded from the file.
+        """
         with open(self.config_file, "r") as f:
             return json.load(f)
 
     def check_asset_exists(self, data_name):
-        """Check if the data asset already exists."""
+        """
+        Check if the data asset already exists.
+
+        Parameters
+        ----------
+        data_name : str
+            Name of the data asset.
+
+        Returns
+        -------
+        bool
+            True if the data asset exists, False otherwise.
+        """
         if data_name in self.existing_assets:
             return True
 
@@ -58,8 +61,14 @@ class DataAssetManager:
         return False
 
     def create_data_asset(self, data_config):
-        """Create a data asset if it doesn't exist."""
-        # Map data types to their corresponding entity types
+        """
+        Create a data asset if it doesn't exist.
+
+        Parameters
+        ----------
+        data_config : dict
+            Configuration data for the data asset.
+        """
         data_types = {
             "uri_file": Dataset,
             "uri_folder": Dataset,
@@ -70,7 +79,7 @@ class DataAssetManager:
         data_name = data_config["name"]
 
         if self.check_asset_exists(data_name):
-            print(f"{data_type.capitalize()} data asset '{data_name}' already exists.")
+            log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' already exists.")
             return
 
         if data_type in data_types:
@@ -81,20 +90,29 @@ class DataAssetManager:
                 **data_config
             )
             self.client.create_data_asset(data_entity)
-            print(f"{data_type.capitalize()} data asset '{data_name}' created with version {data_entity.version}.")
+            log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' created with version {data_entity.version}.")
             self.existing_assets[data_name] = data_entity
         else:
-            print(f"{data_type.capitalize()} data type is not supported.")
+            log_event(self.logger, 'error', f"{data_type.capitalize()} data type is not supported.")
 
     def execute(self):
-        """Main method to run the program."""
+        """
+        Main method to run the program.
+
+        Load the configuration and create data assets based on the configuration.
+        """
         config = self.load_config()
 
-        # Loop over the data assets in the config file
         for data_config in config["data"]:
             self.create_data_asset(data_config)
 
 
 if __name__ == "__main__":
-    manager = DataAssetManager("test.json")
-    manager.execute()
+    """Main execution of the script: Initialize the DataAssetManager and execute it."""
+    logger = setup_logger(__name__)
+
+    try:
+        manager = DataAssetManager("test.json")
+        manager.execute()
+    except Exception as e:
+        log_event(logger, 'error', f"An error occurred: {str(e)}")

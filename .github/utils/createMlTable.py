@@ -1,8 +1,9 @@
-''''This code creates/overwrites ML table from NYC taxi data.'''
 import argparse
 import mltable
 import pandas as pd
 from pathlib import Path
+from workflowhelperfunc.workflowhelper import setup_logger, log_event
+
 
 def create_directories(save_dir):
     """
@@ -19,7 +20,7 @@ def create_directories(save_dir):
     
     # Check if a file with the same name exists
     if mltable_dir.is_file():
-        print(f"A file with the same name '{mltable_dir}' already exists. Deleting it.")
+        log_event(logger, 'info', f"A file with the same name '{mltable_dir}' already exists. Deleting it.")
         mltable_dir.unlink()
     
     # Create the subdirectories if they do not exist
@@ -31,6 +32,9 @@ def create_directories(save_dir):
 def load_data():
     """
     Load data from predefined paths.
+
+    Returns:
+        mltable.mltable: The loaded ML table.
     """
     # Define the data source
     paths = [
@@ -50,7 +54,10 @@ def preprocess_data(tbl):
     Preprocess the data.
 
     Args:
-        tbl (mltable): The mltable to preprocess.
+        tbl (mltable.mltable): The mltable to preprocess.
+
+    Returns:
+        mltable.mltable: The preprocessed ML table.
     """
     tbl = tbl.take_random_sample(probability=0.001, seed=735)
     tbl = tbl.filter("col('tripDistance') > 0")
@@ -67,7 +74,7 @@ def save_data(tbl, mltable_dir):
     Save the processed data.
 
     Args:
-        tbl (mltable): The preprocessed mltable.
+        tbl (mltable.mltable): The preprocessed mltable.
         mltable_dir (Path): Directory to save the mltable.
     """
     # Save the ML table
@@ -78,14 +85,22 @@ def main():
     """
     The main function that gets the save directory from the user and creates and saves the ML table.
     """
-    parser = argparse.ArgumentParser(description='Create and save ML table.')
-    parser.add_argument('save_directory', type=str, help='Directory to save data')
-    args = parser.parse_args()
+    logger = setup_logger(__name__)
 
-    mltable_dir = create_directories(args.save_directory)
-    tbl = load_data()
-    tbl = preprocess_data(tbl)
-    save_data(tbl, mltable_dir)
+    try:
+        parser = argparse.ArgumentParser(description='Create and save ML table.')
+        parser.add_argument('save_directory', type=str, help='Directory to save data')
+        args = parser.parse_args()
+
+        mltable_dir = create_directories(args.save_directory)
+        tbl = load_data()
+        tbl = preprocess_data(tbl)
+        save_data(tbl, mltable_dir)
+
+        log_event(logger, 'info', "ML table created and saved successfully.")
+    except Exception as e:
+        log_event(logger, 'error', f"An error occurred: {str(e)}")
+
 
 if __name__ == "__main__":
     main()

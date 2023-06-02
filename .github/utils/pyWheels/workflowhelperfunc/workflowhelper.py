@@ -1,24 +1,57 @@
 import logging
 import json
 import os
+import logging
 from pathlib import Path
 from jsonschema import validate, exceptions
 import subprocess
 
-def setup_logging(log_file_path: str, level: str = "INFO") -> None:
-    # Configure logging
-    logging.basicConfig(
-        filename=log_file_path,
-        level=level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    )
-    
-    # Create a stream handler to output logs to the console
-    console = logging.StreamHandler()
-    console.setLevel(level)
-    console.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logging.getLogger().addHandler(console)
+def log_event(logger, level, event_message):
+    """
+    Function to log events at different levels.
+    Parameters:
+    logger: Logger object.
+    level (str): Level of the logging event. Can be one of the following - 'debug', 'info', 'warning', 'error', 'critical'.
+    event_message (str): Message to be logged.
 
+    Returns: None
+    """
+    if level.lower() == 'debug':
+        logger.debug(event_message)
+    elif level.lower() == 'info':
+        logger.info(event_message)
+    elif level.lower() == 'warning':
+        logger.warning(event_message)
+    elif level.lower() == 'error':
+        logger.error(event_message)
+    elif level.lower() == 'critical':
+        logger.critical(event_message)
+    else:
+        raise ValueError(f'Invalid log level: {level}')
+
+def setup_logger(name):
+    """
+    Function to set up as logger.
+    Parameters:
+    name (str): Name of the logger.
+
+    Returns: logger instance
+    """
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    # Create a console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+
+    # Create a formatter and add it to the handler
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
+
+    # Add the handler to the logger
+    logger.addHandler(console_handler)
+
+    return logger
 
 def load_and_set_env_vars(file_path=None, var_list=None):
     env_vars = {}

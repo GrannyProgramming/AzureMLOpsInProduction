@@ -5,40 +5,13 @@ import os
 import json 
 
 class ComputeManager:
-    """A class used to manage Azure ML compute resources.
-
-    Attributes
-    ----------
-    environment : str
-        The environment in which the script is running.
-    subscription_id : str
-        Azure subscription id.
-    workspace_name : str
-        Azure ML workspace name.
-    resource_group : str
-        Azure resource group.
-    script_dir : str
-        Directory where the script is located.
-    root_dir : str
-        Root directory of the script.
-    config_file : str
-        Configuration file path.
-    config : dict
-        Configuration dictionary.
-    credential : DefaultAzureCredential
-        Azure default credentials.
-    client : MLClient
-        Azure ML client.
-    compute_types : dict
-        Types of compute resources.
-    """
-
     def __init__(self):
         """Initialize ComputeManager by setting up variables and Azure ML client."""
         self.environment, self.subscription_id, self.workspace_name, self.resource_group = self.get_env_variables()
         self.script_dir, self.root_dir = self.get_directory_structure()
+        self.config_file = self.get_config()
         self.config = self.load_config(self.config_file)
-
+        
         self.credential = DefaultAzureCredential()
         self.client = MLClient(credential=self.credential, subscription_id=f'{self.subscription_id}', workspace_name=f'{self.workspace_name}', resource_group_name=f'{self.resource_group}')
 

@@ -5,12 +5,13 @@ from pathlib import Path
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
 
-def create_directories(save_dir):
+def create_directories(save_dir, logger):
     """
     Create necessary directories.
 
     Args:
         save_dir (str): The directory where the processed table will be saved.
+        logger (Logger): Logger object for logging events.
     """
     save_dir = Path(save_dir)
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -92,7 +93,7 @@ def main():
         parser.add_argument('save_directory', type=str, help='Directory to save data')
         args = parser.parse_args()
 
-        mltable_dir = create_directories(args.save_directory)
+        mltable_dir = create_directories(args.save_directory, logger)
         tbl = load_data()
         tbl = preprocess_data(tbl)
         save_data(tbl, mltable_dir)

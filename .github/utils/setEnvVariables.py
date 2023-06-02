@@ -15,8 +15,6 @@ def main():
     logger = setup_logger(__name__)
 
     try:
-        logger.info("Python path: %s", sys.path)
-
         if len(sys.argv) < 2:
             log_event(logger, 'error', "File path is not provided.")
             sys.exit(1)

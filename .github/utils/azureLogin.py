@@ -45,7 +45,6 @@ if __name__ == '__main__':
     """
     Main execution of the script: Setup the logger and login to the Azure service principal.
     """
-    logger = setup_logger(__name__)
-
+    logger = setup_logger(__name__)    
     # Call the function
     login_to_service_principal(logger)

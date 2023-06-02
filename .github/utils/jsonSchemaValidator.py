@@ -2,7 +2,6 @@ import os
 import sys
 import json
 from jsonschema import validate, ValidationError
-from collections import defaultdict
 
 class SchemaValidator:
     """A class to validate JSON files against their schema files within a directory."""
@@ -11,47 +10,56 @@ class SchemaValidator:
         """Initialize SchemaValidator with the root directory."""
         self.root_dir = root_dir
 
-    def gather_json_schema_pairs(self):
+    def gather_json_files(self):
         """
-        Traverse the root directory, check, and pair JSON and Schema files.
-        Return a dictionary of JSON and Schema file pairs.
+        Traverse the root directory and gather all JSON files.
+        Return a list of tuples (directory path, json file name).
         """
-        json_schema_dict = defaultdict(dict)
+        json_files = []
 
         for dir_path, dirs, files in os.walk(self.root_dir):
             for file in files:
-                if file.endswith('.json') and 'Schema' not in file:
-                    schema_file = file.replace('.json', 'Schema.json')
-                    if schema_file in files:
-                        json_schema_dict[dir_path][file] = schema_file
-        return json_schema_dict
+                if file.endswith('.json'):
+                    json_files.append((dir_path, file))
+        return json_files
+
+    def get_schema_path(self, json_filepath):
+        """
+        Derive the schema path from the json file path.
+        """
+        # Assume the json file is in a directory equivalent to ${ matrix.environment }
+        matrix_environment = os.path.basename(os.path.dirname(json_filepath))
+
+        # Construct the schema path
+        schema_path = os.path.join("variables", matrix_environment, "json-schema", "compute", "computeSchema.json")
+
+        return schema_path
 
     @staticmethod
-    def validate_json_with_schema(dir_path, json_file, schema_file):
+    def validate_json_with_schema(json_filepath, schema_filepath):
         """
         Validate a single JSON file against its schema.
         Print success or error message.
         """
-        with open(os.path.join(dir_path, json_file)) as jf, \
-                open(os.path.join(dir_path, schema_file)) as sf:
+        with open(json_filepath) as jf, open(schema_filepath) as sf:
             try:
                 data = json.load(jf)
                 schema = json.load(sf)
                 validate(instance=data, schema=schema)
-                print(f"{json_file} has been successfully validated against {schema_file}")
+                print(f"{os.path.basename(json_filepath)} has been successfully validated against {os.path.basename(schema_filepath)}")
             except ValidationError as e:
-                print(f"Validation failed for {json_file} against {schema_file}")
+                print(f"Validation failed for {os.path.basename(json_filepath)}. Schema: {os.path.basename(schema_filepath)}")
                 print(f"Error details: {str(e)}")
 
     def execute(self):
         """
-        Main method to gather JSON and Schema pairs, then validate JSON against its schema.
+        Main method to gather JSON files, then validate JSON against its schema.
         """
-        json_schema_dict = self.gather_json_schema_pairs()
+        json_files = self.gather_json_files()
 
-        for dir_path, file_pairs in json_schema_dict.items():
-            for json_file, schema_file in file_pairs.items():
-                self.validate_json_with_schema(dir_path, json_file, schema_file)
+        for json_filepath in json_files:
+            schema_filepath = self.get_schema_path(json_filepath)
+            self.validate_json_with_schema(json_filepath, schema_filepath)
 
 
 if __name__ == "__main__":

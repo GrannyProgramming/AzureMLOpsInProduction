@@ -6,8 +6,7 @@
             "size": "STANDARD_DS3_V2",
             "min_instances": 0,
             "max_instances": 4,
-            "idle_time_before_scale_down": 180,
-            "tier": "Dedicated"
+            "idle_time_before_scale_down": 1800
         },  
         {    
             "name":  "cpu-instance001",

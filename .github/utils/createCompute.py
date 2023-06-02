@@ -50,9 +50,13 @@ class ComputeManager:
                 print(f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
                 return True
         except Exception as e:
-            print(f"Error occurred: {e}")
+            if 'Not Found' in str(e):
+                print(f"{compute_type.capitalize()} compute '{compute_name}' does not exist and will be created.")
+            else:
+                print(f"An unexpected error occurred: {e}")
             return False
         return False
+
 
     def execute(self):
         """Execute the main logic: """

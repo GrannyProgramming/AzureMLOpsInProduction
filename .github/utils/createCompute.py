@@ -23,8 +23,6 @@ class ComputeManager:
         Root directory of the script.
     config_file : str
         Configuration file path.
-    schema_file : str
-        Schema file path.
     config : dict
         Configuration dictionary.
     credential : DefaultAzureCredential
@@ -39,7 +37,6 @@ class ComputeManager:
         """Initialize ComputeManager by setting up variables and Azure ML client."""
         self.environment, self.subscription_id, self.workspace_name, self.resource_group = self.get_env_variables()
         self.script_dir, self.root_dir = self.get_directory_structure()
-        self.config_file, self.schema_file = self.get_config()
         self.config = self.load_config(self.config_file)
 
         self.credential = DefaultAzureCredential()

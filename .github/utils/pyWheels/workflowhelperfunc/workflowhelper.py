@@ -31,11 +31,11 @@ def log_event(logger, level, event_message):
 
 def setup_logger(name):
     """
-    Function to set up as logger.
+    Function to set up a logger.
     Parameters:
     name (str): Name of the logger.
 
-    Returns: logger instance
+    Returns: Logger instance
     """
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
@@ -44,14 +44,21 @@ def setup_logger(name):
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.DEBUG)
 
-    # Create a formatter and add it to the handler
+    # Create a file handler
+    file_handler = logging.FileHandler('logfile.log')
+    file_handler.setLevel(logging.DEBUG)
+
+    # Create a formatter and add it to the handlers
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
 
-    # Add the handler to the logger
+    # Add the handlers to the logger
     logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
 
     return logger
+
 
 def load_and_set_env_vars(file_path=None, var_list=None):
     env_vars = {}

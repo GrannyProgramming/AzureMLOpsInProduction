@@ -17,11 +17,15 @@ def create_directories(save_dir):
     mltable_dir = save_dir / "MLTable"
     uri_dir = save_dir / "URI"
 
-    # Create the subdirectories if they do not exist
-    mltable_dir.mkdir(parents=True, exist_ok=True)
-    uri_dir.mkdir(parents=True, exist_ok=True)
+    # Check if the directories already exist
+    if not mltable_dir.exists():
+        mltable_dir.mkdir(parents=True, exist_ok=True)
+    
+    if not uri_dir.exists():
+        uri_dir.mkdir(parents=True, exist_ok=True)
 
     return mltable_dir, uri_dir
+
 
 def load_data():
     """

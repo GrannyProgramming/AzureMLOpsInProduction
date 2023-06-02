@@ -27,21 +27,12 @@ class SchemaValidator:
         """
         Derive the schema path from the json file path.
         """
-        # Get the relative directory path from the root directory to the JSON file directory
-        relative_dir_path = os.path.relpath(dir_path, self.root_dir)
-
-        # Split the relative directory path into a list of directories
-        dir_list = relative_dir_path.split(os.sep)
-
-        # Replace the first directory (environment) with 'json-schema'
-        dir_list[0] = 'json-schema'
-
-        # Construct the schema directory path
-        schema_dir_path = os.sep.join(dir_list)
-
+        # Get the base name of the JSON file and remove the '.json' extension
+        schema_dir_name = os.path.splitext(json_file)[0]
+        
         # Construct the schema file path
-        schema_file = json_file.replace('.json', 'Schema.json')
-        schema_path = os.path.join(self.root_dir, schema_dir_path, schema_file)
+        schema_file = schema_dir_name + 'Schema.json'
+        schema_path = os.path.join(self.root_dir, 'json-schema', schema_dir_name, schema_file)
 
         return schema_path
 

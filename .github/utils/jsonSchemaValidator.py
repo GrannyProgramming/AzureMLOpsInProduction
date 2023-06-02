@@ -33,13 +33,8 @@ class SchemaValidator:
         # Split the relative directory path into a list of directories
         dir_list = relative_dir_path.split(os.sep)
 
-        # Check if the path has at least two levels
-        if len(dir_list) < 2:
-            print(f"Error: The path '{dir_path}' does not have the expected structure. Skipping this path.")
-            return None
-
-        # Replace the second directory (environment) with 'json-schema'
-        dir_list[1] = 'json-schema'
+        # Replace the first directory (environment) with 'json-schema'
+        dir_list[0] = 'json-schema'
 
         # Construct the schema directory path
         schema_dir_path = os.sep.join(dir_list)
@@ -49,6 +44,7 @@ class SchemaValidator:
         schema_path = os.path.join(self.root_dir, schema_dir_path, schema_file)
 
         return schema_path
+
 
 
     @staticmethod

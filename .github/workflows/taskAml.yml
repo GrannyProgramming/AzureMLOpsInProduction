@@ -22,6 +22,11 @@ jobs:
       - name: Install dependencies
         run: python3 .github/utils/installDependencies.py
 
+      # This needs rethinking, as when moving between the JSON-schema files will be replicated
+      - name: Json schema validation
+        run: |
+          python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}        
+
       - name: Build wheel and install helper functions
         run: |
           cd .github/utils/pyWheels
@@ -40,10 +45,7 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
-      # This needs rethinking, as when moving between the JSON-schema files will be replicated
-      - name: Json schema validation
-        run: |
-          python3 .github/utils/jsonSchemaValidator.py variables/${{ matrix.environment }}
+
 
       # commented for faster compile in gh actions
       # - name: Compile Bicep templates

@@ -23,15 +23,18 @@ class SchemaValidator:
                     json_files.append((dir_path, file))
         return json_files
 
-    def get_schema_path(self, dir_path):
+    def get_schema_path(self, dir_path, json_file):
         """
         Derive the schema path from the json file path.
         """
-        # Assume the json file is in a directory equivalent to ${ matrix.environment }
-        matrix_environment = os.path.basename(dir_path)
+        relative_dir_path = os.path.relpath(dir_path, self.root_dir)
 
-        # Construct the schema path
-        schema_path = os.path.join("variables", matrix_environment, "json-schema", "compute", "computeSchema.json")
+        # Replace the environment part with 'json-schema'
+        schema_dir_path = os.path.join(self.root_dir, relative_dir_path.replace(os.path.basename(self.root_dir), 'json-schema'))
+
+        # Construct the schema file path
+        schema_file = json_file.replace('.json', 'Schema.json')
+        schema_path = os.path.join(schema_dir_path, schema_file)
 
         return schema_path
 
@@ -59,7 +62,7 @@ class SchemaValidator:
 
         for dir_path, json_file in json_files:
             json_filepath = os.path.join(dir_path, json_file)
-            schema_filepath = self.get_schema_path(dir_path)
+            schema_filepath = self.get_schema_path(dir_path, json_file)
             self.validate_json_with_schema(json_filepath, schema_filepath)
 
 

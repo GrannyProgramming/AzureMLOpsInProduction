@@ -50,21 +50,23 @@ class SchemaValidator:
 
         return schema_path
 
-    @staticmethod
-    def validate_json_with_schema(json_filepath, schema_filepath):
+    def validate_json_with_schema(self, json_filepath, schema_filepath):
         """
         Validate a single JSON file against its schema.
-        Print success or error message.
+        Print success or error message and raise exception if validation fails.
         """
         with open(json_filepath) as jf, open(schema_filepath) as sf:
+            data = json.load(jf)
+            schema = json.load(sf)
+
             try:
-                data = json.load(jf)
-                schema = json.load(sf)
                 validate(instance=data, schema=schema)
                 print(f"{os.path.basename(json_filepath)} has been successfully validated against {os.path.basename(schema_filepath)}")
             except ValidationError as e:
                 print(f"Validation failed for {os.path.basename(json_filepath)}. Schema: {os.path.basename(schema_filepath)}")
                 print(f"Error details: {str(e)}")
+                raise SystemExit(e)
+
 
     def execute(self):
         """

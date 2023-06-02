@@ -79,7 +79,7 @@ def save_data(tbl, mltable_dir, uri_dir):
     tbl.save(str(mltable_dir))
 
     # Convert the ML table to a pandas dataframe and save as Parquet
-    df = tbl.to_pandas()
+    df = tbl.to_pandas_dataframe()
     df.to_parquet(str(uri_dir / "NYC_taxi.parquet"))
 
 def main():

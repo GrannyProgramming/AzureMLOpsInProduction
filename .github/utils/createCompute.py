@@ -39,7 +39,7 @@ class ComputeManager:
         """Initialize ComputeManager by setting up variables and Azure ML client."""
         self.environment, self.subscription_id, self.workspace_name, self.resource_group = self.get_env_variables()
         self.script_dir, self.root_dir = self.get_directory_structure()
-        self.config_file, self.schema_file = self.get_config_and_schema_files()
+        self.config_file, self.schema_file = self.get_config()
         self.config = self.load_config(self.config_file)
 
         self.credential = DefaultAzureCredential()
@@ -62,11 +62,10 @@ class ComputeManager:
         root_dir = os.path.join(script_dir, '..', '..')
         return script_dir, root_dir
 
-    def get_config_and_schema_files(self):
-        """Identify and return the paths for the config and schema files."""
+    def get_config(self):
+        """Identify and return the paths for the config"""
         config_file = os.path.join(self.root_dir, "variables", f'{self.environment}', "compute", "compute.json")
-        schema_file = os.path.join(self.root_dir, "variables", f'{self.environment}', "compute", "computeSchema.json")
-        return config_file, schema_file
+        return config_file
 
     @staticmethod
     def load_config(config_file):

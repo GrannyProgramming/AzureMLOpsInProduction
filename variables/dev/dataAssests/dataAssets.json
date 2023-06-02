@@ -2,21 +2,21 @@
     "data": [
         {
             "type": "uri_file",
-            "name": "<name>",
+            "name": "",
             "description": "<description>",
             "path": "<uri>"
         },
         {
             "type": "uri_folder",
-            "name": "<name_of_data>",
+            "name": "dataScience/src/data",
             "description": "<description goes here>",
             "path": "<path>"
         },
         {
             "type": "mltable",
-            "name": "<name_of_data>",
-            "description": "<description goes here>",
-            "path": "<path>"
+            "name": "NYC_taxi",
+            "description": "MLTAble from NYC taxi data",
+            "path": "dataScience/src/data/MLTable"
         }
     ]
 }

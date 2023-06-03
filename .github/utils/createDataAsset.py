@@ -47,13 +47,18 @@ class DataAssetManager:
 
     def create_data_asset(self, data_config):
         """
-        Create a data asset if it doesn't exist.
+        Create or update a data asset.
 
         Parameters
         ----------
         data_config : dict
             Configuration data for the data asset.
         """
+        required_keys = ['type', 'name']
+        if not all(key in data_config for key in required_keys):
+            log_event(self.logger, 'error', f"Data config is missing required keys: {', '.join(required_keys)}.")
+            return
+
         data_types = {
             "uri_file": Data,
             "uri_folder": Data,
@@ -63,22 +68,22 @@ class DataAssetManager:
         data_type = data_config["type"].lower()
         data_name = data_config["name"]
 
-        if self.check_asset_exists(data_name):
-            log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' already exists.")
+        if data_type not in data_types:
+            log_event(self.logger, 'error', f"{data_type.capitalize()} data type is not supported.")
             return
 
-        if data_type in data_types:
+        try:
             data_entity = data_types[data_type](
                 name=data_name,
                 version="auto",
                 asset_type=AssetTypes.Data,
                 **data_config
             )
-            self.client.create_data_asset(data_entity)
-            log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' created with version {data_entity.version}.")
+            self.client.data.create_or_update(data_entity)
+            log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' created or updated with version {data_entity.version}.")
             self.existing_assets[data_name] = data_entity
-        else:
-            log_event(self.logger, 'error', f"{data_type.capitalize()} data type is not supported.")
+        except Exception as e:
+            log_event(self.logger, 'error', f"Failed to create or update {data_type.capitalize()} data asset '{data_name}': {str(e)}")
 
     def execute(self):
         """

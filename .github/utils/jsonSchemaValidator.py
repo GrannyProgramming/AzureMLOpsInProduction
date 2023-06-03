@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import logging
 from jsonschema import validate, ValidationError
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 

@@ -1,6 +1,5 @@
 import argparse
 import mltable
-import pandas as pd
 from pathlib import Path
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 

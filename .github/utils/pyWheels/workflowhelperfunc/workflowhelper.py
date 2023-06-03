@@ -2,41 +2,51 @@ import logging
 import json
 import os
 import logging
-from pathlib import Path
-from jsonschema import validate, exceptions
-import subprocess
+from azure.ai.ml import MLClient
+from azure.identity import DefaultAzureCredential
 
 def log_event(logger, level, event_message):
-    """
-    Function to log events at different levels.
-    Parameters:
-    logger: Logger object.
-    level (str): Level of the logging event. Can be one of the following - 'debug', 'info', 'warning', 'error', 'critical'.
-    event_message (str): Message to be logged.
+    """Log events at different levels.
 
-    Returns: None
+    Parameters
+    ----------
+    logger : Logger
+        Logger object.
+    level : str
+        Level of the logging event. Can be 'debug', 'info', 'warning', 'error', 'critical'.
+    event_message : str
+        Message to be logged.
+
+    Raises
+    ------
+    ValueError
+        If the log level is invalid.
     """
-    if level.lower() == 'debug':
-        logger.debug(event_message)
-    elif level.lower() == 'info':
-        logger.info(event_message)
-    elif level.lower() == 'warning':
-        logger.warning(event_message)
-    elif level.lower() == 'error':
-        logger.error(event_message)
-    elif level.lower() == 'critical':
-        logger.critical(event_message)
-    else:
+    LOG_LEVELS = {'debug', 'info', 'warning', 'error', 'critical'}
+    level = level.lower()
+
+    if level not in LOG_LEVELS:
         raise ValueError(f'Invalid log level: {level}')
 
-def setup_logger(name):
-    """
-    Function to set up as logger.
-    Parameters:
-    name (str): Name of the logger.
+    getattr(logger, level)(event_message)
 
-    Returns: logger instance
+def setup_logger(name):
+    """Set up and return a logger.
+
+    If a logger with the given name already exists, the existing logger is returned.
+    Otherwise, a new logger is created and returned.
+
+    Parameters
+    ----------
+    name : str
+        Name of the logger.
+
+    Returns
+    -------
+    logger : Logger
+        Logger object.
     """
+
     logger = logging.getLogger(name)
     if not logger.handlers:  # To prevent creating multiple handlers
         logger.setLevel(logging.DEBUG)  # Logger level
@@ -55,6 +65,19 @@ def setup_logger(name):
 
 
 def load_and_set_env_vars(file_path=None, var_list=None):
+    """Load and set environment variables from a file and/or a list.
+
+    Parameters
+    ----------
+    file_path : str, optional
+        Path to the JSON file containing environment variables.
+    var_list : list of str, optional
+        List of strings in the format "KEY=VALUE".
+
+    Notes
+    -----
+    The environment variables are set in the format "KEY=VALUE".
+    """
     env_vars = {}
 
     # Load from file
@@ -73,5 +96,55 @@ def load_and_set_env_vars(file_path=None, var_list=None):
         os.system(f"echo {env_var} >> $GITHUB_ENV")
 
 def load_config(config_file):
+    """Load and return a configuration from a JSON file.
+
+    Parameters
+    ----------
+    config_file : str
+        Path to the JSON file containing the configuration.
+
+    Returns
+    -------
+    config : dict
+        Configuration loaded from the JSON file.
+    """
     with open(config_file, "r") as f:
         return json.load(f)
+    
+def initialize_mlclient():
+    """Initialize and return an MLClient object.
+
+    This function uses the following environment variables:
+    - SUBSCRIPTION_ID
+    - RESOURCE_GROUP_NAME
+    - WORKSPACE_NAME
+    - AZURE_CLIENT_ID
+    - AZURE_TENANT_ID
+    - AZURE_CLIENT_SECRET
+
+    Returns
+    -------
+    client : MLClient
+        An initialized MLClient object.
+
+    Raises
+    ------
+    ValueError
+        If one or more environment variables are missing.
+    """
+    required_vars = ['SUBSCRIPTION_ID', 'RESOURCE_GROUP_NAME', 'WORKSPACE_NAME']
+
+    if not all(os.getenv(var) for var in required_vars):
+        raise ValueError("One or more environment variables are missing.")
+
+    subscription_id = os.getenv('SUBSCRIPTION_ID')
+    resource_group_name = os.getenv('RESOURCE_GROUP_NAME')
+    workspace_name = os.getenv('WORKSPACE_NAME')
+    credential = DefaultAzureCredential()
+
+    return MLClient(
+        subscription_id=subscription_id,
+        resource_group_name=resource_group_name,
+        workspace_name=workspace_name,
+        credential=credential
+    )

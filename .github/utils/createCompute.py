@@ -1,9 +1,6 @@
-from azure.identity import DefaultAzureCredential
-from azure.ai.ml import MLClient
 from azure.ai.ml.entities import AmlCompute, ComputeInstance
-from workflowhelperfunc.workflowhelper import setup_logger, log_event
+from workflowhelperfunc.workflowhelper import setup_logger, log_event, initialize_mlclient, load_config
 import os
-import json 
 
 class ComputeManager:
     """Manage Azure ML Compute resources."""
@@ -11,14 +8,11 @@ class ComputeManager:
         """Initialize ComputeManager with environment variables, directories, config, and Azure ML client."""
         self.logger = setup_logger(__name__)
 
-        self.environment, self.subscription_id, self.workspace_name, self.resource_group = self.get_env_variables()
         self.script_dir, self.root_dir = self.get_directory_structure()
         self.config_file = self.get_config()
         self.config = self.load_config(self.config_file)
+        self.client = initialize_mlclient()
         
-        self.credential = DefaultAzureCredential()
-        self.client = MLClient(credential=self.credential, subscription_id=f'{self.subscription_id}', workspace_name=f'{self.workspace_name}', resource_group_name=f'{self.resource_group}')
-
         self.compute_types = {
             "amlcompute": AmlCompute,
             "computeinstance": ComputeInstance
@@ -29,9 +23,9 @@ class ComputeManager:
         """Fetch environment variables.
 
         Returns:
-            tuple: environment, subscription_id, workspace_name, resource_group
+            dict: environment
         """
-        return os.environ['ENVIRONMENT'], os.environ['SUBSCRIPTION_ID'], os.environ['WORKSPACE_NAME'], os.environ['RESOURCE_GROUP']
+        return os.environ['ENVIRONMENT']
 
     @staticmethod
     def get_directory_structure():
@@ -52,19 +46,6 @@ class ComputeManager:
         """
         config_file = os.path.join(self.root_dir, "variables", f'{self.environment}', "compute", "compute.json")
         return config_file
-
-    @staticmethod
-    def load_config(config_file):
-        """Load the configuration from a JSON file.
-
-        Args:
-            config_file (str): JSON file to load the configuration from.
-
-        Returns:
-            dict: Loaded configuration.
-        """
-        with open(config_file, "r") as f:
-            return json.load(f)
 
     def handle_existing_compute(self, compute_type, compute_name):
         """Check if the compute resource already exists. If so, return True.

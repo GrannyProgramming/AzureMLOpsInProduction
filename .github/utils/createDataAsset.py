@@ -1,10 +1,7 @@
-import json
 import sys
-from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Data
 from azure.ai.ml.constants import AssetTypes
-from workflowhelperfunc.workflowhelper import setup_logger, log_event
-
+from workflowhelperfunc.workflowhelper import setup_logger, log_event, initialize_mlclient, load_config
 
 class DataAssetManager:
     """Manage Azure ML Data Assets."""
@@ -19,22 +16,10 @@ class DataAssetManager:
             Path to the configuration file.
         """
         self.config_file = config_file
-        self.client = MLClient()
+        self.client = initialize_mlclient()
         self.existing_assets = {}
 
         self.logger = setup_logger(__name__)
-
-    def load_config(self):
-        """
-        Load the configuration file.
-
-        Returns
-        -------
-        dict
-            Configuration data loaded from the file.
-        """
-        with open(self.config_file, "r") as f:
-            return json.load(f)
 
     def check_asset_exists(self, data_name):
         """

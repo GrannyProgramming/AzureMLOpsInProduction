@@ -26,10 +26,10 @@ def create_environment_from_json(env_config):
         # )
         # ml_client.environments.create_or_update(env)
 
-    if 'path' in env_config:
+    if 'build' in env_config:
         env = Environment(
             name=env_config['name'],
-            build=BuildContext(path=env_config['path']),
+            build=BuildContext(path=env_config['build']),
             description=env_config.get('description')
         )
         ml_client.environments.create_or_update(env)

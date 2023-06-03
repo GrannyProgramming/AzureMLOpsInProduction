@@ -68,10 +68,10 @@
             ]
         },
         {
-            "name": "env_from_dockerfile",
+            "name": "docker-build-example1",
             "version": "1",
-            "path": "variables/dev/environments/dockerContexts/exDockerEnv",
-            "docker_image_name": "my_docker_image"
+            "build": "variables/dev/environments/dockerContexts/exDockerEnv",
+            "description": "Environment created from a Build Docker context."
         }
     ]
 }

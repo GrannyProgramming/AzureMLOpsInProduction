@@ -132,7 +132,7 @@ def initialize_mlclient():
     ValueError
         If one or more environment variables are missing.
     """
-    required_vars = ['SUBSCRIPTION_ID', 'RESOURCE_GROUP_NAME', 'WORKSPACE_NAME']
+    required_vars = ['SUBSCRIPTION_ID', 'RESOURCE_GROUP', 'WORKSPACE_NAME']
 
     if not all(os.getenv(var) for var in required_vars):
         raise ValueError("One or more environment variables are missing for MLClient.")

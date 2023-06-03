@@ -3,6 +3,7 @@ import json
 import yaml
 import logging
 import sys
+#import required libraries for environments examples
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
@@ -13,9 +14,9 @@ ml_client = initialize_mlclient()
 logging.basicConfig(level=logging.INFO)
 
 # #Create an environment from a Docker build context
-# env_docker_context = Environment(
-#     build=BuildContext(path="variables/environments/ex_docker_env"),
-#     name="docker-build-example",
-#     description="Environment created from a Build Docker context.",
-# )
-# ml_client.environments.create_or_update(env_docker_context)
+env_docker_context = Environment(
+    build=BuildContext(path="variables/environments/ex_docker_env"),
+    name="docker-build-example",
+    description="Environment created from a Build Docker context.",
+)
+ml_client.environments.create_or_update(env_docker_context)

@@ -12,7 +12,7 @@ class ComputeManager:
 
         self.script_dir, self.root_dir = self.get_directory_structure()
         self.config_file = self.get_config()
-        self.config = self.load_config(self.config_file)
+        self.config = load_config(self.config_file)
         self.client = initialize_mlclient()
         
         self.compute_types = {

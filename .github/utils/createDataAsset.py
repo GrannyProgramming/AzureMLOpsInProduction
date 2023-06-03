@@ -38,7 +38,7 @@ class DataAssetManager:
         if data_name in self.existing_assets:
             return True
 
-        existing_asset = self.client.get_data_asset(data_name)
+        existing_asset = self.client.data.get(data_name)
         if existing_asset is not None:
             self.existing_assets[data_name] = existing_asset
             return True

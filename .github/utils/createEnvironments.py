@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 # #Create an environment from a Docker build context
 env_docker_context = Environment(
-    build=BuildContext(path="variables/environments/ex_docker_env"),
+    build=BuildContext(path="variables/dev/environments/dockerContexts/exDockerEnv"),
     name="docker-build-example",
     description="Environment created from a Build Docker context.",
 )

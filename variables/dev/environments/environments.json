@@ -1,7 +1,7 @@
 {
     "environments": [
-        {
-            "name": "pydata-example",
+        {   
+            "name": "conda_environment_example",
             "channels": [
                 "conda-forge"
             ],
@@ -34,7 +34,7 @@
             ]
         },
         {
-            "name": "pydata-example2",
+            "name": "conda_example_with_pywheel",
             "channels": [
                 "conda-forge"
             ],
@@ -66,11 +66,15 @@
             ]
         },
         {
-            "name": "env3",
+            "name": "env_from_dockerfile",
             "version": "1",
-            "dockerfile": "variables/environments/docker/dockerfile",
-            "docker_image_name": "my_docker_image",
-            "docker_image_tag": "latest"
+            "path": "variables/environments/ex_docker_env/dockerfile",
+            "docker_image_name": "my_docker_image"
+        },
+        {
+            "image": "pytorch/pytorch:latest",
+            "name": "prebuilt_docker_image_example",
+            "description": "Environment created from a prebuilt Docker image."
         }
     ]
 }

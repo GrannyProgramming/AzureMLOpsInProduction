@@ -69,10 +69,19 @@ jobs:
         run: | 
           python3 .github/utils/createMlTable.py dataScience/src/data
 
-      # Create data asseets, 
-      - name: Create data asseets
+      # Create data asseets 
+      # @GrannyProgramming should I leave the unused file types in the json?
+      - name: Create data assets
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
           python3 .github/utils/createDataAsset.py variables/dev/dataAssests/dataAssets.json
+
+      # Create aml environments
+      # @grannyProgramming - maybe set version the same as it was set in dataAsset step? create a function for this?
+      - name: Create aml environments
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+        run: | 
+          python3 .github/utils/createAmlEnvironments.py $AML_ENVIRONMENTS_CONFIG_PATH
 

@@ -111,3 +111,4 @@ if __name__ == "__main__":
         manager.execute()
     except Exception as e:
         log_event(logger, 'error', f"An error occurred: {str(e)}")
+        

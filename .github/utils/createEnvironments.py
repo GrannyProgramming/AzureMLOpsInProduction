@@ -1,26 +1,71 @@
+# 1. Import the required libraries
 import json
-from azure.ai.ml.entities import Environment
-from workflowhelperfunc.workflowhelper import setup_logger, log_event, initialize_mlclient
+import yaml
+import logging
+import sys
+from azure.ai.ml.entities import Environment, BuildContext
+from workflowhelperfunc.workflowhelper import initialize_mlclient
 
-
+# 2. Configure workspace details and get a handle to the workspace
 ml_client = initialize_mlclient()
 
-# Authenticate to the workspace using mlclient
-workspace = ml_client.get_workspace()
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
-# Load the environment configuration from a JSON file
-with open('environment.json', 'r') as f:
-    env_configs = json.load(f)['environments']
+# 3. Define the function that creates environments according to their types specified in the JSON configuration
+def create_environment_from_json(env_config):
+    # Check if environment already exists with the same version
+    existing_env = ml_client.environments.get(name=env_config['name'], version=env_config.get('version'))
+    if existing_env:
+        logging.info(f"Environment {env_config['name']} with version {env_config.get('version')} already exists. Skipping...")
+        return
 
-# Check if each environment already exists and create it if it does not
-for env_config in env_configs:
-    env_name = env_config['name']
-    env_version = env_config['version']
-    env = Environment.get(workspace, name=env_name, version=env_version)
-    if env is None:
-        env = Environment.from_dict(env_config)
-        env.register(workspace)
-        # my_env.python.conda_dependencies.add_pip_package('path/to/my_package-0.1.0-py3-none-any.whl')
-        # logging.info(f"Created environment '{env_name}' with version '{env_version}'")
-    else:
-        print(f"Environment '{env_name}' with version '{env_version}' already exists")
+    if 'image' in env_config:
+        env = Environment(
+            name=env_config['name'],
+            version=env_config.get('version'),
+            description=env_config.get('description'),
+            image=env_config['image'],
+        )
+        ml_client.environments.create_or_update(env)
+
+    elif 'path' in env_config:
+        env = Environment(
+            name=env_config['name'],
+            version=env_config['version'],
+            build=BuildContext(path=env_config['path']),
+        )
+        ml_client.environments.create_or_update(env)
+
+    elif 'channels' in env_config and 'dependencies' in env_config:
+        conda_dependencies = {
+            'channels': env_config['channels'],
+            'dependencies': env_config['dependencies']
+        }
+
+        conda_file = env_config['name'] + '.yml'
+        with open(conda_file, 'w') as file:
+            documents = yaml.dump(conda_dependencies, file)
+        
+        env = Environment(
+            name=env_config['name'],
+            version=env_config['version'],
+            conda_file=conda_file,
+        )
+        ml_client.environments.create_or_update(env)
+
+
+# Check if the script is invoked with necessary arguments
+if len(sys.argv) < 2:
+    logging.error('No configuration file provided.')
+    sys.exit(1)
+
+# Extract config file path
+config_file_path = sys.argv[1]
+
+# 4. Read the JSON configuration file and call the function defined in step 3 to create the environments
+with open(config_file_path, 'r') as f:
+    config = json.load(f)
+
+for env_config in config['environments']:
+    create_environment_from_json(env_config)

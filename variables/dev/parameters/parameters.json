@@ -1,5 +1,8 @@
 {
     "subscription_id": "e62983d6-29cb-4435-b8d2-b19887c7a735",
     "bicep_main_path":"./infra/main.bicep",
-    "bicep_parameter_path": "./infra/parameters/dev/bicep.parameters.json"
+    "bicep_parameter_path": "./infra/parameters/dev/bicep.parameters.json",
+    "aml_environments_config_path": "variables/dev/environments/environments.json",
+    "aml_data_assets_config_path": "variables/dev/dataAssests/dataAssets.json",
+    "aml_data_save_path": "dataScience/src/data"
 }

@@ -53,7 +53,7 @@ jobs:
       # commented for faster compile in gh actions
       - name: Compile Bicep templates
         run: |
-          bicep build ./core/infra/main.bicep
+          bicep build ./infra/main.bicep
 
       - name: Deploy Bicep templates
         run: |

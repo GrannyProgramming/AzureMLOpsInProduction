@@ -1,6 +1,7 @@
 {
     "environments": [
         {   
+            "image":"mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
             "name": "conda_environment_example",
             "channels": [
                 "conda-forge"
@@ -34,6 +35,7 @@
             ]
         },
         {
+            "image": "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
             "name": "conda_example_with_pywheel",
             "channels": [
                 "conda-forge"
@@ -64,6 +66,12 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "env_from_dockerfile",
+            "version": "1",
+            "path": "variables/environments/ex_docker_env/dockerfile",
+            "docker_image_name": "my_docker_image"
         }
     ]
 }

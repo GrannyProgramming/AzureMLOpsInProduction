@@ -1,7 +1,7 @@
 import json
 import logging
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import Dataset, Datastore
+from azure.ai.ml.entities import Data
 from azure.ai.ml.constants import AssetTypes
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
@@ -70,9 +70,9 @@ class DataAssetManager:
             Configuration data for the data asset.
         """
         data_types = {
-            "uri_file": Dataset,
-            "uri_folder": Dataset,
-            "mltable": Dataset
+            "uri_file": Data,
+            "uri_folder": Data,
+            "mltable": Data
         }
 
         data_type = data_config["type"].lower()
@@ -86,7 +86,7 @@ class DataAssetManager:
             data_entity = data_types[data_type](
                 name=data_name,
                 version="auto",
-                asset_type=AssetTypes.DATA,
+                asset_type=AssetTypes.Data,
                 **data_config
             )
             self.client.create_data_asset(data_entity)

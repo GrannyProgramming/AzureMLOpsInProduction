@@ -21,9 +21,7 @@ def login_to_service_principal(logger):
     arm_tenant_id = os.getenv('ARM_TENANT_ID')
 
     if not all([arm_client_id, arm_client_secret, arm_tenant_id]):
-        print("Before logging error")
         log_event(logger, 'error', "One or more required environment variables are missing!")
-        print("After logging error")
         raise Exception("One or more required environment variables are missing!")
 
     # Use az cli to log in
@@ -49,10 +47,4 @@ if __name__ == '__main__':
     """
     logger = setup_logger(__name__)    
     # Call the function
-    try:
-        login_to_service_principal(logger)
-    finally:
-        for handler in logger.handlers:  # Close handlers to flush all logs
-            handler.close()
-            logger.removeHandler(handler)
-
+    login_to_service_principal(logger)

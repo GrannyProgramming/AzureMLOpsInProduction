@@ -47,4 +47,10 @@ if __name__ == '__main__':
     """
     logger = setup_logger(__name__)    
     # Call the function
-    login_to_service_principal(logger)
+    try:
+        login_to_service_principal(logger)
+    finally:
+        for handler in logger.handlers:  # Close handlers to flush all logs
+            handler.close()
+            logger.removeHandler(handler)
+

@@ -31,32 +31,26 @@ def log_event(logger, level, event_message):
 
 def setup_logger(name):
     """
-    Function to set up a logger.
+    Function to set up as logger.
     Parameters:
     name (str): Name of the logger.
 
-    Returns: Logger instance
+    Returns: logger instance
     """
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+    if not logger.handlers:  # To prevent creating multiple handlers
+        logger.setLevel(logging.DEBUG)  # Logger level
 
-    # Create a console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.DEBUG)
+        # Create a console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)  # Handler level
 
-    # Create a file handler
-    file_handler = logging.FileHandler('logfile.log')
-    file_handler.setLevel(logging.DEBUG)
+        # Create a formatter and add it to the handler
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        console_handler.setFormatter(formatter)
 
-    # Create a formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
-
-    # Add the handlers to the logger
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
-
+        # Add the handler to the logger
+        logger.addHandler(console_handler)
     return logger
 
 

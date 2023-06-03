@@ -22,7 +22,29 @@ class DataAssetManager:
 
         self.logger = setup_logger(__name__)
 
-    # existing methods omitted for brevity...
+    def check_asset_exists(self, data_name):
+        """
+        Check if the data asset already exists.
+
+        Parameters
+        ----------
+        data_name : str
+            Name of the data asset.
+
+        Returns
+        -------
+        bool
+            True if the data asset exists, False otherwise.
+        """
+        if data_name in self.existing_assets:
+            return True
+
+        existing_asset = self.client.data.get(data_name)
+        if existing_asset is not None:
+            self.existing_assets[data_name] = existing_asset
+            return True
+
+        return False
 
     def create_data_asset(self, data_config):
         """
@@ -68,7 +90,16 @@ class DataAssetManager:
         except Exception as e:
             log_event(self.logger, 'error', f"Failed to create or update {data_type.capitalize()} data asset '{data_name}': {str(e)}")
 
-    # existing methods omitted for brevity...
+    def execute(self):
+        """
+        Main method to run the program.
+
+        Load the configuration and create data assets based on the configuration.
+        """
+        config = load_config(self.config_file)
+
+        for data_config in config["data"]:
+            self.create_data_asset(data_config)
 
 if __name__ == "__main__":
     """Main execution of the script: Initialize the DataAssetManager and execute it."""

@@ -1,5 +1,5 @@
 import json
-import logging
+import sys
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import Data
 from azure.ai.ml.constants import AssetTypes
@@ -106,13 +106,13 @@ class DataAssetManager:
         for data_config in config["data"]:
             self.create_data_asset(data_config)
 
-
 if __name__ == "__main__":
     """Main execution of the script: Initialize the DataAssetManager and execute it."""
     logger = setup_logger(__name__)
 
     try:
-        manager = DataAssetManager("test.json")
+        config_file = sys.argv[1]
+        manager = DataAssetManager(config_file)
         manager.execute()
     except Exception as e:
         log_event(logger, 'error', f"An error occurred: {str(e)}")

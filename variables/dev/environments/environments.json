@@ -70,7 +70,7 @@
         {
             "name": "env_from_dockerfile",
             "version": "1",
-            "path": "variables/environments/ex_docker_env/dockerfile",
+            "path": "variables/environments/ex_docker_env   ",
             "docker_image_name": "my_docker_image"
         }
     ]

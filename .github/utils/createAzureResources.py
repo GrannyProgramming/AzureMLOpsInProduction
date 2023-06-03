@@ -98,7 +98,6 @@ class BicepDeployment:
         cmd = f'az deployment sub create --location {location} --template-file {self.template_file} --parameters {self.parameters}'
         return self.run_command(cmd)
 
-    @staticmethod
     def set_aml_workspace_and_resource_group_as_defaults(logger, workspace, resource_group):
         """Sets the AML workspace and its resource group as defaults using the Azure CLI.
 
@@ -123,7 +122,8 @@ class BicepDeployment:
             resource_group = output_json['properties']['outputs']['resourceGroupName']['value']
 
             # Set workspace and resource group as defaults
-            self.set_aml_workspace_and_resource_group_as_defaults(self.logger, workspace, resource_group)
+            self.set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group)
+
 
             # Check if workspace and resource group are set as defaults
             default_settings = json.loads(self.run_command('az configure --list-defaults -o json'))

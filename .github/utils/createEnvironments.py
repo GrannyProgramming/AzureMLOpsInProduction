@@ -12,10 +12,10 @@ ml_client = initialize_mlclient()
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
-#Create an environment from a Docker build context
-env_docker_context = Environment(
-    build=BuildContext(path="variables/environments/ex_docker_env"),
-    name="docker-build-example",
-    description="Environment created from a Build Docker context.",
-)
-ml_client.environments.create_or_update(env_docker_context)
+# #Create an environment from a Docker build context
+# env_docker_context = Environment(
+#     build=BuildContext(path="variables/environments/ex_docker_env"),
+#     name="docker-build-example",
+#     description="Environment created from a Build Docker context.",
+# )
+# ml_client.environments.create_or_update(env_docker_context)

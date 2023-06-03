@@ -3,7 +3,6 @@ import json
 import yaml
 import logging
 import sys
-from azure.ai.ml.exceptions import ResourceNotFoundError
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
@@ -19,7 +18,8 @@ def create_environment_from_json(env_config):
         # Try to get the specific environment version
         env = ml_client.environments.get(name=env_config['name'], version=env_config.get('version'))
         logging.info(f"Environment {env_config['name']} with version {env_config.get('version')} already exists. Skipping...")
-    except ResourceNotFoundError:
+    except Exception as e:  # Catch any exception
+        logging.error(f"An error occurred: {e}")
         # If the environment doesn't exist, create it
         if 'image' in env_config:
             env = Environment(
@@ -54,7 +54,7 @@ def create_environment_from_json(env_config):
                 conda_file=documents,
             )
             ml_client.environments.create_or_update(env)
-
+            
 # Check if the script is invoked with necessary arguments
 if len(sys.argv) < 2:
     logging.error('No configuration file provided.')

@@ -83,5 +83,5 @@ jobs:
         env:
           ENVIRONMENT: ${{ matrix.environment }}
         run: | 
-          python3 .github/utils/createAmlEnvironments.py $AML_ENVIRONMENTS_CONFIG_PATH
+          python3 .github/utils/createEnvironments.py $AML_ENVIRONMENTS_CONFIG_PATH
 

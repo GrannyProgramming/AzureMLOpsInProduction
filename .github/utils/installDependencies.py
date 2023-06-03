@@ -8,6 +8,7 @@ import subprocess
 def install_dependencies():
     subprocess.run(['pip3', 'install', '--upgrade', 'pip'])
     subprocess.run(['pip', 'install', 'jsonschema'])
+    subprocess.run(['pip', 'install', 'yaml'])
     # subprocess.run(['pip3', 'install', 'yq']) 
     subprocess.run(['pip3', 'install', 'wheel'])
     # subprocess.run(['pip3', 'install', 'azure-cli', '--upgrade'])

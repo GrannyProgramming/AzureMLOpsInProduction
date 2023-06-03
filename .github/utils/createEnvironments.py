@@ -44,8 +44,8 @@ def create_environment_from_json(env_config):
         }
 
         conda_file = env_config['name'] + '.yml'
-        with open(conda_file, 'w') as file:
-            documents = yaml.dump(conda_dependencies, file)
+        # with open(conda_file, 'w') as file:
+        #     documents = yaml.dump(conda_dependencies, file)
         
         env = Environment(
             name=env_config['name'],

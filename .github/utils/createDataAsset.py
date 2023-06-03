@@ -76,7 +76,7 @@ class DataAssetManager:
             data_entity = data_types[data_type](
                 name=data_name,
                 version="auto",
-                asset_type=AssetTypes.data_types,
+                asset_type=AssetTypes.data_types[data_type],
                 **data_config
             )
             self.client.data.create_or_update(data_entity)

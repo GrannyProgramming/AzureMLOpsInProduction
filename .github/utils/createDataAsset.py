@@ -60,9 +60,9 @@ class DataAssetManager:
             return
 
         data_types = {
-            "uri_file": Data,
-            "uri_folder": Data,
-            "mltable": Data
+            "uri_file": AssetTypes.URI_FILE,
+            "uri_folder": AssetTypes.URI_FOLDER,
+            "mltable": AssetTypes.MLTABLE  
         }
 
         data_type = data_config["type"].lower()
@@ -73,11 +73,12 @@ class DataAssetManager:
             return
 
         try:
-            data_entity = data_types[data_type](
+            data_entity = Data(
                 name=data_name,
                 version="auto",
-                asset_type=AssetTypes.data_type,
-                **data_config
+                type=data_types[data_type],
+                description=data_config.get("description", ""),
+                path=data_config.get("path", ""),
             )
             self.client.data.create_or_update(data_entity)
             log_event(self.logger, 'info', f"{data_type.capitalize()} data asset '{data_name}' created or updated with version {data_entity.version}.")

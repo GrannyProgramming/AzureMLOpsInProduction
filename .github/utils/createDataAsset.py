@@ -86,7 +86,7 @@ class DataAssetManager:
 
         Load the configuration and create data assets based on the configuration.
         """
-        config = self.load_config()
+        config = load_config(self.config_file)
 
         for data_config in config["data"]:
             self.create_data_asset(data_config)

@@ -98,17 +98,17 @@ class BicepDeployment:
         cmd = f'az deployment sub create --location {location} --template-file {self.template_file} --parameters {self.parameters}'
         return self.run_command(cmd)
 
-    def set_aml_workspace_and_resource_group_as_defaults(logger, workspace, resource_group):
+    def set_aml_workspace_and_resource_group_as_defaults(self, workspace, resource_group):
         """Sets the AML workspace and its resource group as defaults using the Azure CLI.
 
         Args:
-            logger: The logger instance for logging events.
             workspace: The AML workspace.
             resource_group: The resource group of the AML workspace.
         """
-        log_event(logger, 'info', f'Setting {workspace} as default workspace and {resource_group} as default resource group')
-        BicepDeployment.run_command(f'az configure --defaults group={resource_group}')
-        BicepDeployment.run_command(f'az configure --defaults workspace={workspace}')
+        log_event(self.logger, 'info', f'Setting {workspace} as default workspace and {resource_group} as default resource group')
+        self.run_command(f'az configure --defaults group={resource_group}')
+        self.run_command(f'az configure --defaults workspace={workspace}')
+
 
     def execute(self):
         """The main function for executing the Bicep deployment process."""

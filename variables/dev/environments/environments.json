@@ -64,17 +64,6 @@
                     ]
                 }
             ]
-        },
-        {
-            "name": "env_from_dockerfile",
-            "version": "1",
-            "path": "variables/environments/ex_docker_env/dockerfile",
-            "docker_image_name": "my_docker_image"
-        },
-        {
-            "image": "pytorch/pytorch:latest",
-            "name": "prebuilt_docker_image_example",
-            "description": "Environment created from a prebuilt Docker image."
         }
     ]
 }

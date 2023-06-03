@@ -135,10 +135,10 @@ def initialize_mlclient():
     required_vars = ['SUBSCRIPTION_ID', 'RESOURCE_GROUP_NAME', 'WORKSPACE_NAME']
 
     if not all(os.getenv(var) for var in required_vars):
-        raise ValueError("One or more environment variables are missing.")
+        raise ValueError("One or more environment variables are missing for MLClient.")
 
     subscription_id = os.getenv('SUBSCRIPTION_ID')
-    resource_group_name = os.getenv('RESOURCE_GROUP_NAME')
+    resource_group_name = os.getenv('RESOURCE_GROUP')
     workspace_name = os.getenv('WORKSPACE_NAME')
     credential = DefaultAzureCredential()
 

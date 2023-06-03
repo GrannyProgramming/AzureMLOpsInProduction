@@ -54,11 +54,11 @@ jobs:
       #     python3 .github/utils/createAzureResources.py
 
       # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute. Create seperate script for this. @GrannyProgramming
-      - name: Create AML instance/compute Clusters
-        env:
-          ENVIRONMENT: ${{ matrix.environment }}
-        run: | 
-          python3 .github/utils/createCompute.py
+      # - name: Create AML instance/compute Clusters
+      #   env:
+      #     ENVIRONMENT: ${{ matrix.environment }}
+      #   run: | 
+      #     python3 .github/utils/createCompute.py
 
       # This step is optional and relevant to the quickstart. 
       # If data already exists elsewhere reference it in the data asset step and skip this one. 

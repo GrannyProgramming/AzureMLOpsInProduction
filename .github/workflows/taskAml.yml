@@ -48,16 +48,10 @@ jobs:
           --password "${{ secrets.ARM_CLIENT_SECRET }}" \
           --tenant "${{ secrets.ARM_TENANT_ID }}"
       
-
-
-      # commented for faster compile in gh actions
-      - name: Compile Bicep templates
-        run: |
-          bicep build ./infra/main.bicep
-
-      - name: Deploy Bicep templates
-        run: |
-          python3 .github/utils/createAzureResources.py
+      # - name: Compile & Deploy Bicep templates
+      #   run: |
+      #     bicep build ./infra/main.bicep
+      #     python3 .github/utils/createAzureResources.py
 
       # Create Cluster  - Done, having issues with creating the kubernetes compute and AKS compute. Create seperate script for this. @GrannyProgramming
       - name: Create AML instance/compute Clusters

@@ -8,6 +8,8 @@ class ComputeManager:
         """Initialize ComputeManager with environment variables, directories, config, and Azure ML client."""
         self.logger = setup_logger(__name__)
 
+        self.environment = self.get_env_variables()
+
         self.script_dir, self.root_dir = self.get_directory_structure()
         self.config_file = self.get_config()
         self.config = self.load_config(self.config_file)

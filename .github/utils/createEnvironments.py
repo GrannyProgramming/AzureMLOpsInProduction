@@ -14,8 +14,15 @@ def create_environment_from_json(env_config):
     try:
         existing_env = ml_client.environments.get(name=env_config['name'], version=env_config['version'])
         if existing_env:
-            print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists.")
-            return
+            existing_deps = existing_env.conda_file.get('dependencies', [])
+            new_deps = env_config.get('dependencies', [])
+
+            if existing_deps == new_deps:
+                print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists and dependencies are the same.")
+                return
+            else:
+                print("Dependencies have changed, incrementing version and updating environment.")
+                env_config['version'] = str(int(env_config['version']) + 1)
     except Exception as e:
         print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
 
@@ -30,7 +37,7 @@ def create_environment_from_json(env_config):
     elif 'channels' in env_config and 'dependencies' in env_config:
         conda_dependencies = {
             'name': env_config['name'],
-            'channels': env_config['channels'],  
+            'channels': env_config['channels'],
             'dependencies': env_config['dependencies']
         }
 

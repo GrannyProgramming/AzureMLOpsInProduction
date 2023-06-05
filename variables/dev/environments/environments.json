@@ -68,7 +68,7 @@
         },
         {
             "name": "docker-build-example1",
-            "version": "3",
+            "version": "4",
             "build": "variables/dev/environments/dockerContexts/exDockerEnv",
             "description": "Environment created from a Build Docker context."
         }

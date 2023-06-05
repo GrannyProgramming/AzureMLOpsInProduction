@@ -2,11 +2,11 @@
     "environments": [
         {   
             "image":"mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
-            "name": "conda_environment_example",
+            "name": "conda_environment_example1",
             "channels": [
                 "conda-forge"
             ],
-            "version": "2",
+            "version": "3",
             "dependencies": [
                 "python=3.8",
                 "pip=21.2.4",
@@ -40,7 +40,7 @@
             "channels": [
                 "conda-forge"
             ],
-            "version": "1",
+            "version": "2",
             "dependencies": [
                 "python=3.8",
                 "pip=21.2.4",
@@ -69,7 +69,7 @@
         },
         {
             "name": "docker-build-example1",
-            "version": "1",
+            "version": "2",
             "build": "variables/dev/environments/dockerContexts/exDockerEnv",
             "description": "Environment created from a Build Docker context."
         }

@@ -49,7 +49,7 @@ def create_environment_from_json(env_config):
             image=env_config['image'],
             name=env_config['name'],
             version=env_config['version'],
-            conda_file=conda_file,
+            conda_file=conda_file_all,
         )
         ml_client.environments.create_or_update(env)
 

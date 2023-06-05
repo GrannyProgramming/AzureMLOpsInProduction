@@ -1,7 +1,6 @@
 # 1. Import the required libraries
 import json
 import yaml
-import logging
 import sys
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
@@ -12,19 +11,6 @@ ml_client = initialize_mlclient()
 # 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
     # Check if environment already exists with the same version
-    existing_env = ml_client.environments.get(name=env_config['name'], version=env_config.get('version'))
-    if existing_env:
-        logging.info(f"Environment {env_config['name']} with version {env_config.get('version')} already exists. Skipping...")
-        return
-
-    # if 'image' in env_config:
-        # env = Environment(
-        #     name=env_config['name'],
-        #     version=env_config.get('version'),
-        #     description=env_config.get('description'),
-        #     image=env_config['image'],
-        # )
-        # ml_client.environments.create_or_update(env)
 
     if 'build' in env_config:
         env = Environment(
@@ -56,7 +42,7 @@ def create_environment_from_json(env_config):
 
 # Check if the script is invoked with necessary arguments
 if len(sys.argv) < 2:
-    logging.error('No configuration file provided.')
+    print('No configuration file provided.')
     sys.exit(1)
 
 # Extract config file path

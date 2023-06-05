@@ -30,7 +30,7 @@ def create_environment_from_json(env_config):
     elif 'channels' in env_config and 'dependencies' in env_config:
         conda_dependencies = {
             'name': env_config['name'],
-            'channels': env_config['channels'],
+            'channels': env_config['channels'], 
             'dependencies': env_config['dependencies']
         }
 

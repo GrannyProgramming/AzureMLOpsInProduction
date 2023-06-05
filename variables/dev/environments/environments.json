@@ -28,8 +28,7 @@
                         "jupyter==1.0.0",
                         "ipykernel==6.4.1",
                         "papermill==2.3.3",
-                        "mldesigner==0.1.0b4",
-                        "mlops/utils/dist/loggingConfig-1.0.0-py3-none-any.whl"
+                        "mldesigner==0.1.0b4"
                     ]
                 }
             ]

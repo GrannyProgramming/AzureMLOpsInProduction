@@ -11,33 +11,14 @@ ml_client = initialize_mlclient()
 # 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
     # Check if environment already exists with the same version
+    try:
+        existing_env = ml_client.environments.get(name=env_config['name'], version=env_config['version'])
+        if existing_env:
+            print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists.")
+            return
+    except Exception as e:
+        print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
 
-    if 'build' in env_config:
-        env = Environment(
-            name=env_config['name'],
-            build=BuildContext(path=env_config['build']),
-            description=env_config.get('description')
-        )
-        ml_client.environments.create_or_update(env)
-
-    elif 'channels' in env_config and 'dependencies' in env_config:
-        conda_dependencies = {
-            'name': env_config['name'],
-            'channels': env_config['channels'],
-            'dependencies': env_config['dependencies']
-        }
-
-        conda_file_all = env_config['name'] + '.yml'
-        with open(conda_file_all, 'w') as file:
-            conda_file = yaml.dump(conda_dependencies, file)
-        
-        env = Environment(
-            image=env_config['image'],
-            name=env_config['name'],
-            version=env_config['version'],
-            conda_file=conda_file,
-        )
-        ml_client.environments.create_or_update(env)
 
 
 # Check if the script is invoked with necessary arguments

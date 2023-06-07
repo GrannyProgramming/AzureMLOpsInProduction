@@ -10,9 +10,6 @@ ml_client = initialize_mlclient()
 
 # Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
-    # Initialize version
-    new_version = '1'
-
     print(f"DEBUG: Environment configuration: {env_config}")
 
     # Check if environment already exists
@@ -23,11 +20,14 @@ def create_environment_from_json(env_config):
         # Sort by version number to get the latest version
         existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version), reverse=True)
         existing_env = existing_envs_sorted[0]  # The latest version
-        print(f"DEBUG: Existing environment:")
-    else:  # No existing environment, create new one
-        env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
-        print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-        new_version = str(int(new_version) + 1)  # Increment version
+        print(f"DEBUG: Existing environment: {existing_env.name} (version {existing_env.version})")
+    
+    # Increment version if there is an existing environment
+    if existing_env:
+        new_version = str(int(existing_env.version) + 1)
+    else:
+        new_version = '1'
+        print(f"DEBUG: No existing environment found, creating new environment with version: {new_version}")
 
     env = None
     if 'build' in env_config:
@@ -44,7 +44,7 @@ def create_environment_from_json(env_config):
             env = Environment(
                 name=env_config['name'],
                 build=build_context,
-                version=env_config['version'],
+                version=new_version,
                 description=env_config.get('description')
             )
 
@@ -70,20 +70,19 @@ def create_environment_from_json(env_config):
             # Compare dependencies
             if existing_conda_data and conda_dependencies != existing_conda_data:
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
-                # Increment version if dependencies do not match
-                existing_env.version = str(int(existing_env.version) + 1)
-                existing_env.conda_file = conda_file_all
                 env = existing_env
+                env.version = new_version
+                env.conda_file = conda_file_all
             else:
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
         else:
             env = Environment(
                 image=env_config['image'],
                 name=env_config['name'],
-                version=env_config['version'],
+                version=new_version,
                 conda_file=conda_file_all,
             )
-    
+
     if env is not None:
         ml_client.environments.create_or_update(env)
     else:

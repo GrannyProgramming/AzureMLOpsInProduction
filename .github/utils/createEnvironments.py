@@ -10,32 +10,34 @@ ml_client = initialize_mlclient()
 
 # 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
-    # Initialize version
-    new_version = '1'
-
-    # Check if environment already exists
+# Check if environment already exists
     try:
-        existing_env = ml_client.environments.get(name=env_config['name'], version=env_config['version'])
+        # Get all versions of the environment by name
+        existing_envs = ml_client.environments.list(env_config['name'])
 
-        if existing_env:
-            # If environment exists, set the new version to be the incremented version
-            new_version = str(int(existing_env.version) + 1)
+        if existing_envs:
+            # Sort by version number to get the latest version
+            existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version), reverse=True)
+            existing_env = existing_envs_sorted[0]  # The latest version
             
             if existing_env.conda_file == env_config.get('conda_file', '') and env_config['version'].lower() == 'auto':
-                print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists and dependencies are the same.")
+                print(f"Environment with name {env_config['name']} and version {existing_env.version} already exists and dependencies are the same.")
                 return
             elif env_config['version'].lower() != 'auto':
                 print(f"Warning: SKIPPING ENVIRONMENT CREATION - Environment {env_config['name']} version and name are same but dependencies have changed. Version is not set to 'auto', so version will not be incremented.")
                 return
+            elif not existing_env.conda_file:
+                print("Warning: The environment exists but there are no dependencies specified.")
+                return
             else:
                 print("Dependencies have changed or version is set to 'auto', incrementing version and updating environment.")
+                new_version = str(int(existing_env.version) + 1)  # Increment the version number
         elif env_config['version'].lower() != 'auto':
             # If environment doesn't exist and version is not auto, set new version as given version
             new_version = env_config['version']
 
     except Exception as e:
-        print(f"An error occurred: {str(e)}. Proceeding to creation/update...") 
-                
+        print(f"An error occurred: {str(e)}. Proceeding to creation/update...")                
     env = None
     if 'build' in env_config:
         env = Environment(

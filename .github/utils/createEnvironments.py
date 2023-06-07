@@ -62,10 +62,10 @@ def create_environment_from_json(env_config):
         # For version set to 'auto', check existing environment conda file
         if existing_env and env_config['version'] == 'auto':
             # Get existing conda file dependencies
-            existing_conda_data = existing_env.validate().conda_file
+            existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
 
             # Compare dependencies
-            if conda_dependencies != existing_conda_data:
+            if existing_conda_data and conda_dependencies != existing_conda_data:
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
                 # Increment version if dependencies do not match
                 existing_env.version = str(int(existing_env.version) + 1)

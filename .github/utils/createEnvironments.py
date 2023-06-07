@@ -36,8 +36,8 @@ def create_environment_from_json(env_config):
             new_version = env_config['version']
 
     except Exception as e:
-        print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
-
+        print(f"An error occurred: {str(e)}. Proceeding to creation/update...") 
+        
     env = None
     if 'build' in env_config:
         env = Environment(

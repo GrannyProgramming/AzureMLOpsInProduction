@@ -11,7 +11,8 @@ ml_client = initialize_mlclient()
 # 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
 # Check if environment already exists
-    try:
+    new_version = '1'  # Add this line
+    try:# Initialize version
         # Get all versions of the environment by name
         existing_envs = ml_client.environments.list(env_config['name'])
 

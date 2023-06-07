@@ -20,7 +20,8 @@ def create_environment_from_json(env_config):
     conda_file_all = env_config['dependencies']
 
     # Create a temporary file to hold the conda dependencies
-    with tempfile.NamedTemporaryFile(suffix='.yml', delete=False) as tmp_file:
+    # Create a temporary file to hold the conda dependencies
+    with tempfile.NamedTemporaryFile(suffix='.yml', delete=False, mode='w') as tmp_file:
         conda_file_path = tmp_file.name
         yaml.dump({'dependencies': conda_file_all}, tmp_file)
 

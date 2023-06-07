@@ -26,11 +26,7 @@ def create_environment_from_json(env_config):
     else:  # No existing environment, create new one
         env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-
-    # try:
-    # selected scenarios go here
-    # except Exception as e:
-
+        
     env = None
     if 'build' in env_config:
         # Build Context case
@@ -49,15 +45,6 @@ def create_environment_from_json(env_config):
                 version=env_config['version'],
                 description=env_config.get('description')
             )
-
-    elif 'image' in env_config:
-        print("DEBUG: Creating environment with image...")
-        env = Environment(
-            name=env_config['name'],
-            version=env_config['version'],
-            image=env_config['image'],
-            description=env_config.get('description')
-        )
 
     elif 'channels' in env_config and 'dependencies' in env_config:
         print("DEBUG: Creating environment with conda dependencies...")

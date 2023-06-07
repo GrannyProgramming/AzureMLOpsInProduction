@@ -6,7 +6,7 @@
             "channels": [
                 "conda-forge"
             ],
-            "version": "4",
+            "version": "auto",
             "dependencies": [
                 "python=3.8",
                 "pip=21.2.4",
@@ -39,7 +39,7 @@
             "channels": [
                 "conda-forge"
             ],
-            "version": "3",
+            "version": "auto",
             "dependencies": [
                 "python=3.8",
                 "pip=21.2.4",
@@ -68,7 +68,7 @@
         },
         {
             "name": "docker-build-example1",
-            "version": "4",
+            "version": "5",
             "build": "variables/dev/environments/dockerContexts/exDockerEnv",
             "description": "Environment created from a Build Docker context."
         }

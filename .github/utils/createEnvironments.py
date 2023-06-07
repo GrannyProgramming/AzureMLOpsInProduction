@@ -68,9 +68,12 @@ def create_environment_from_json(env_config):
             if conda_dependencies != existing_conda_data:
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
                 # Increment version if dependencies do not match
-                existing_env.version = str(int(existing_env.version) + 1)
-                existing_env.conda_file = conda_file_all
-                env = existing_env
+                env = Environment(
+                image=existing_env.image,
+                name=existing_env.name,
+                version=str(int(existing_env.version) + 1),
+                conda_file=conda_file_all,
+                )
             else:
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
         else:

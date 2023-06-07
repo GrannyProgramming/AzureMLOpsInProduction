@@ -92,5 +92,5 @@ with open(sys.argv[1], 'r') as json_file:
     data = json.load(json_file)
 
 # 5. Create environments for each item in the JSON configuration
-for env_config in data:
+for env_config in data["conda"]:
     create_environment_from_json(env_config)

@@ -1,5 +1,5 @@
 {
-    "environments": [
+    "conda": [
         {   
             "image":"mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
             "name": "conda_environment_example5",
@@ -61,7 +61,7 @@
                         "jupyter==1.0.0",
                         "ipykernel==6.4.1",
                         "papermill==2.3.3",
-                        "seaborn==0.11.2"
+                        "se aborn==0.11.2"
                     ]
                 }
             ]

@@ -52,7 +52,7 @@ def create_environment_from_json(env_config):
             'channels': env_config['channels'],
             'dependencies': env_config['dependencies']
         }
-        
+
         conda_file_all = env_config['name'] + '.yml'
         with open(conda_file_all, 'w') as file:
             yaml = ruamel.yaml.YAML()
@@ -62,7 +62,7 @@ def create_environment_from_json(env_config):
         # For version set to 'auto', check existing environment conda file
         if existing_env and env_config['version'] == 'auto':
             # Get existing conda file dependencies
-            existing_conda_data = existing_env.conda_file_all
+            existing_conda_data = existing_env.validate().conda_file
 
             # Compare dependencies
             if conda_dependencies != existing_conda_data:

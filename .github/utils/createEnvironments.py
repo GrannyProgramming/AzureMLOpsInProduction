@@ -15,10 +15,8 @@ def create_environment_from_json(env_config):
     # try:# Initialize version
         # Get all versions of the environment by name
     existing_envs = ml_client.environments.list(env_config['name'])
-    existing_envs_get = ml_client.environments.get(env_config['name'])
     for env in existing_envs:
         print("DEBUG: existing_envs: ", env)
-    print("DEBUG: existing_envs: ", existing_envs_get)
 
     #     if existing_envs:
     #         # Sort by version number to get the latest version

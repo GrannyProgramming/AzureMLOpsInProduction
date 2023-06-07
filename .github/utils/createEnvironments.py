@@ -1,50 +1,55 @@
 # 1. Import the required libraries
 import json
-import os
+import yaml
 import sys
-from azure.ai.ml.entities import Environment
-from azure.ai.ml import MlClient
+import os
+from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
 # 2. Configure workspace details and get a handle to the workspace
 print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
 
-# Helper function to check if an environment exists and create or update it if necessary
+# 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
-    # Check if environment exists
-    env_name = env_config["name"]
-    env_version = env_config["version"]
-    conda_file_all = env_config["dependencies"]
-    env = None
+    # Get the existing environments with the given name
+    existing_envs = list(ml_client.environments.list(env_config['name']))
+    conda_file_all = env_config['dependencies']
 
-    if Environment.exists(ml_client, env_name):
-        env = Environment.get(ml_client, env_name)
-        if env.version != env_version:
-            print(f"The version for {env_name} defined in the JSON file doesn't match with the one in AML environment.")
+    # Case 1: Environment doesn't exist
+    if len(existing_envs) == 0:
+        print(f"Creating new environment: {env_config['name']}")
+
+        if env_config['version'].lower() == 'auto':
+            version = '1'
         else:
-            print(f"The environment {env_name} with version {env_version} already exists in AML.")
-    else:
-        env = Environment(ml_client, env_name)
+            version = env_config['version']
 
-    # Check if the conda files match
-    if env.conda_file != conda_file_all:
-        print(f"The conda file for {env_name} defined in the JSON file doesn't match with the one in AML environment.")
-        if env_version == "auto":
-            # Auto-increment version
-            if env.version is None:
-                env.version = "1"
+        new_env = Environment(name=env_config['name'], version=version, conda_file=conda_file_all)
+        ml_client.environments.create_or_update(new_env)
+
+    else:
+        for existing_env in existing_envs:
+            # Case 2: Environment exists with a given version
+            if existing_env.version == env_config['version']:
+                print(f"Environment {env_config['name']} already exists with version {env_config['version']}")
+
+            # Case 3: Environment exists, version is 'auto', and conda_file differs
+            elif env_config['version'].lower() == 'auto' and existing_env.conda_file != conda_file_all:
+                print(f"Updating environment {env_config['name']} due to conda file mismatch.")
+
+                new_version = str(int(existing_env.version) + 1)  # increment version
+                updated_env = Environment(name=env_config['name'], version=new_version, conda_file=conda_file_all)
+                ml_client.environments.create_or_update(updated_env)
+
             else:
-                env.version = str(int(env.version) + 1)
-            env.conda_file = conda_file_all
-            print(f"The conda file for {env_name} has been updated to version {env.version} in AML environment.")
-        else:
-            env.conda_file = conda_file_all
-            print(f"The conda file for {env_name} has been updated to the specified version in the JSON file.")
+                print(f"No action needed for environment {env_config['name']} with version {env_config['version']}")
+    # If new environment created or updated, register it
+    if env:
+        print(f"DEBUG: Registering environment {env_config['name']} version {env_config['version']}")
+        env = ml_client.environments.create_or_update(env)
     else:
-        print(f"The conda file for {env_name} matches with the one in AML environment.")
-
-    env.save()
+        print(f"DEBUG: No changes to the environment {env_config['name']} detected")
 
 # 4. Load the environment configuration from a JSON file
 with open(sys.argv[1], 'r') as json_file:

@@ -96,5 +96,5 @@ print(f"DEBUG: Reading configuration file: {config_file_path}")
 with open(config_file_path, 'r') as f:
     config = json.load(f)
 
-for env_config in config['environments']:
+for env_config in config['conda']:
     create_environment_from_json(env_config)

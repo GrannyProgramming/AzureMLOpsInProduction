@@ -1,5 +1,4 @@
 import json
-import yaml
 import sys
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
@@ -56,7 +55,9 @@ def create_environment_from_json(env_config):
         
         conda_file_all = env_config['name'] + '.yml'
         with open(conda_file_all, 'w') as file:
-            yaml.dump(conda_dependencies, file, Dumper=ruamel.yaml.RoundTripDumper)
+            yaml = ruamel.yaml.YAML()
+            yaml.indent(mapping=2, sequence=4, offset=2)
+            yaml.dump(conda_dependencies, file)
 
         # For version set to 'auto', check existing environment conda file
         if existing_env and env_config['version'] == 'auto':
@@ -96,5 +97,5 @@ print(f"DEBUG: Reading configuration file: {config_file_path}")
 with open(config_file_path, 'r') as f:
     config = json.load(f)
 
-for env_config in config['conda']:
+for env_config in config['environments']:
     create_environment_from_json(env_config)

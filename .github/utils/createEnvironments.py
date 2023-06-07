@@ -78,6 +78,10 @@ def create_environment_from_json(env_config):
                 version=env_config['version'],
                 conda_file=conda_file,
             )
+    if env is not None:
+        ml_client.environments.create_or_update(env)
+    else:
+        print(f"Invalid configuration for environment {env_config['name']}")
 
 # Check if the script is invoked with necessary arguments
 if len(sys.argv) < 2:

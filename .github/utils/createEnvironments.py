@@ -1,68 +1,100 @@
-# 1. Import the required libraries
 import json
 import yaml
 import sys
-import os
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
+import ruamel.yaml
 
-# 2. Configure workspace details and get a handle to the workspace
+# Configure workspace details and get a handle to the workspace
 print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
 
-# 3. Define the function that creates environments according to their types specified in the JSON configuration
-import tempfile
-import shutil
-
+# Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
-    # Get the existing environments with the given name
+    new_version = '1'  # Initialize version
+    print(f"DEBUG: Environment configuration: {env_config}")
+
+    # Check if environment already exists
+    print("DEBUG: Checking if environment exists...")
     existing_envs = list(ml_client.environments.list(env_config['name']))
-    conda_file_all = env_config['dependencies']
+    existing_env = None
+    if existing_envs:
+        # Sort by version number to get the latest version
+        existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version), reverse=True)
+        existing_env = existing_envs_sorted[0]  # The latest version
+        print(f"DEBUG: Existing environment:")
+    else:  # No existing environment, create new one
+        env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
+        print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
+        
+    env = None
+    if 'build' in env_config:
+        # Build Context case
+        # Create build context
+        print("DEBUG: Creating build context...")
+        build_context = BuildContext(path=env_config['build'])
 
-    # Create a temporary file to hold the conda dependencies
-    # Create a temporary file to hold the conda dependencies
-    with tempfile.NamedTemporaryFile(suffix='.yml', delete=False, mode='w') as tmp_file:
-        conda_file_path = tmp_file.name
-        yaml.dump({'dependencies': conda_file_all}, tmp_file)
-
-    try:
-        # Case 1: Environment doesn't exist
-        if len(existing_envs) == 0:
-            print(f"Creating new environment: {env_config['name']}")
-
-            if env_config['version'].lower() == 'auto':
-                version = '1'
-            else:
-                version = env_config['version']
-
-            new_env = Environment(name=env_config['name'], version=version, conda_file=conda_file_path)
-            ml_client.environments.create_or_update(new_env)
-
+        # Compare existing AML build context with new build context
+        if existing_env and existing_env.build == build_context:
+            print(f"The build context for {env_config['name']} matches the existing one.")
         else:
-            for existing_env in existing_envs:
-                # Case 2: Environment exists with a given version
-                if existing_env.version == env_config['version']:
-                    print(f"Environment {env_config['name']} already exists with version {env_config['version']}")
+            print(f"The build context for {env_config['name']} does not match the existing one. Creating new environment...")
+            env = Environment(
+                name=env_config['name'],
+                build=build_context,
+                version=env_config['version'],
+                description=env_config.get('description')
+            )
 
-                # Case 3: Environment exists, version is 'auto', and conda_file differs
-                elif env_config['version'].lower() == 'auto' and existing_env.conda_file != conda_file_path:
-                    print(f"Updating environment {env_config['name']} due to conda file mismatch.")
+    elif 'channels' in env_config and 'dependencies' in env_config:
+        print("DEBUG: Creating environment with conda dependencies...")
+        conda_dependencies = {
+            'name': env_config['name'],
+            'channels': env_config['channels'],
+            'dependencies': env_config['dependencies']
+        }
+        
+        conda_file_all = env_config['name'] + '.yml'
+        with open(conda_file_all, 'w') as file:
+            yaml.dump(conda_dependencies, file, Dumper=ruamel.yaml.RoundTripDumper)
 
-                    new_version = str(int(existing_env.version) + 1)  # increment version
-                    updated_env = Environment(name=env_config['name'], version=new_version, conda_file=conda_file_path)
-                    ml_client.environments.create_or_update(updated_env)
+        # For version set to 'auto', check existing environment conda file
+        if existing_env and env_config['version'] == 'auto':
+            # Get existing conda file dependencies
+            existing_conda_data = existing_env.conda_file_all
 
-                else:
-                    print(f"No action needed for environment {env_config['name']} with version {env_config['version']}")
+            # Compare dependencies
+            if conda_dependencies != existing_conda_data:
+                print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+                # Increment version if dependencies do not match
+                existing_env.version = str(int(existing_env.version) + 1)
+                existing_env.conda_file = conda_file_all
+                env = existing_env
+            else:
+                print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+        else:
+            env = Environment(
+                name=env_config['name'],
+                version=env_config['version'],
+                conda_file=conda_file_all,
+            )
+    if env is not None:
+        ml_client.environments.create_or_update(env)
+    else:
+        print(f"Invalid configuration for environment {env_config['name']}")
 
-    finally:
-        # Delete the temporary file
-        os.unlink(conda_file_path)
+# Check if the script is invoked with necessary arguments
+if len(sys.argv) < 2:
+    print('No configuration file provided.')
+    sys.exit(1)
 
-# 4. Load the environment configuration from a JSON file
-with open(sys.argv[1], 'r') as json_file:
-    data = json.load(json_file)
+# Extract config file path
+config_file_path = sys.argv[1]
 
-# 5. Create environments for each item in the JSON configuration
-for env_config in data["conda"]:
+# Read the JSON configuration file and call the function defined above to create the environments
+print(f"DEBUG: Reading configuration file: {config_file_path}")
+with open(config_file_path, 'r') as f:
+    config = json.load(f)
+
+for env_config in config['environments']:
     create_environment_from_json(env_config)

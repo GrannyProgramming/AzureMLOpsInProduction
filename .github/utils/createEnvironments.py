@@ -2,6 +2,7 @@
 import json
 import yaml
 import sys
+import os
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
@@ -26,13 +27,21 @@ def create_environment_from_json(env_config):
     else:  # No existing environment, create new one
         env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-        
+
     env = None
     if 'build' in env_config:
         # Build Context case
         # Create build context
         print("DEBUG: Creating build context...")
-        build_context = BuildContext(path=env_config['build'])
+
+        # Ensure that the Docker context path is absolute
+        docker_context_path = os.path.join(os.getenv("GITHUB_WORKSPACE", ""), env_config['build'])
+
+        if not os.path.exists(docker_context_path):
+            print(f"ERROR: Docker context path {docker_context_path} does not exist.")
+            return
+
+        build_context = BuildContext(path=docker_context_path)
 
         # Compare existing AML build context with new build context
         if existing_env and existing_env.build == build_context:
@@ -68,33 +77,20 @@ def create_environment_from_json(env_config):
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
                 # Increment version if dependencies do not match
                 existing_env.version = str(int(existing_env.version) + 1)
-                existing_env.conda_file = conda_file_all
+                existing_env.conda_file_all = conda_file
                 env = existing_env
-            else:
-                print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-        else:
-            env = Environment(
-                name=env_config['name'],
-                version=env_config['version'],
-                conda_file=conda_file_all,
-            )
-    if env is not None:
-        ml_client.environments.create_or_update(env)
+
+    # If new environment created or updated, register it
+    if env:
+        print(f"DEBUG: Registering environment {env_config['name']} version {env_config['version']}")
+        env = ml_client.environments.create_or_update(env)
     else:
-        print(f"Invalid configuration for environment {env_config['name']}")
+        print(f"DEBUG: No changes to the environment {env_config['name']} detected")
 
-# Check if the script is invoked with necessary arguments
-if len(sys.argv) < 2:
-    print('No configuration file provided.')
-    sys.exit(1)
+# 4. Load the environment configuration from a JSON file
+with open(sys.argv[1], 'r') as json_file:
+    data = json.load(json_file)
 
-# Extract config file path
-config_file_path = sys.argv[1]
-
-# 4. Read the JSON configuration file and call the function defined in step 3 to create the environments
-print(f"DEBUG: Reading configuration file: {config_file_path}")
-with open(config_file_path, 'r') as f:
-    config = json.load(f)
-
-for env_config in config['environments']:
+# 5. Create environments for each item in the JSON configuration
+for env_config in data:
     create_environment_from_json(env_config)

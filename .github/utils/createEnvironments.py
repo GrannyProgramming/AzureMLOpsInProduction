@@ -17,11 +17,12 @@ def create_environment_from_json(env_config):
             if existing_env.image == env_config.get('image', '') and existing_env.conda_file == env_config.get('conda_file', ''):
                 print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists and dependencies are the same.")
                 return
-            elif env_config['version'].lower() == 'auto':
-                print("Dependencies have changed, incrementing version and updating environment.")
-                env_config['version'] = str(int(env_config['version']) + 1)
-            else:
+            elif env_config['version'].lower() != 'auto':
                 print(f"Warning: Environment {env_config['name']} version and name are same but dependencies have changed. Version is not set to 'auto', so version will not be incremented.")
+                return
+            else:
+                print("Dependencies have changed, incrementing version and updating environment.")
+                env_config['version'] = str(int(existing_env.version) + 1)
     except Exception as e:
         print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
 

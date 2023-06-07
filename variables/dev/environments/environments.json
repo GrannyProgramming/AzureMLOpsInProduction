@@ -2,7 +2,7 @@
     "environments": [
         {   
             "image":"mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
-            "name": "conda_environment_example2",
+            "name": "conda_environment_example3",
             "channels": [
                 "conda-forge"
             ],

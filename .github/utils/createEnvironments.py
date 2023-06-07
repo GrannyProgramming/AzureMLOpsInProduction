@@ -9,22 +9,28 @@ from workflowhelperfunc.workflowhelper import initialize_mlclient
 ml_client = initialize_mlclient()
 
 # 3. Define the function that creates environments according to their types specified in the JSON configuration
+# 3. Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
     # Check if environment already exists with the same version
     try:
-        existing_env = ml_client.environments.get(name=env_config['name'], version=env_config['version'])
-        if existing_env:
-            if existing_env.image == env_config.get('image', '') and existing_env.conda_file == env_config.get('conda_file', ''):
+        versions = ml_client.environments.list_versions(env_config['name'])
+        existing_versions = sorted([version.version for version in versions])
+        if existing_versions:
+            existing_env = ml_client.environments.get(name=env_config['name'], version=existing_versions[-1])
+            if existing_env and existing_env.conda_file == env_config.get('conda_file', '') and env_config['version'].lower() == 'auto':
                 print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists and dependencies are the same.")
                 return
-            elif env_config['version'].lower() != 'auto':
+            elif env_config['version'].lower() == 'auto':
+                print("Dependencies have changed or version is set to 'auto', incrementing version and updating environment.")
+                env_config['version'] = str(int(existing_versions[-1]) + 1)
+            else:
                 print(f"Warning: SKIPPING ENVIRONMENT CREATION - Environment {env_config['name']} version and name are same but dependencies have changed. Version is not set to 'auto', so version will not be incremented.")
                 return
-            else:
-                print("Dependencies have changed, incrementing version and updating environment.")
-                env_config['version'] = str(int(existing_env.version) + 1)
+        elif env_config['version'].lower() == 'auto':
+            env_config['version'] = '1'
     except Exception as e:
         print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
+
 
     env = None
     if 'build' in env_config:

@@ -22,7 +22,7 @@ def create_environment_from_json(env_config):
         # Sort by version number to get the latest version
         existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version), reverse=True)
         existing_env = existing_envs_sorted[0]  # The latest version
-        print(f"DEBUG: Existing environment: {existing_env}")
+        print(f"DEBUG: Existing environment:")
     else:  # No existing environment, create new one
         env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
@@ -61,14 +61,14 @@ def create_environment_from_json(env_config):
         # For version set to 'auto', check existing environment conda file
         if existing_env and env_config['version'] == 'auto':
             # Get existing conda file dependencies
-            existing_conda_data = existing_env.conda_file
+            existing_conda_data = existing_env.conda_file_all
 
             # Compare dependencies
             if conda_dependencies != existing_conda_data:
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
                 # Increment version if dependencies do not match
                 existing_env.version = str(int(existing_env.version) + 1)
-                existing_env.conda_file = conda_file
+                existing_env.conda_file = conda_file_all
                 env = existing_env
             else:
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
@@ -76,7 +76,7 @@ def create_environment_from_json(env_config):
             env = Environment(
                 name=env_config['name'],
                 version=env_config['version'],
-                conda_file=conda_file,
+                conda_file=conda_file_all,
             )
     if env is not None:
         ml_client.environments.create_or_update(env)

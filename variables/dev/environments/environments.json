@@ -61,7 +61,7 @@
                         "jupyter==1.0.0",
                         "ipykernel==6.4.1",
                         "papermill==2.3.3",
-                        "se aborn==0.11.2"
+                        "seaborn==0.11.2"
                     ]
                 }
             ]

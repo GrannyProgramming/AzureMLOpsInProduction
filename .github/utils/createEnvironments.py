@@ -10,7 +10,9 @@ ml_client = initialize_mlclient()
 
 # Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
-    new_version = '1'  # Initialize version
+    # Initialize version
+    new_version = '1'
+
     print(f"DEBUG: Environment configuration: {env_config}")
 
     # Check if environment already exists
@@ -25,7 +27,8 @@ def create_environment_from_json(env_config):
     else:  # No existing environment, create new one
         env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-        
+        new_version = str(int(new_version) + 1)  # Increment version
+
     env = None
     if 'build' in env_config:
         # Build Context case
@@ -80,6 +83,7 @@ def create_environment_from_json(env_config):
                 version=env_config['version'],
                 conda_file=conda_file_all,
             )
+    
     if env is not None:
         ml_client.environments.create_or_update(env)
     else:

@@ -14,10 +14,7 @@ def create_environment_from_json(env_config):
     try:
         existing_env = ml_client.environments.get(name=env_config['name'], version=env_config['version'])
         if existing_env:
-            existing_deps = existing_env.conda_file.get('dependencies', [])
-            new_deps = env_config.get('dependencies', [])
-
-            if existing_deps == new_deps:
+            if existing_env.image == env_config.get('image', '') and existing_env.conda_file == env_config.get('conda_file', ''):
                 print(f"Environment with name {env_config['name']} and version {env_config['version']} already exists and dependencies are the same.")
                 return
             else:
@@ -26,14 +23,21 @@ def create_environment_from_json(env_config):
     except Exception as e:
         print("Environment does not exist or an error occurred while fetching it. Proceeding to creation/update...")
 
+    env = None
     if 'build' in env_config:
         env = Environment(
             name=env_config['name'],
             build=BuildContext(path=env_config['build']),
+            version=env_config['version'],
             description=env_config.get('description')
         )
-        ml_client.environments.create_or_update(env)
-
+    elif 'image' in env_config:
+        env = Environment(
+            name=env_config['name'],
+            version=env_config['version'],
+            image=env_config['image'],
+            description=env_config.get('description')
+        )
     elif 'channels' in env_config and 'dependencies' in env_config:
         conda_dependencies = {
             'name': env_config['name'],
@@ -46,12 +50,15 @@ def create_environment_from_json(env_config):
             conda_file = yaml.dump(conda_dependencies, file)
         
         env = Environment(
-            image=env_config['image'],
             name=env_config['name'],
             version=env_config['version'],
             conda_file=conda_file_all,
         )
+        
+    if env is not None:
         ml_client.environments.create_or_update(env)
+    else:
+        print(f"Invalid configuration for environment {env_config['name']}")
 
 
 # Check if the script is invoked with necessary arguments

@@ -3,7 +3,7 @@ import mltable
 from pathlib import Path
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
-
+## This logic needs to be reviewed and updated, don't think deleting a file is the right way to go
 def create_directories(save_dir, logger):
     """
     Create necessary directories.

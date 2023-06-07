@@ -75,7 +75,7 @@ def create_environment_from_json(env_config):
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
         else:
             env = Environment(
-                image=env_config.get('image'),
+                image=env_config['image'],
                 name=env_config['name'],
                 version=env_config['version'],
                 conda_file=conda_file_all,

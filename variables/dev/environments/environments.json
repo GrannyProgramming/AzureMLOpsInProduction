@@ -9,7 +9,7 @@
             "version": "auto",
             "dependencies": [
                 "python=3.8",
-                "pip=21.2.4",
+                "pip=21.2.4", 
                 {
                     "pip": [
                         "numpy==1.21.2",

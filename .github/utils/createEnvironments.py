@@ -82,16 +82,22 @@ def create_environment_from_json(env_config):
             # Check if the versions are the same
             if env_config['version'] == existing_env.version:
                 # Get existing conda file dependencies
-                existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
+                # Get existing conda file dependencies
+                existing_conda_data = existing_env.validate() if existing_env else None
 
                 # Compare dependencies
-                if existing_conda_data is not None and deep_equal(conda_dependencies, existing_conda_data):
-                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-                    return False  # Return False as a signal to continue to the next environment
-                else:
-                    print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+                if existing_conda_data is not None and 'dependencies' in existing_conda_data:
+                    if deep_equal(conda_dependencies, existing_conda_data):
+                        print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                        return False  # Return False as a signal to continue to the next environment
+                    else:
+                        print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+
                     if env_config['version'] == 'auto':
-                        new_version = str(int(existing_env.version) + 1)
+                        if existing_env:
+                            new_version = str(int(existing_env.version) + 1)
+                        else:
+                            new_version = '1'
                     else:
                         new_version = env_config['version']
                     env = Environment(

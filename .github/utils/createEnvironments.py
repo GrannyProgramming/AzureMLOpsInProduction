@@ -7,6 +7,24 @@ import ruamel.yaml
 # Configure workspace details and get a handle to the workspace
 print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
+def deep_equal(a, b):
+    if type(a) != type(b):
+        return False
+    if isinstance(a, dict):
+        if len(a) != len(b):
+            return False
+        for key in a:
+            if key not in b or not deep_equal(a[key], b[key]):
+                return False
+    elif isinstance(a, list):
+        if len(a) != len(b):
+            return False
+        for item in a:
+            if item not in b:
+                return False
+    else:
+        return a == b
+    return True
 
 # Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
@@ -67,7 +85,7 @@ def create_environment_from_json(env_config):
                 existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
 
                 # Compare dependencies
-                if existing_conda_data is not None and conda_dependencies == existing_conda_data:
+                if existing_conda_data is not None and deep_equal(conda_dependencies, existing_conda_data):
                     print(f"The conda dependencies for {env_config['name']} match the existing ones.")
                     return False  # Return False as a signal to continue to the next environment
                 else:

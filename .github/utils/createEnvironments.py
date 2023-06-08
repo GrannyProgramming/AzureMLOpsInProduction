@@ -11,11 +11,14 @@ ml_client = initialize_mlclient()
 import hashlib
 
 def get_conda_spec(env):
-    conda_spec = {
-        'channels': env.channels,
-        'dependencies': env.validate()['dependencies']
+    conda_spec = env.validate()
+    conda_channels = conda_spec['channels']
+    conda_dependencies = conda_spec['dependencies']
+    conda_data = {
+        'channels': conda_channels,
+        'dependencies': conda_dependencies
     }
-    return hashlib.md5(str(conda_spec).encode()).hexdigest()
+    return hashlib.md5(str(conda_data).encode()).hexdigest()
 
 def deep_equal(a, b):
     if type(a) != type(b):
@@ -98,7 +101,7 @@ def create_environment_from_json(env_config):
             existing_conda_spec = get_conda_spec(existing_env)
 
             # Compare conda environment specifications
-            new_conda_spec = get_conda_spec(conda_dependencies)
+            new_conda_spec = get_conda_spec(env)
             if existing_conda_spec == new_conda_spec:
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
                 return False  # Return False as a signal to continue to the next environment

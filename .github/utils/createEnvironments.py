@@ -45,7 +45,7 @@ def create_environment_from_json(env_config):
                 description=env_config.get('description')
             )
 
-    elif 'channels' in env_config and 'dependencies' in env_config:
+    if 'channels' in env_config and 'dependencies' in env_config:
         print("DEBUG: Creating environment with conda dependencies...")
         conda_dependencies = {
             'name': env_config['name'],
@@ -59,15 +59,14 @@ def create_environment_from_json(env_config):
             yaml.indent(mapping=2, sequence=4, offset=2)
             yaml.dump(conda_dependencies, file)
 
-        # For version set to 'auto', check existing environment conda file
         if existing_env:
             # Get existing conda file dependencies
             existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
 
-            # Compare dependencies
-            if sorted(conda_dependencies['dependencies']) == sorted(existing_conda_data['dependencies']):
+            # Convert all elements to strings before comparing
+            if sorted(map(str, conda_dependencies['dependencies'])) == sorted(map(str, existing_conda_data['dependencies'])):
                 print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-                return False  # Return False as a signal to continue to the next environment
+                return False  
             else:
                 print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
                 if env_config['version'] == 'auto':

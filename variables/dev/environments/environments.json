@@ -39,7 +39,7 @@
             "channels": [
                 "conda-forge"
             ],
-            "version": "3",
+            "version": "4",
             "dependencies": [
                 "python=3.8",
                 "pip=21.2.4",

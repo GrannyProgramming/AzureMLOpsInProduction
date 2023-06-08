@@ -48,7 +48,7 @@ def create_environment_from_json(env_config):
         existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version), reverse=True)
         existing_env = existing_envs_sorted[0]  # The latest version
         print(f"DEBUG: Existing environment:")
-        existing_conda_data = existing_env.validate() if existing_env else None
+        existing_conda_data = existing_env.validate() 
         if existing_conda_data is not None and 'dependencies' in existing_conda_data:
             print(f"DEBUG: Existing environment dependencies: {existing_conda_data['dependencies']}")
         else:

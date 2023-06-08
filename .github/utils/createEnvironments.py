@@ -25,7 +25,7 @@ def create_environment_from_json(env_config):
     else:  # No existing environment, create new one
         env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-        
+
     env = None
     if 'build' in env_config:
         # Build Context case
@@ -45,7 +45,7 @@ def create_environment_from_json(env_config):
                 description=env_config.get('description')
             )
 
-    if 'channels' in env_config and 'dependencies' in env_config:
+    elif 'channels' in env_config and 'dependencies' in env_config:
         print("DEBUG: Creating environment with conda dependencies...")
         conda_dependencies = {
             'name': env_config['name'],
@@ -59,20 +59,32 @@ def create_environment_from_json(env_config):
             yaml.indent(mapping=2, sequence=4, offset=2)
             yaml.dump(conda_dependencies, file)
 
+        # For version set to 'auto', check existing environment conda file
         if existing_env:
-            # Get existing conda file dependencies
-            existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
+            # Check if the versions are the same
+            if env_config['version'] == existing_env.version:
+                # Get existing conda file dependencies
+                existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
 
-            # Convert all elements to strings before comparing
-            if sorted(map(str, conda_dependencies['dependencies'])) == sorted(map(str, existing_conda_data['dependencies'])):
-                print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-                return False  
-            else:
-                print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
-                if env_config['version'] == 'auto':
-                    new_version = str(int(existing_env.version) + 1)
+                # Compare dependencies
+                if existing_conda_data is not None and conda_dependencies == existing_conda_data:
+                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                    return False  # Return False as a signal to continue to the next environment
                 else:
-                    new_version = env_config['version']
+                    print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+                    if env_config['version'] == 'auto':
+                        new_version = str(int(existing_env.version) + 1)
+                    else:
+                        new_version = env_config['version']
+                    env = Environment(
+                        image=existing_env.image,
+                        name=existing_env.name,
+                        version=new_version,
+                        conda_file=conda_file_all,
+                    )
+            else:
+                # Version is different, create new environment with new version
+                new_version = str(int(existing_env.version) + 1) if env_config['version'] == 'auto' else env_config['version']
                 env = Environment(
                     image=existing_env.image,
                     name=existing_env.name,

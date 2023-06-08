@@ -12,6 +12,8 @@ import hashlib
 
 def get_conda_spec(env):
     conda_spec = env.validate()
+    if conda_spec is None:
+        return {}
     conda_channels = conda_spec['channels']
     conda_dependencies = conda_spec['dependencies']
     conda_data = {

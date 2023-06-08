@@ -44,17 +44,17 @@ def create_environment_from_json(env_config):
     print(f"DEBUG: Environment configuration: {env_config}")
 
     print("DEBUG: Checking if environment exists...")
-    existing_envs = list(ml_client.environments.list(env_config['name']))
-    existing_env = None
-    if existing_envs:
-        existing_envs_sorted = sorted(existing_envs, key=lambda e: int(e.version.split(':')[-1] if ':' in e.version else e.version), reverse=True)
-        existing_env = existing_envs_sorted[0]
-        print(f"DEBUG: Existing environment:")
-    else:
-        env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
-        print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-
-    env = None
+    try:
+        existing_env = ml_client.environments.get(env_config['name'], latest=True)
+        if existing_env is None:
+            print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
+            env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
+        else:
+            print(f"DEBUG: Existing environment found: {existing_env.name}")
+    except Exception as e:
+        print(f"ERROR: An error occurred while trying to get the environment: {e}")
+        existing_env = None
+        
     if 'build' in env_config:
         # Build Context case
         # Create build context

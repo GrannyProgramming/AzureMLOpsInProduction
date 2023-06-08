@@ -130,10 +130,19 @@ def create_environment_from_json(env_config):
             )
             ml_client.environments.create_or_update(env)
 
-def main(argv):
-    with open(argv[1]) as f:
-        env_config = json.load(f)
-    create_environment_from_json(env_config)
 
-if __name__ == "__main__":
-    main(sys.argv)
+if len(sys.argv) < 2:
+    print('No configuration file provided.')
+    sys.exit(1)
+
+# Extract config file path
+config_file_path = sys.argv[1]
+
+# Read the JSON configuration file and call the function defined above to create the environments
+print(f"DEBUG: Reading configuration file: {config_file_path}")
+with open(config_file_path, 'r') as f:
+    config = json.load(f)
+
+for env_config in config['conda']:
+    if not create_environment_from_json(env_config):  # if the function returns False, continue to the next environment
+        continue

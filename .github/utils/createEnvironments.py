@@ -8,6 +8,15 @@ import ruamel.yaml
 print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
 
+import hashlib
+
+def get_conda_spec(env):
+    conda_spec = {
+        'channels': env.channels,
+        'dependencies': env.validate()['dependencies']
+    }
+    return hashlib.md5(str(conda_spec).encode()).hexdigest()
+
 def deep_equal(a, b):
     if type(a) != type(b):
         return False
@@ -86,13 +95,13 @@ def create_environment_from_json(env_config):
 
         # For version set to 'auto', check existing environment conda file and dependencies
         if existing_env and env_config['version'] == 'auto':
-            existing_conda_data = existing_env.validate() if existing_env else None
+            existing_conda_spec = get_conda_spec(existing_env)
 
-            # Compare dependencies
-            if existing_conda_data is not None and 'dependencies' in existing_conda_data:
-                if deep_equal(conda_dependencies['dependencies'], existing_conda_data['dependencies']):
-                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-                    return False  # Return False as a signal to continue to the next environment
+            # Compare conda environment specifications
+            new_conda_spec = get_conda_spec(conda_dependencies)
+            if existing_conda_spec == new_conda_spec:
+                print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                return False  # Return False as a signal to continue to the next environment
 
         # Version is different or not 'auto', create new environment with new version
         new_version = str(int(existing_env.version) + 1) if env_config['version'] == 'auto' else env_config['version']

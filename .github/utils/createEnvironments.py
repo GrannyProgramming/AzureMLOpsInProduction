@@ -20,12 +20,18 @@ def deep_equal(a, b):
     elif isinstance(a, list):
         if len(a) != len(b):
             return False
-        for item in a:
-            if item not in b:
-                return False
+        # For 'pip' dependencies, use sets for comparison
+        if all(isinstance(item, dict) for item in a) and all('pip' in item for item in a):
+            a_pip_deps = set(a[0]['pip'])  # Assuming only one 'pip' item in the list
+            b_pip_deps = set(b[0]['pip'])  # Assuming only one 'pip' item in the list
+            return a_pip_deps == b_pip_deps
+        # For other dependencies, use sets for comparison
+        else:
+            return set(a) == set(b)
     else:
         return a == b
     return True
+
 
 # Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):

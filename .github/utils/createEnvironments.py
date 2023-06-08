@@ -72,23 +72,25 @@ def create_environment_from_json(env_config):
                     return False  # Return False as a signal to continue to the next environment
                 else:
                     print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+                    if env_config['version'] == 'auto':
+                        new_version = str(int(existing_env.version) + 1)
+                    else:
+                        new_version = env_config['version']
+                    env = Environment(
+                        image=existing_env.image,
+                        name=existing_env.name,
+                        version=new_version,
+                        conda_file=conda_file_all,
+                    )
             else:
                 # Version is different, create new environment with new version
+                new_version = str(int(existing_env.version) + 1) if env_config['version'] == 'auto' else env_config['version']
                 env = Environment(
                     image=existing_env.image,
                     name=existing_env.name,
-                    version=str(int(existing_env.version) + 1),
+                    version=new_version,
                     conda_file=conda_file_all,
                 )
-        else:
-            # No existing environment, create new one
-            env = Environment(
-                image=env_config['image'],
-                name=env_config['name'],
-                version=env_config['version'],
-                conda_file=conda_file_all,
-            )
-
         if env is not None:
             ml_client.environments.create_or_update(env)
         else:

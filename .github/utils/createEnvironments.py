@@ -60,33 +60,40 @@ def create_environment_from_json(env_config):
             yaml.dump(conda_dependencies, file)
 
         # For version set to 'auto', check existing environment conda file
-        if existing_env and env_config['version'] == 'auto':
-            # Get existing conda file dependencies
-            existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
+        if existing_env:
+            # Check if the versions are the same
+            if env_config['version'] == existing_env.version:
+                # Get existing conda file dependencies
+                existing_conda_data = existing_env.validate().conda_file if existing_env.validate() else None
 
-            # Compare dependencies
-            if conda_dependencies != existing_conda_data:
-                print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
-                # Increment version if dependencies do not match
-                env = Environment(
-                image=existing_env.image,
-                name=existing_env.name,
-                version=str(int(existing_env.version) + 1),
-                conda_file=conda_file_all,
-                )
+                # Compare dependencies
+                if conda_dependencies == existing_conda_data:
+                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                    return False  # Return False as a signal to continue to the next environment
+                else:
+                    print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
             else:
-                print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                # Version is different, create new environment with new version
+                env = Environment(
+                    image=existing_env.image,
+                    name=existing_env.name,
+                    version=str(int(existing_env.version) + 1),
+                    conda_file=conda_file_all,
+                )
         else:
+            # No existing environment, create new one
             env = Environment(
                 image=env_config['image'],
                 name=env_config['name'],
                 version=env_config['version'],
                 conda_file=conda_file_all,
             )
-    if env is not None:
-        ml_client.environments.create_or_update(env)
-    else:
-        print(f"Invalid configuration for environment {env_config['name']}")
+
+        if env is not None:
+            ml_client.environments.create_or_update(env)
+        else:
+            print(f"Invalid configuration for environment {env_config['name']}")
+        return True
 
 # Check if the script is invoked with necessary arguments
 if len(sys.argv) < 2:
@@ -102,4 +109,5 @@ with open(config_file_path, 'r') as f:
     config = json.load(f)
 
 for env_config in config['conda']:
-    create_environment_from_json(env_config)
+    if not create_environment_from_json(env_config):  # if the function returns False, continue to the next environment
+        continue

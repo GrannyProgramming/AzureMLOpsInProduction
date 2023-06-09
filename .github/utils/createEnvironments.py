@@ -4,6 +4,8 @@ from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 import ruamel.yaml
 
+
+
 # Configure workspace details and get a handle to the workspace
 print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
@@ -53,7 +55,7 @@ def create_environment_from_json(env_config):
 
     print("DEBUG: Checking if environment exists...")
     try:
-        existing_env = get_environment(ml_client, env_config['name'])
+        existing_env = ml_client.environments.get(env_config['name'], latest=True)
         if existing_env is None:
             print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
             env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
@@ -62,6 +64,16 @@ def create_environment_from_json(env_config):
     except Exception as e:
         print(f"ERROR: An error occurred while trying to get the environment: {e}")
         existing_env = None
+
+    # Use .python.conda_dependencies.serialize_to_string() instead of .validate() here
+    if existing_env:
+        existing_conda_data = existing_env.python.conda_dependencies.serialize_to_string() if existing_env else None
+    else:
+        existing_conda_data = None
+
+    if existing_conda_data is not None:
+        yaml = ruamel.yaml.YAML()
+        existing_conda_data = yaml.load(existing_conda_data)
 
     if 'build' in env_config:
         # Build Context case

@@ -13,6 +13,14 @@ def get_env_name_without_version(name_with_version):
         return name_with_version.split(':')[0]
     return name_with_version
 
+def get_environment(ml_client, env_name):
+    env_list = ml_client.environments.list()
+    for env in env_list:
+        if env.name == env_name:
+            return env
+    return None
+
+
 def deep_equal(a, b):
     if type(a) != type(b):
         return False
@@ -45,7 +53,7 @@ def create_environment_from_json(env_config):
 
     print("DEBUG: Checking if environment exists...")
     try:
-        existing_env = ml_client.environments.get(env_config['name'], latest=True)
+        existing_env = get_environment(ml_client, env_config['name'])
         if existing_env is None:
             print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
             env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
@@ -54,7 +62,7 @@ def create_environment_from_json(env_config):
     except Exception as e:
         print(f"ERROR: An error occurred while trying to get the environment: {e}")
         existing_env = None
-        
+
     if 'build' in env_config:
         # Build Context case
         # Create build context

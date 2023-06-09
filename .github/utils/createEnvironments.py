@@ -55,7 +55,8 @@ def create_environment_from_json(env_config):
 
     print("DEBUG: Checking if environment exists...")
     try:
-        existing_env = ml_client.environments.get(env_config['name'], latest=True)
+        # Use get_environment() instead of .get()
+        existing_env = get_environment(ml_client, env_config['name'])
         if existing_env is None:
             print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
             env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
@@ -74,6 +75,7 @@ def create_environment_from_json(env_config):
     if existing_conda_data is not None:
         yaml = ruamel.yaml.YAML()
         existing_conda_data = yaml.load(existing_conda_data)
+
 
     if 'build' in env_config:
         # Build Context case

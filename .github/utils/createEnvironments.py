@@ -58,7 +58,7 @@ def create_environment_from_json(env_config):
             env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         else:
             print(f"DEBUG: Existing environment found: {existing_env.name} with version: {existing_env.version}")
-            env = ml_client.environments.get(name=existing_env.name, version=existing_env.version)
+            env = ml_client.environments.get(name=existing_env.name, version="latest")
             print("existing_env:", env)
     except Exception as e:
         print(f"ERROR: An error occurred while trying to get the environment: {e}")

@@ -22,7 +22,6 @@ def get_environment(ml_client, env_name):
             return env
     return None
 
-
 def deep_equal(a, b):
     if type(a) != type(b):
         return False
@@ -64,6 +63,12 @@ def create_environment_from_json(env_config):
     except Exception as e:
         print(f"ERROR: An error occurred while trying to get the environment: {e}")
         existing_env = None
+
+    # Extract conda dependencies directly from the 'conda_file' attribute
+    if existing_env:
+        existing_conda_data = existing_env.conda_file if existing_env else None
+    else:
+        existing_conda_data = None
 
     # Extract conda dependencies directly from the 'environment_variables' attribute
     if existing_env:

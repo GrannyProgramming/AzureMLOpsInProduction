@@ -26,6 +26,8 @@ def flatten_dependencies(dependencies):
 
 def environment_exists_and_same_version(ml_client, env_config):
     existing_env = get_environment(ml_client, env_config['name'])
+    existing_env = ml_client.environments.get(name=existing_env.name, version=existing_env.latest_version)
+
     if existing_env and existing_env.latest_version == env_config['version']:
         print(f"Environment {existing_env.name} with version {existing_env.latest_version} already exists in AML.")
         conda_env_dependencies = flatten_dependencies(existing_env.conda_file.get('dependencies'))
@@ -39,6 +41,7 @@ def environment_exists_and_same_version(ml_client, env_config):
 
 def environment_exists_and_auto_version(ml_client, env_config):
     existing_env = get_environment(ml_client, env_config['name'])
+    existing_env = ml_client.environments.get(name=existing_env.name, version=existing_env.latest_version)
     if existing_env and env_config['version'] == 'auto':
         print(f"Environment {existing_env.name} with version {existing_env.latest_version} and set to 'auto' exists in AML.")
         conda_env_dependencies = flatten_dependencies(existing_env.conda_file.get('dependencies'))

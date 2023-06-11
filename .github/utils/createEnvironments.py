@@ -77,7 +77,8 @@ def create_environment_from_json(env_config):
 
         if existing_env:
             existing_conda_data = existing_env.validate() if existing_env else None
-
+            env = ml_client.environments.get(name=existing_env.name, version=existing_env.version)
+            print("existing_env:", env)
             if existing_conda_data is not None and 'dependencies' in existing_conda_data:
                 if deep_equal(conda_dependencies['dependencies'], existing_conda_data['dependencies']):
                     print(f"The conda dependencies for {env_config['name']} match the existing ones.")

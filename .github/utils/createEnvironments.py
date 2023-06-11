@@ -70,12 +70,6 @@ def create_environment_from_json(env_config):
     else:
         existing_conda_data = None
 
-    # Extract conda dependencies directly from the 'environment_variables' attribute
-    if existing_env:
-        existing_conda_data = existing_env.environment_variables if existing_env else None
-    else:
-        existing_conda_data = None
-
     if existing_conda_data is not None:
         yaml = ruamel.yaml.YAML()
         existing_conda_data = yaml.load(existing_conda_data)

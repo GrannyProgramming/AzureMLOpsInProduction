@@ -58,6 +58,8 @@ def create_environment_from_json(env_config):
             env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
         else:
             print(f"DEBUG: Existing environment found: {existing_env.name}")
+            env = ml_client.environment`s.get(name=existing_env.name, version=existing_env.version)
+            print("existing_env:", env)
     except Exception as e:
         print(f"ERROR: An error occurred while trying to get the environment: {e}")
 
@@ -77,8 +79,6 @@ def create_environment_from_json(env_config):
 
         if existing_env:
             existing_conda_data = existing_env.validate() if existing_env else None
-            env = ml_client.environments.get(name=existing_env.name, version=existing_env.version)
-            print("existing_env:", env)
             if existing_conda_data is not None and 'dependencies' in existing_conda_data:
                 if deep_equal(conda_dependencies['dependencies'], existing_conda_data['dependencies']):
                     print(f"The conda dependencies for {env_config['name']} match the existing ones.")

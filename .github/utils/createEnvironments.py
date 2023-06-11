@@ -42,7 +42,7 @@ def create_or_update_environment(ml_client, env_config):
     env = Environment(**prepare_env_config(env_config, new_version))
     ml_client.environments.create_or_update(env)
 
-
+ 
 def main():
     if len(sys.argv) < 2:
         print('No configuration file provided.')

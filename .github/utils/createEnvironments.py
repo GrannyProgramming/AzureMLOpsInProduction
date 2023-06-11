@@ -1,17 +1,10 @@
-import json
 import sys
 from azure.ai.ml.entities import Environment, BuildContext
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 import ruamel.yaml
+import json
 
-# Configure workspace details and get a handle to the workspace
-print("DEBUG: Initializing ml client...")
 ml_client = initialize_mlclient()
-
-def get_env_name_without_version(name_with_version):
-    if ':' in name_with_version:
-        return name_with_version.split(':')[0]
-    return name_with_version
 
 def get_environment(ml_client, env_name):
     env_list = ml_client.environments.list()
@@ -20,104 +13,71 @@ def get_environment(ml_client, env_name):
             return env
     return None
 
-def deep_equal(a, b):
-    if type(a) != type(b):
-        return False
-    if isinstance(a, dict):
-        if len(a) != len(b):
-            return False
-        for key in a:
-            if key not in b or not deep_equal(a[key], b[key]):
-                return False
-    elif isinstance(a, list):
-        if len(a) != len(b):
-            return False
-        # For 'pip' dependencies, use sets for comparison
-        if all(isinstance(item, dict) for item in a) and all('pip' in item for item in a):
-            a_pip_deps = set(a[0]['pip'])  # Assuming only one 'pip' item in the list
-            b_pip_deps = set(b[0]['pip'])  # Assuming only one 'pip' item in the list
-            return a_pip_deps == b_pip_deps
-        # For other dependencies, use sets for comparison
+def flatten_dependencies(dependencies):
+    flat_dependencies = []
+    for dep in dependencies:
+        if isinstance(dep, str):
+            flat_dependencies.append(dep)
+        elif isinstance(dep, dict):
+            for key, values in dep.items():
+                flat_dependencies.append(key)
+                flat_dependencies.extend(values)
+    return flat_dependencies
+
+def environment_exists_and_same_version(ml_client, env_config):
+    existing_env = get_environment(ml_client, env_config['name'])
+    if existing_env and existing_env.version == env_config['version']:
+        print(f"Environment {existing_env.name} with version {existing_env.version} already exists in AML.")
+        conda_env_dependencies = flatten_dependencies(existing_env.conda_file.get('dependencies'))
+        json_env_dependencies = flatten_dependencies(env_config.get('dependencies'))
+        if conda_env_dependencies == json_env_dependencies:
+            print("Conda dependencies in AML and JSON config are the same.")
         else:
-            return set(a) == set(b)
-    else:
-        return a == b
-    return True
+            print("Conda dependencies in AML and JSON config are different.")
+        return True
+    return False
 
-# Define the function that creates environments according to their types specified in the JSON configuration
-def create_environment_from_json(env_config):
-    new_version = '1'
-    env = None  # Initialize env variable
-    print(f"DEBUG: Environment configuration: {env_config}")
-
-    print("DEBUG: Checking if environment exists...")
-    existing_env = None
-    try:
-        existing_env = get_environment(ml_client, env_config['name'])
-        existing_env = ml_client.environments.get(name=existing_env.name, version=existing_env.latest_version)
-        if existing_env is None:
-            print(f"DEBUG: No existing environment found, creating new environment with version: {env_config['version']}")
-            env_config['version'] = new_version if env_config['version'] == 'auto' else env_config['version']
+def environment_exists_and_auto_version(ml_client, env_config):
+    existing_env = get_environment(ml_client, env_config['name'])
+    if existing_env and env_config['version'] == 'auto':
+        print(f"Environment {existing_env.name} with version 'auto' exists in AML.")
+        conda_env_dependencies = flatten_dependencies(existing_env.conda_file.get('dependencies'))
+        json_env_dependencies = flatten_dependencies(env_config.get('dependencies'))
+        if conda_env_dependencies == json_env_dependencies:
+            print("Conda dependencies in AML and JSON config are the same.")
         else:
-            print(f"DEBUG: Existing environment found: {existing_env.name} with version: {existing_env.version}")            
-    except Exception as e:
-        print(f"ERROR: An error occurred while trying to get the environment: {e}")
-
-    if 'channels' in env_config and 'dependencies' in env_config:
-        print("DEBUG: Creating environment with conda dependencies...")
-        conda_dependencies = {
-            'name': env_config['name'],
-            'channels': env_config['channels'],
-            'dependencies': env_config['dependencies']
-        }
-
-        conda_file_all = env_config['name'] + '.yml'
-        with open(conda_file_all, 'w') as file:
-            yaml = ruamel.yaml.YAML()
-            yaml.indent(mapping=2, sequence=4, offset=2)
-            yaml.dump(conda_dependencies, file)
-
-        if existing_env:
-            existing_conda_data = existing_env.validate() if existing_env else None
-            if existing_conda_data is not None and 'dependencies' in existing_conda_data:
-                if deep_equal(conda_dependencies['dependencies'], existing_conda_data['dependencies']):
-                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-                    return False
-                else:
-                    print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
-                    new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
-                    env = Environment(
-                        image=existing_env.image,
-                        name=get_env_name_without_version(existing_env.name),
-                        version=new_version,
-                        conda_file=conda_file_all,
-                    )
-        else:
-            new_version = '1'
-            env = Environment(
-                image=env_config['image'],  # this is where you set the image from the env_config
-                name=env_config['name'],
-                version=new_version,
-                conda_file=conda_file_all,
-            )
-
-        if env is not None:
-            ml_client.environments.create_or_update(env)
+            print("Conda dependencies in AML and JSON config are different, updating environment version in AML...")
+            # update the version of the environment
+            existing_env.version = str(int(existing_env.version) + 1)
+            ml_client.environments.create_or_update(existing_env)
+        return True
+    return False
 
 
+# get the JSON file path from command line arguments
+json_file_path = sys.argv[1]
 
-if len(sys.argv) < 2:
-    print('No configuration file provided.')
-    sys.exit(1)
-
-# Extract config file path
-config_file_path = sys.argv[1]
-
-# Read the JSON configuration file and call the function defined above to create the environments
-print(f"DEBUG: Reading configuration file: {config_file_path}")
-with open(config_file_path, 'r') as f:
-    config = json.load(f)
-
-for env_config in config['conda']:
-    if not create_environment_from_json(env_config):  # if the function returns False, continue to the next environment
-        continue
+with open(json_file_path, 'r') as json_file:
+    json_config = json.load(json_file)
+    for env_config in json_config['conda']:
+        if 'channels' in env_config and 'dependencies' in env_config:
+            print(f"DEBUG: Processing environment {env_config['name']}...")
+            if environment_exists_and_same_version(ml_client, env_config):
+                continue
+            elif environment_exists_and_auto_version(ml_client, env_config):
+                continue
+            else:
+                print(f"Environment {env_config['name']} does not exist in AML, creating...")
+                conda_dependencies = {
+                    'name': env_config['name'],
+                    'channels': env_config['channels'],
+                    'dependencies': env_config['dependencies']
+                }
+                conda_file_all = env_config['name'] + '.yml'
+                with open(conda_file_all, 'w') as file:
+                    yaml = ruamel.yaml.YAML()
+                    yaml.indent(mapping=2, sequence=4, offset=2)
+                    yaml.dump(conda_dependencies, file)
+                # create a new environment
+                new_env = Environment(name=env_config['name'], version=env_config['version'] if env_config['version'] != 'auto' else '1', conda_file=conda_file_all)
+                ml_client.environments.create_or_update(new_env)

@@ -74,25 +74,7 @@ def create_environment_from_json(env_config):
         yaml = ruamel.yaml.YAML()
         existing_conda_data = yaml.load(existing_conda_data)
 
-    if 'build' in env_config:
-        # Build Context case
-        # Create build context
-        print("DEBUG: Creating build context...")
-        build_context = BuildContext(path=env_config['build'])
-
-        # Compare existing AML build context with new build context
-        if existing_env and existing_env.build == build_context:
-            print(f"The build context for {env_config['name']} matches the existing one.")
-        else:
-            print(f"The build context for {env_config['name']} does not match the existing one. Creating new environment...")
-            env = Environment(
-                name=env_config['name'],
-                build=build_context,
-                version=env_config['version'],
-                description=env_config.get('description')
-            )
-
-    elif 'channels' in env_config and 'dependencies' in env_config:
+    if 'channels' in env_config and 'dependencies' in env_config:
         print("DEBUG: Creating environment with conda dependencies...")
         conda_dependencies = {
             'name': env_config['name'],
@@ -105,6 +87,34 @@ def create_environment_from_json(env_config):
             yaml = ruamel.yaml.YAML()
             yaml.indent(mapping=2, sequence=4, offset=2)
             yaml.dump(conda_dependencies, file)
+
+        if existing_env:
+            existing_conda_data = existing_env.validate() if existing_env else None
+
+            if existing_conda_data is not None and 'dependencies' in existing_conda_data:
+                if deep_equal(conda_dependencies['dependencies'], existing_conda_data['dependencies']):
+                    print(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                    return False
+                else:
+                    print(f"The conda dependencies for {env_config['name']} do not match the existing ones.")
+                    if env_config['version'] == 'auto':
+                        new_version = str(int(existing_env.version.split(':')[-1] if ':' in existing_env.version else existing_env.version) + 1)
+                        env = Environment(
+                            image=env_config['image'],  # Include the 'image' parameter here
+                            name=get_env_name_without_version(existing_env.name),
+                            version=new_version,
+                            conda_file=conda_file_all,
+                        )
+                    else:
+                        env = Environment(
+                            image=env_config['image'],  # Include the 'image' parameter here
+                            name=get_env_name_without_version(existing_env.name),
+                            version=env_config['version'],
+                            conda_file=conda_file_all,
+                        )
+            else:
+                new_version = str(int(existing_env.version.split(':')[-1.output.indent.mapping=2, sequence=4, offset=2)
+                        yaml.dump(conda_dependencies, file)
 
         if existing_env:
             existing_conda_data = existing_env.validate() if existing_env else None
@@ -143,6 +153,7 @@ def create_environment_from_json(env_config):
         else:
             new_version = '1'
             env = Environment(
+                image=env_config['image'],  # this is where you set the image from the env_config
                 name=env_config['name'],
                 version=new_version,
                 conda_file=conda_file_all,

@@ -47,6 +47,7 @@ def deep_equal(a, b):
 # Define the function that creates environments according to their types specified in the JSON configuration
 def create_environment_from_json(env_config):
     new_version = '1'
+    env = None  # Initialize env variable
     print(f"DEBUG: Environment configuration: {env_config}")
 
     print("DEBUG: Checking if environment exists...")
@@ -102,6 +103,7 @@ def create_environment_from_json(env_config):
 
         if env is not None:
             ml_client.environments.create_or_update(env)
+
 
 
 if len(sys.argv) < 2:

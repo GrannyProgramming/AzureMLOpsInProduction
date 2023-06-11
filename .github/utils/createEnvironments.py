@@ -18,14 +18,6 @@ def prepare_env_config(config, new_version):
         'conda_file': config['name'] + '.yml',
     }
 
-def get_pip_deps(conda_deps):
-    for dep in conda_deps:
-        if isinstance(dep, dict) and 'pip' in dep:
-            return dep['pip']
-    return None
-
-existing_deps = get_pip_deps(existing_env.conda_file.get('dependencies')) if existing_env else None
-
 def create_or_update_environment(ml_client, env_config):
     conda_dependencies = {
         'name': env_config['name'],
@@ -44,11 +36,9 @@ def create_or_update_environment(ml_client, env_config):
         if existing_deps and existing_deps == env_config['dependencies']:
             print(f"The conda dependencies for {env_config['name']} match the existing ones.")
             return
-
         new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
     else:
         new_version = '1'
-
     env = Environment(**prepare_env_config(env_config, new_version))
     ml_client.environments.create_or_update(env)
 

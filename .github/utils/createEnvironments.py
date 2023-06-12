@@ -82,20 +82,22 @@ class EnvironmentManager:
             self.create_yaml_file(f"{env_config['name']}.yml", conda_dependencies)
 
             existing_env = next((env for env in self.ml_client.environments.list() 
-                                 if env.name == env_config['name']), None)
+                                if env.name == env_config['name']), None)
 
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
-                                                               version=existing_env.latest_version)
+                                                            version=existing_env.latest_version)
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps and existing_deps == env_config['dependencies']:
-                    self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                    self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return
-                
-                new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
+                else:
+                    new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
+                    self.logger.info(f"Updating the environment {env_config['name']}.")
             else:
                 new_version = '1'
+                self.logger.info(f"Creating new environment {env_config['name']}.")
 
             env = Environment(**self.prepare_env_config(env_config, new_version))
             self.ml_client.environments.create_or_update(env)

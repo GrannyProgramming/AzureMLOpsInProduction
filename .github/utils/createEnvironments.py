@@ -1,62 +1,101 @@
 import json
 import sys
+import logging
 from azure.ai.ml.entities import Environment
-from workflowhelperfunc.workflowhelper import initialize_mlclient
-import ruamel.yaml
+import ruamel.yaml as yaml
+from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
 
-def create_yaml_file(filename, content):
-    with open(filename, 'w') as file:
-        yaml = ruamel.yaml.YAML()
-        yaml.indent(mapping=2, sequence=4, offset=2)
-        yaml.dump(content, file)
+class EnvironmentManager:
+    """Manage Azure ML Environments."""
 
-def prepare_env_config(config, new_version):
-    return {
-        'image': config['image'],  
-        'name': config['name'],
-        'version': new_version,
-        'conda_file': config['name'] + '.yml',
-    }
+    def __init__(self, ml_client, logger):
+        """Initialize the manager with an Azure ML client and a logger."""
+        self.ml_client = ml_client
+        self.logger = logger
 
-def create_or_update_environment(ml_client, env_config):
-    conda_dependencies = {
-        'name': env_config['name'],
-        'channels': env_config['channels'],
-        'dependencies': env_config['dependencies']
-    }
+    def create_yaml_file(self, filename, content):
+        """Write content to a YAML file."""
+        self.logger.debug(f"Creating YAML file: {filename}")
+        try:
+            with open(filename, 'w') as file:
+                yaml_handler = yaml.YAML()
+                yaml_handler.indent(mapping=2, sequence=4, offset=2)
+                yaml_handler.dump(content, file)
+            self.logger.info(f'Successfully created YAML file: {filename}')
+        except Exception as e:
+            self.logger.error(f"Failed to create YAML file: {filename}. Error: {e}")
+            raise
 
-    create_yaml_file(env_config['name'] + '.yml', conda_dependencies)
+    def prepare_env_config(self, config, new_version):
+        """Generate the configuration for an Azure ML environment."""
+        self.logger.debug(f"Preparing environment configuration for: {config['name']}")
+        env_config = {
+            'image': config['image'],
+            'name': config['name'],
+            'version': new_version,
+            'conda_file': f"{config['name']}.yml",
+        }
+        self.logger.info(f"Prepared environment configuration for: {config['name']}")
+        return env_config
 
-    existing_env = next((env for env in ml_client.environments.list() if env.name == env_config['name']), None)
+    def create_or_update_environment(self, env_config):
+        """Create or update an Azure ML environment."""
+        self.logger.debug(f"Creating or updating environment: {env_config['name']}")
+        try:
+            conda_dependencies = {
+                'name': env_config['name'],
+                'channels': env_config['channels'],
+                'dependencies': env_config['dependencies']
+            }
 
-    if existing_env:
-        existing_env = ml_client.environments.get(name=existing_env.name, version=existing_env.latest_version)
-        existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
+            self.create_yaml_file(f"{env_config['name']}.yml", conda_dependencies)
 
-        if existing_deps and existing_deps == env_config['dependencies']:
-            print(f"The conda dependencies for {env_config['name']} match the existing ones.")
-            return
-        new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
-    else:
-        new_version = '1'
-    env = Environment(**prepare_env_config(env_config, new_version))
-    ml_client.environments.create_or_update(env)
+            existing_env = next((env for env in self.ml_client.environments.list() 
+                                 if env.name == env_config['name']), None)
 
- 
+            if existing_env:
+                existing_env = self.ml_client.environments.get(name=existing_env.name, 
+                                                               version=existing_env.latest_version)
+                existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
+
+                if existing_deps and existing_deps == env_config['dependencies']:
+                    self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones.")
+                    return
+                
+                new_version = (str(int(existing_env.version.split(':')[-1]) + 1) 
+                               if env_config['version'] == 'auto' 
+                               else env_config['version'])
+            else:
+                new_version = '1'
+
+            env = Environment(**self.prepare_env_config(env_config, new_version))
+            self.ml_client.environments.create_or_update(env)
+            self.logger.info(f"Environment {env_config['name']} has been updated or created.")
+        except Exception as e:
+            self.logger.error(f"Failed to create or update environment: {env_config['name']}. Error: {e}")
+            raise
+
 def main():
+    """Manage Azure ML environments based on a configuration file."""
     if len(sys.argv) < 2:
         print('No configuration file provided.')
         sys.exit(1)
 
-    print(f"DEBUG: Reading configuration file: {sys.argv[1]}")
-    print("DEBUG: Initializing ml client...")
-    ml_client = initialize_mlclient()
+    logger = setup_logger(__name__)
+    log_event(logger, 'info', f"Reading configuration file: {sys.argv[1]}")
+    log_event(logger, 'info', "Initializing ml client...")
+    try:
+        ml_client = initialize_mlclient()
+        env_manager = EnvironmentManager(ml_client, logger)
 
-    with open(sys.argv[1], 'r') as f:
-        config = json.load(f)
+        with open(sys.argv[1], 'r') as config_file:
+            config = json.load(config_file)
 
-    for env_config in config['conda']:
-        create_or_update_environment(ml_client, env_config)
+        for env_config in config['conda']:
+            env_manager.create_or_update_environment(env_config)
+    except Exception as e:
+        log_event(logger, 'error', f"An error occurred during execution: {e}")
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

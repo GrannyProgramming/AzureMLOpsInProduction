@@ -91,8 +91,9 @@ class EnvironmentManager:
 
                 if existing_deps and existing_deps == env_config['dependencies']:
                     if env_config['version'] != "auto":
-                        raise Exception(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
-                    self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
+                        self.logger.info(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
+                    else:
+                        self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment creation/update skipped.")
                     return
                 else:
                     new_version = env_config['version']

@@ -90,10 +90,14 @@ class EnvironmentManager:
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps and existing_deps == env_config['dependencies']:
+                    if existing_env.version != env_config['version']:
+                        raise Exception(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
                     self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return
                 else:
-                    new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
+                    new_version = env_config['version']
+                    if new_version == existing_env.version:
+                        raise Exception(f"Environment {env_config['name']} with version {new_version} is already registered. Please choose a different version.")
                     self.logger.info(f"Updating the environment {env_config['name']}.")
             else:
                 new_version = '1'
@@ -105,7 +109,6 @@ class EnvironmentManager:
         except Exception as e:
             self.logger.error(f"Failed to create or update environment: {env_config['name']}. Error: {e}")
             raise
-
 
 def main() -> None:
     """Entry point for the script."""

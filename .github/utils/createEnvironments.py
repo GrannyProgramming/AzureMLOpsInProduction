@@ -90,7 +90,7 @@ class EnvironmentManager:
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps and existing_deps == env_config['dependencies']:
-                    if existing_env.version != env_config['version']:
+                    if env_config['version'] != "auto":
                         raise Exception(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
                     self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return

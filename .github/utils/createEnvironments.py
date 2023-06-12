@@ -1,20 +1,37 @@
 import json
 import sys
-import logging
 from azure.ai.ml.entities import Environment
 import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
 
-class EnvironmentManager:
-    """Manage Azure ML Environments."""
 
-    def __init__(self, ml_client, logger):
-        """Initialize the manager with an Azure ML client and a logger."""
+class EnvironmentManager:
+    """
+    Class to manage Azure ML environments.
+
+    Attributes:
+        ml_client: Azure ML client to handle Azure ML related operations.
+        logger: Logger to log the operations.
+    """
+    def __init__(self, ml_client: object, logger: object) -> None:
+        """
+        Initialize the manager with an Azure ML client and a logger.
+
+        Args:
+            ml_client (object): Azure ML client object.
+            logger (object): Logger object.
+        """
         self.ml_client = ml_client
         self.logger = logger
 
-    def create_yaml_file(self, filename, content):
-        """Write content to a YAML file."""
+    def create_yaml_file(self, filename: str, content: dict) -> None:
+        """
+        Create a YAML file from content.
+
+        Args:
+            filename (str): Name of the file to be created.
+            content (dict): Content to be written to the file.
+        """
         self.logger.debug(f"Creating YAML file: {filename}")
         try:
             with open(filename, 'w') as file:
@@ -26,8 +43,17 @@ class EnvironmentManager:
             self.logger.error(f"Failed to create YAML file: {filename}. Error: {e}")
             raise
 
-    def prepare_env_config(self, config, new_version):
-        """Generate the configuration for an Azure ML environment."""
+    def prepare_env_config(self, config: dict, new_version: str) -> dict:
+        """
+        Prepare environment configuration.
+
+        Args:
+            config (dict): The configuration details.
+            new_version (str): The new version of the environment.
+
+        Returns:
+            dict: The prepared configuration.
+        """
         self.logger.debug(f"Preparing environment configuration for: {config['name']}")
         env_config = {
             'image': config['image'],
@@ -38,8 +64,13 @@ class EnvironmentManager:
         self.logger.info(f"Prepared environment configuration for: {config['name']}")
         return env_config
 
-    def create_or_update_environment(self, env_config):
-        """Create or update an Azure ML environment."""
+    def create_or_update_environment(self, env_config: dict) -> None:
+        """
+        Create or update environment based on provided configuration.
+
+        Args:
+            env_config (dict): The configuration details.
+        """
         self.logger.debug(f"Creating or updating environment: {env_config['name']}")
         try:
             conda_dependencies = {
@@ -62,9 +93,7 @@ class EnvironmentManager:
                     self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones.")
                     return
                 
-                new_version = (str(int(existing_env.version.split(':')[-1]) + 1) 
-                               if env_config['version'] == 'auto' 
-                               else env_config['version'])
+                new_version = str(int(existing_env.version.split(':')[-1]) + 1) if env_config['version'] == 'auto' else env_config['version']
             else:
                 new_version = '1'
 
@@ -75,8 +104,9 @@ class EnvironmentManager:
             self.logger.error(f"Failed to create or update environment: {env_config['name']}. Error: {e}")
             raise
 
-def main():
-    """Manage Azure ML environments based on a configuration file."""
+
+def main() -> None:
+    """Entry point for the script."""
     if len(sys.argv) < 2:
         print('No configuration file provided.')
         sys.exit(1)
@@ -96,6 +126,7 @@ def main():
     except Exception as e:
         log_event(logger, 'error', f"An error occurred during execution: {e}")
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()

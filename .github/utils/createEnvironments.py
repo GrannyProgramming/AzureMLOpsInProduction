@@ -85,17 +85,14 @@ class EnvironmentManager:
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps == env_config['dependencies']:
-                    if env_config['version'] != "auto" and env_config['version'] <= existing_env.version:
-                        self.logger.info(f"The version for environment {env_config['name']} has the same conda dependencies.")
                     self.logger.info(f"As the conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return
                 else:
                     if env_config['version'] == "auto":
-
                         new_version = str(int(existing_env.version) + 1)  # auto increment
                     else:
                         new_version = env_config['version']
-
+                        
                     if new_version == existing_env.version:
                         self.logger.info(f"Environment {env_config['name']} with version {new_version} is already registered. Environment was not updated.")
                         return

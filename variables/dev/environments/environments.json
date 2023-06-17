@@ -1,9 +1,9 @@
 {
     "docker_build": [
         {
-        "name": "docker-context-example",
+        "name": "docker-context-example-001",
         "BuildContext": {
-        "path": "dockerContexts/exDockerEnv"
+        "path": "variables/dev/environments/dockerContexts/exDockerEnv"
         },
       "version": "1",
       "description": "Environment created from a Docker context."

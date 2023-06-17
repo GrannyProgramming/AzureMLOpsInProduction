@@ -3,7 +3,6 @@ import sys
 from azure.ai.ml.entities import Environment, BuildContext
 import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
-import filecmp
 
 class EnvironmentManager:
     """
@@ -60,25 +59,6 @@ class EnvironmentManager:
             'conda_file': f"{config['name']}.yml",
         }
         return env_config
-    
-    def prepare_docker_env_config(self, config: dict, new_version: str) -> dict:
-        """
-        Prepare environment configuration for Docker build context.
-
-        Args:
-            config (dict): The configuration details.
-            new_version (str): The new version of the environment.
-
-        Returns:
-            dict: The prepared configuration.
-        """
-        env_config = {
-            'name': config['name'],
-            'version': new_version,
-            'description': config['description'],
-            'build': BuildContext(**config['BuildContext']),
-        }
-        return env_config
 
     def create_or_update_environment(self, env_config: dict) -> None:
         """
@@ -98,6 +78,7 @@ class EnvironmentManager:
 
             existing_env = next((env for env in self.ml_client.environments.list() 
                                 if env.name == env_config['name']), None)
+
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
                                                              version=existing_env.latest_version)
@@ -127,70 +108,37 @@ class EnvironmentManager:
             self.logger.error(f"Failed to create or update environment: {env_config['name']}. Error: {e}")
             raise
 
-
-
-    def create_or_update_docker_environment(self, env_config: dict) -> None:
+    def create_or_update_docker_environment(self, docker_env_config: dict) -> None:
         """
         Create or update Docker environment based on provided configuration.
 
         Args:
-            env_config (dict): The configuration details.
+            docker_env_config (dict): The configuration details for Docker environment.
         """
         try:
             existing_env = next((env for env in self.ml_client.environments.list() 
-                                if env.name == env_config['name']), None)
-            print(existing_env)
+                                if env.name == docker_env_config['name']), None)
+
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
                                                             version=existing_env.latest_version)
-                print(existing_env)
-                print(existing_env.build)
-                build_context = existing_env.build.path
-                build_con=BuildContext(build_context)
-                print(build_con)
-                print(vars(build_context))
-                
-                # build_context = existing_env.build
-                # print(build_context.attribute_name)
-
-                # Check if both existing and new environments are docker
-                if env_config.get('BuildContext') and existing_env.build:
-                    # Compare the Dockerfiles
-                    try:
-                        is_same_file = filecmp.cmp(env_config['BuildContext']['path'], existing_env.build.path, shallow=False)
-                    except AttributeError:
-                        self.logger.error("The 'BuildContext' object has no attribute 'context_path'")
-                        raise
-
-                    if is_same_file:
-                        self.logger.info(f"As the Docker build context for {env_config['name']} matches the existing one. Environment was not updated.")
-                        return
-                    else:
-                        if env_config['version'] == "auto":
-                            new_version = str(int(existing_env.latest_version) + 1)  # auto increment
-                        else:
-                            new_version = env_config['version']
-
-                        if new_version == existing_env.latest_version:
-                            self.logger.info(f"Environment '{env_config['name']}' with version {new_version} has different Docker build context. However environment version is less than equal to the JSON config. Update the environment version in the JSON to proceed with the update. Environment not updated.")
-                            return
-                        self.logger.info(f"Updating the environment {env_config['name']}.")
-
+                if  docker_env_config['version'] <= existing_env.version:
+                    self.logger.info(f"Environment '{docker_env_config['name']}' with version {docker_env_config['version']} already exists. No changes have been made.")
+                    return
                 else:
-                    self.logger.info(f"Updating the environment {env_config['name']}.")
-
+                    self.logger.info(f"Updating the environment {docker_env_config['name']}.")
             else:
-                new_version = '1'
-                self.logger.info(f"Creating new Docker environment {env_config['name']}.")
+                self.logger.info(f"Creating new Docker environment {docker_env_config['name']}.")
 
-            # Assume prepare_docker_env_config is a function that takes env_config and prepares it for Docker.
-            env = Environment(**self.prepare_docker_env_config(env_config, new_version))
+            env = Environment(build=BuildContext(path=docker_env_config['BuildContext']['path']), 
+                            name=docker_env_config['name'], 
+                            version=docker_env_config['version'])
+                            
             self.ml_client.environments.create_or_update(env)
-            self.logger.info(f"Docker Environment {env_config['name']} has been updated or created.")
+            self.logger.info(f"Docker environment {docker_env_config['name']} has been updated or created.")
         except Exception as e:
-            self.logger.error(f"Failed to create or update Docker environment: {env_config['name']}. Error: {e}")
+            self.logger.error(f"Failed to create or update Docker environment: {docker_env_config['name']}. Error: {e}")
             raise
-
 
 
 def main() -> None:
@@ -212,14 +160,12 @@ def main() -> None:
         for env_config in config['conda']:
             env_manager.create_or_update_environment(env_config)
         
-        for env_config in config['docker_build']:
-            env_manager.create_or_update_docker_environment(env_config)
+        if 'docker_build' in config:
+            env_manager.create_or_update_docker_environment(config['docker_build'])
 
     except Exception as e:
         log_event(logger, 'error', f"An error occurred during execution: {e}")
         sys.exit(1)
-
-
 
 if __name__ == '__main__':
     main()

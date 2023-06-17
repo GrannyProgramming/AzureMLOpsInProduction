@@ -23,10 +23,10 @@ RUN pip install \
     joblib==1.0.1 \
     jupyter==1.0.0 \
     ipykernel==6.4.1 \
-    papermill==2.3.3
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt && rm requirements.txt
+    papermill==2.3.3 \
+    azureml-core==1.34.0
+# COPY requirements.txt .
+# RUN pip install -r requirements.txt && rm requirements.txt
 
 # set command
 CMD ["bash"]

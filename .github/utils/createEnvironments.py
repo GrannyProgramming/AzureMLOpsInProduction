@@ -1,6 +1,6 @@
 import json
 import sys
-from azure.ai.ml.entities import Environment
+from azure.ai.ml.entities import Environment, BuildContext
 import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
 
@@ -78,7 +78,7 @@ class EnvironmentManager:
 
             existing_env = next((env for env in self.ml_client.environments.list() 
                                 if env.name == env_config['name']), None)
-
+            print(existing_env)
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
                                                              version=existing_env.latest_version)
@@ -107,6 +107,7 @@ class EnvironmentManager:
         except Exception as e:
             self.logger.error(f"Failed to create or update environment: {env_config['name']}. Error: {e}")
             raise
+
 
 
 def main() -> None:

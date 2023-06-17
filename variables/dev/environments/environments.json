@@ -4,6 +4,7 @@
         "BuildContext": {
         "path": "dockerContexts/exDockerEnv"
       },
+      "version": "1",
       "description": "Environment created from a Docker context."
     },
     "conda": [

@@ -145,7 +145,12 @@ class EnvironmentManager:
                                                             version=existing_env.latest_version)
                 print(existing_env)
                 print(existing_env.build)
-                    # Check if both existing and new environments are docker
+                build_context = existing_env.build()
+                print(vars(build_context))
+                build_context = existing_env.build()
+                print(build_context.attribute_name)
+
+                # Check if both existing and new environments are docker
                 if env_config.get('BuildContext') and existing_env.build:
                     # Compare the Dockerfiles
                     try:

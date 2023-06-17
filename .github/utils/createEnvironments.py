@@ -145,7 +145,7 @@ class EnvironmentManager:
                                                         version=existing_env.latest_version)
             print(existing_env)
             print(existing_env.build)
-                # Check if both existing and new environments are docker
+        #         Check if both existing and new environments are docker
         #         if env_config.get('BuildContext') and existing_env.build:
         #             # Compare the Dockerfiles
         #             is_same_file = filecmp.cmp(env_config['BuildContext'], existing_env.build.context_path, shallow=False)

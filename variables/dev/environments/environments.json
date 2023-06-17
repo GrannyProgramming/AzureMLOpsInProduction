@@ -1,12 +1,14 @@
 {
-    "docker_build": {
+    "docker_build": [
+        {
         "name": "docker-context-example",
         "BuildContext": {
         "path": "dockerContexts/exDockerEnv"
-      },
+        },
       "version": "1",
       "description": "Environment created from a Docker context."
-    },
+       }
+    ],
     "conda": [
         {   
             "image":"mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",

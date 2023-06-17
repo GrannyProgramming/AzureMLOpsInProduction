@@ -78,7 +78,7 @@ jobs:
       #     python3 .github/utils/createDataAsset.py variables/dev/dataAssests/dataAssets.json
 
       # Create aml environments
-      # @grannyProgramming - maybe set version the same as it was set in dataAsset step? create a function for this?
+      # @grannyProgramming - should I force a environment update if the version is updated but the dependencies are the same?
       - name: Create aml environments
         env:
           ENVIRONMENT: ${{ matrix.environment }}

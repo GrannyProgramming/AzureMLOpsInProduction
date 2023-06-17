@@ -200,7 +200,7 @@ def main() -> None:
         for env_config in config['conda']:
             env_manager.create_or_update_environment(env_config)
         
-        for env_config in config['docker']:
+        for env_config in config['docker_build']:
             env_manager.create_or_update_docker_environment(env_config)
 
     except Exception as e:

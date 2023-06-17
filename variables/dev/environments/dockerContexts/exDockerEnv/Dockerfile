@@ -13,9 +13,6 @@ RUN pip install \
     # trees
     xgboost==1.4.2 \
     lightgbm==3.2.1 \
-    # tracking
-    mlflow==1.20.2 \
-    azureml-mlflow==1.34.0 \
     # visualization
     matplotlib==3.4.3 \
     # python tools

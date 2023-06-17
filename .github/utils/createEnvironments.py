@@ -161,7 +161,9 @@ def main() -> None:
             env_manager.create_or_update_environment(env_config)
         
         if 'docker_build' in config:
-            env_manager.create_or_update_docker_environment(config['docker_build'])
+            for docker_env_config in config['docker_build']:
+                env_manager.create_or_update_docker_environment(docker_env_config)
+
 
     except Exception as e:
         log_event(logger, 'error', f"An error occurred during execution: {e}")

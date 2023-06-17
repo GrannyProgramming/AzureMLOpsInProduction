@@ -24,6 +24,8 @@ RUN pip install \
     jupyter==1.0.0 \
     ipykernel==6.4.1 \
     papermill==2.3.3 
+
+# how tto use requirements.txt with docker build
 # COPY requirements.txt .
 # RUN pip install -r requirements.txt && rm requirements.txt
 

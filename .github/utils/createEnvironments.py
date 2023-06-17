@@ -78,10 +78,11 @@ class EnvironmentManager:
 
             existing_env = next((env for env in self.ml_client.environments.list() 
                                 if env.name == env_config['name']), None)
-            print(existing_env)
+            # print(existing_env)
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
                                                              version=existing_env.latest_version)
+                print(existing_env)
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps == env_config['dependencies']:

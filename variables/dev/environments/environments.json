@@ -3,10 +3,10 @@
         {
         "name": "docker-context-example-001",
         "BuildContext": {
-        "path": "variables/dev/environments/dockerContexts/exDockerEnv/Dockerfile"
+        "path": "variables/dev/environments/dockerContexts/exDockerEnv"
         },
-      "version": "2",
-      "description": "Environment created from a Docker context."
+        "version": "3",
+        "description": "Environment created from a Docker context."
        }
     ],
     "conda": [

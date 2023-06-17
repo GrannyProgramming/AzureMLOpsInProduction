@@ -79,6 +79,7 @@ jobs:
 
       # Create aml environments
       # @grannyProgramming - should I force a environment update if the version is updated but the dependencies are the same?
+      # @GrannyProgramming - Not sure if I can use the same logic for dockerfiles as I did for the conda file
       - name: Create aml environments
         env:
           ENVIRONMENT: ${{ matrix.environment }}

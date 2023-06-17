@@ -146,15 +146,18 @@ class EnvironmentManager:
                 print(existing_env)
                 print(existing_env.build)
                 build_context = existing_env.build
+                build_con=BuildContext(build_context)
+                print(build_con)
                 print(vars(build_context))
-                build_context = existing_env.build
-                print(build_context.attribute_name)
+                
+                # build_context = existing_env.build
+                # print(build_context.attribute_name)
 
                 # Check if both existing and new environments are docker
                 if env_config.get('BuildContext') and existing_env.build:
                     # Compare the Dockerfiles
                     try:
-                        is_same_file = filecmp.cmp(env_config['BuildContext']['path'], existing_env.build.context_path, shallow=False)
+                        is_same_file = filecmp.cmp(env_config['BuildContext']['path'], existing_env.build.path, shallow=False)
                     except AttributeError:
                         self.logger.error("The 'BuildContext' object has no attribute 'context_path'")
                         raise

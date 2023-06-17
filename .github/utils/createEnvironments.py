@@ -58,7 +58,6 @@ class EnvironmentManager:
             'version': new_version,
             'conda_file': f"{config['name']}.yml",
         }
-        self.logger.info(f"Prepared environment configuration for: {config['name']}")
         return env_config
 
     def create_or_update_environment(self, env_config: dict) -> None:
@@ -68,7 +67,6 @@ class EnvironmentManager:
         Args:
             env_config (dict): The configuration details.
         """
-        self.logger.debug(f"Creating or updating environment: {env_config['name']}")
         try:
             conda_dependencies = {
                 'name': env_config['name'],

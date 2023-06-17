@@ -52,6 +52,7 @@ class EnvironmentManager:
         Returns:
             dict: The prepared configuration.
         """
+
         env_config = {
             'image': config['image'],
             'name': config['name'],
@@ -88,7 +89,7 @@ class EnvironmentManager:
 
                 if existing_deps and existing_deps == env_config['dependencies']:
                     if env_config['version'] != "auto":
-                        self.logger.info(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
+                        self.logger.info(f"The version for environment {env_config['name']} is less than or equal to the existing version  but the conda dependencies are the same. Please increment version  manually to force update.")
                     self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return
                 else:

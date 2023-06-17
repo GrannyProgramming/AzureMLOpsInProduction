@@ -32,13 +32,11 @@ class EnvironmentManager:
             filename (str): Name of the file to be created.
             content (dict): Content to be written to the file.
         """
-        self.logger.debug(f"Creating YAML file: {filename}")
         try:
             with open(filename, 'w') as file:
                 yaml_handler = yaml.YAML()
                 yaml_handler.indent(mapping=2, sequence=4, offset=2)
                 yaml_handler.dump(content, file)
-            self.logger.info(f'Successfully created YAML file: {filename}')
         except Exception as e:
             self.logger.error(f"Failed to create YAML file: {filename}. Error: {e}")
             raise
@@ -54,7 +52,6 @@ class EnvironmentManager:
         Returns:
             dict: The prepared configuration.
         """
-        self.logger.debug(f"Preparing environment configuration for: {config['name']}")
         env_config = {
             'image': config['image'],
             'name': config['name'],

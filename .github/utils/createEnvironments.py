@@ -92,9 +92,9 @@ class EnvironmentManager:
                         new_version = str(int(existing_env.version) + 1)  # auto increment
                     else:
                         new_version = env_config['version']
-                        
+
                     if new_version == existing_env.version:
-                        self.logger.info(f"Environment {env_config['name']} with version {new_version} is already registered. Environment was not updated.")
+                        self.logger.info(f"Environment '{env_config['name']}' with version {new_version} has different dependencies. However environment version is less than equal to the JSON config. Update the environment version in the JSON to proceed with the update. Environment not updated.")
                         return
                     self.logger.info(f"Updating the environment {env_config['name']}.")
             else:

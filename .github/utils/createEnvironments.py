@@ -37,6 +37,7 @@ class EnvironmentManager:
                 yaml_handler = yaml.YAML()
                 yaml_handler.indent(mapping=2, sequence=4, offset=2)
                 yaml_handler.dump(content, file)
+            self.logger.info(f'Successfully created YAML file: {filename}')
         except Exception as e:
             self.logger.error(f"Failed to create YAML file: {filename}. Error: {e}")
             raise
@@ -52,7 +53,7 @@ class EnvironmentManager:
         Returns:
             dict: The prepared configuration.
         """
-
+        self.logger.debug(f"Preparing environment configuration for: {config['name']}")
         env_config = {
             'image': config['image'],
             'name': config['name'],
@@ -84,12 +85,12 @@ class EnvironmentManager:
 
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
-                                                             version=existing_env.latest_version)
+                                                            version=existing_env.latest_version)
                 existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
                 if existing_deps and existing_deps == env_config['dependencies']:
-                    if env_config['version'] != "auto" and env_config['version'] <= existing_env.version:
-                        self.logger.info(f"The version for environment {env_config['name']} is less than or equal to the existing version  but the conda dependencies are the same. Please increment version  manually to force update.")
+                    if env_config['version'] != "auto":
+                        self.logger.info(f"The version for environment {env_config['name']} does not match the existing version but the conda dependencies are the same. Please update manually.")
                     self.logger.info(f"The conda dependencies for {env_config['name']} match the existing ones. Environment was not updated.")
                     return
                 else:

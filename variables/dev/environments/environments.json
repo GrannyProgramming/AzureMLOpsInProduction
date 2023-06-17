@@ -3,7 +3,7 @@
         {
         "name": "docker-context-example-001",
         "BuildContext": {
-        "path": "variables/dev/environments/dockerContexts/exDockerEnv"
+        "path": "variables/dev/environments/dockerContexts/exDockerEnv/dockerfile"
         },
       "version": "1",
       "description": "Environment created from a Docker context."

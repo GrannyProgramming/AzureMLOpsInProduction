@@ -148,7 +148,11 @@ class EnvironmentManager:
                     # Check if both existing and new environments are docker
                 if env_config.get('BuildContext') and existing_env.build:
                     # Compare the Dockerfiles
-                    is_same_file = filecmp.cmp(env_config['BuildContext'], existing_env.build.context_path, shallow=False)
+                    try:
+                        is_same_file = filecmp.cmp(env_config['BuildContext']['path'], existing_env.build.context_path, shallow=False)
+                    except AttributeError:
+                        self.logger.error("The 'BuildContext' object has no attribute 'context_path'")
+                        raise
 
                     if is_same_file:
                         self.logger.info(f"As the Docker build context for {env_config['name']} matches the existing one. Environment was not updated.")

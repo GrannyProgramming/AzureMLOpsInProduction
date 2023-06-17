@@ -145,7 +145,8 @@ class EnvironmentManager:
             if existing_env:
                 existing_env = self.ml_client.environments.get(name=existing_env.name, 
                                                             version=existing_env.latest_version)
-
+                print(existing_env)
+                print(existing_env.build)
                 # Check if both existing and new environments are docker
                 if env_config.get('BuildContext') and existing_env.build:
                     # Compare the Dockerfiles

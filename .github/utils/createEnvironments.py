@@ -3,6 +3,7 @@ import sys
 from azure.ai.ml.entities import Environment, BuildContext
 import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
+import filecmp
 
 class EnvironmentManager:
     """
@@ -59,6 +60,25 @@ class EnvironmentManager:
             'conda_file': f"{config['name']}.yml",
         }
         return env_config
+    
+    def prepare_docker_env_config(self, config: dict, new_version: str) -> dict:
+        """
+        Prepare environment configuration for Docker build context.
+
+        Args:
+            config (dict): The configuration details.
+            new_version (str): The new version of the environment.
+
+        Returns:
+            dict: The prepared configuration.
+        """
+        env_config = {
+            'name': config['name'],
+            'version': new_version,
+            'description': config['description'],
+            'build': BuildContext(**config['BuildContext']),
+        }
+        return env_config
 
     def create_or_update_environment(self, env_config: dict) -> None:
         """
@@ -111,6 +131,57 @@ class EnvironmentManager:
 
 
 
+    def create_or_update_docker_environment(self, env_config: dict) -> None:
+        """
+        Create or update Docker environment based on provided configuration.
+
+        Args:
+            env_config (dict): The configuration details.
+        """
+        try:
+            existing_env = next((env for env in self.ml_client.environments.list() 
+                                if env.name == env_config['name']), None)
+
+            if existing_env:
+                existing_env = self.ml_client.environments.get(name=existing_env.name, 
+                                                            version=existing_env.latest_version)
+
+                # Check if both existing and new environments are docker
+                if env_config.get('BuildContext') and existing_env.build:
+                    # Compare the Dockerfiles
+                    is_same_file = filecmp.cmp(env_config['BuildContext'], existing_env.build.context_path, shallow=False)
+
+                    if is_same_file:
+                        self.logger.info(f"As the Docker build context for {env_config['name']} matches the existing one. Environment was not updated.")
+                        return
+                    else:
+                        if env_config['version'] == "auto":
+                            new_version = str(int(existing_env.latest_version) + 1)  # auto increment
+                        else:
+                            new_version = env_config['version']
+
+                        if new_version == existing_env.latest_version:
+                            self.logger.info(f"Environment '{env_config['name']}' with version {new_version} has different Docker build context. However environment version is less than equal to the JSON config. Update the environment version in the JSON to proceed with the update. Environment not updated.")
+                            return
+                        self.logger.info(f"Updating the environment {env_config['name']}.")
+
+                else:
+                    self.logger.info(f"Updating the environment {env_config['name']}.")
+
+            else:
+                new_version = '1'
+                self.logger.info(f"Creating new Docker environment {env_config['name']}.")
+
+            # Assume prepare_docker_env_config is a function that takes env_config and prepares it for Docker.
+            env = Environment(**self.prepare_docker_env_config(env_config, new_version))
+            self.ml_client.environments.create_or_update(env)
+            self.logger.info(f"Docker Environment {env_config['name']} has been updated or created.")
+        except Exception as e:
+            self.logger.error(f"Failed to create or update Docker environment: {env_config['name']}. Error: {e}")
+            raise
+
+
+
 def main() -> None:
     """Entry point for the script."""
     if len(sys.argv) < 2:
@@ -129,9 +200,14 @@ def main() -> None:
 
         for env_config in config['conda']:
             env_manager.create_or_update_environment(env_config)
+        
+        for env_config in config['docker']:
+            env_manager.create_or_update_docker_environment(env_config)
+
     except Exception as e:
         log_event(logger, 'error', f"An error occurred during execution: {e}")
         sys.exit(1)
+
 
 
 if __name__ == '__main__':

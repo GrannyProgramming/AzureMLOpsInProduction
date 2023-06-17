@@ -145,7 +145,7 @@ class EnvironmentManager:
                                                             version=existing_env.latest_version)
                 print(existing_env)
                 print(existing_env.build)
-                build_context = existing_env.build
+                build_context = existing_env.build.path
                 build_con=BuildContext(build_context)
                 print(build_con)
                 print(vars(build_context))

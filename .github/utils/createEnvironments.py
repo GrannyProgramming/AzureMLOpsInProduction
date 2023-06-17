@@ -93,6 +93,7 @@ class EnvironmentManager:
                     return
                 else:
                     if env_config['version'] == "auto":
+                        
                         new_version = str(int(existing_env.version) + 1)  # auto increment
                     else:
                         new_version = env_config['version']

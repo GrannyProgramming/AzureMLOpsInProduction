@@ -21,7 +21,6 @@ class EnvironmentManager:
         self.ml_client = ml_client
         self.logger = logger
 
-    @staticmethod
     def catch_exception(func):
         """
         A decorator that wraps a function to catch and log any exceptions that occur 
@@ -40,7 +39,7 @@ class EnvironmentManager:
             except Exception as e:
                 args[0].logger.error(f"Failed to execute function: {func.__name__}. Error: {e}")
                 raise
-        return staticmethod(inner)  # Make the wrapped function a staticmethod.
+        return inner  # Make the wrapped function a staticmethod.
 
 
     @catch_exception

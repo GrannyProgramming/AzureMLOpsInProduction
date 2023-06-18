@@ -40,7 +40,8 @@ class EnvironmentManager:
             except Exception as e:
                 args[0].logger.error(f"Failed to execute function: {func.__name__}. Error: {e}")
                 raise
-        return inner
+        return staticmethod(inner)  # Make the wrapped function a staticmethod.
+
 
     @catch_exception
     def create_yaml_file(self, filename: str, content: dict) -> None:

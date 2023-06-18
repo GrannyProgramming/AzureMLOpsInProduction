@@ -4,37 +4,32 @@ from azure.ai.ml.entities import Data
 from azure.ai.ml.constants import AssetTypes
 from workflowhelperfunc.workflowhelper import setup_logger, log_event, initialize_mlclient, load_config
 
+
+
 class DataAssetManager:
     """Manage Azure ML Data Assets."""
 
-    def __init__(self, config_file):
+    def __init__(self, config_file: str) -> None:
         """
         Initialize the DataAssetManager.
 
-        Parameters
-        ----------
-        config_file : str
-            Path to the configuration file.
+        Args:
+            config_file (str): Path to the configuration file.
         """
-        self.config_file = config_file
+        self.config_file: str = config_file
         self.client = initialize_mlclient()
-        self.existing_assets = {}
-
+        self.existing_assets: dict = {}
         self.logger = setup_logger(__name__)
 
-    def check_asset_exists(self, data_name):
+    def check_asset_exists(self, data_name: str) -> bool:
         """
         Check if the data asset already exists.
 
-        Parameters
-        ----------
-        data_name : str
-            Name of the data asset.
+        Args:
+            data_name (str): Name of the data asset.
 
-        Returns
-        -------
-        bool
-            True if the data asset exists, False otherwise.
+        Returns:
+            bool: True if the data asset exists, False otherwise.
         """
         if data_name in self.existing_assets:
             return True
@@ -46,18 +41,18 @@ class DataAssetManager:
 
         return False
 
-    def create_data_asset(self, data_config):
+    def create_data_asset(self, data_config: dict) -> None:
         """
         Create or update a data asset.
 
-        Parameters
-        ----------
-        data_config : dict
-            Configuration data for the data asset.
+        Args:
+            data_config (dict): Configuration data for the data asset.
         """
         required_keys = ['type', 'name']
-        if not all(key in data_config for key in required_keys):
-            log_event(self.logger, 'error', f"Data config is missing required keys: {', '.join(required_keys)}.")
+        missing_keys = [key for key in required_keys if key not in data_config]
+
+        if missing_keys:
+            log_event(self.logger, 'error', f"Data config is missing required keys: {', '.join(missing_keys)}.")
             return
 
         data_types = {
@@ -90,7 +85,7 @@ class DataAssetManager:
         except Exception as e:
             log_event(self.logger, 'error', f"Failed to create or update {data_type.capitalize()} data asset '{data_name}': {str(e)}")
 
-    def execute(self):
+    def execute(self) -> None:
         """
         Main method to run the program.
 
@@ -101,14 +96,22 @@ class DataAssetManager:
         for data_config in config["data"]:
             self.create_data_asset(data_config)
 
-if __name__ == "__main__":
-    """Main execution of the script: Initialize the DataAssetManager and execute it."""
+
+def main(config_file: str) -> None:
+    """
+    Main execution of the script: Initialize the DataAssetManager and execute it.
+
+    Args:
+        config_file (str): Configuration file path.
+    """
     logger = setup_logger(__name__)
 
     try:
-        config_file = sys.argv[1]
         manager = DataAssetManager(config_file)
         manager.execute()
     except Exception as e:
         log_event(logger, 'error', f"An error occurred: {str(e)}")
-        
+
+
+if __name__ == "__main__":
+    main(sys.argv[1])

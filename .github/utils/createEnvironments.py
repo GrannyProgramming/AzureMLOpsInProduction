@@ -2,7 +2,7 @@ import json
 import sys
 from azure.ai.ml.entities import Environment, BuildContext
 import ruamel.yaml as yaml
-from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event, catch_exception
+from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
 
 class EnvironmentManager:
     """
@@ -20,7 +20,6 @@ class EnvironmentManager:
         self.ml_client = ml_client
         self.logger = logger
 
-    @catch_exception
     def create_yaml_file(self, filename: str, content: dict) -> None:
         """
         Creates a YAML file with the given content in the correct format.
@@ -61,7 +60,6 @@ class EnvironmentManager:
             }
         return env_config
 
-    @catch_exception
     def _get_existing_environment(self, env_name):
         """
         Get an existing environment based on provided name and get the latest version.
@@ -79,7 +77,6 @@ class EnvironmentManager:
                                                         version=existing_env.latest_version)
         return existing_env
 
-    @catch_exception
     def create_or_update_environment(self, env_config: dict) -> None:
         """
         Creates or updates an Azure ML environment based on provided configuration. Logic for auto
@@ -120,7 +117,6 @@ class EnvironmentManager:
         self.ml_client.environments.create_or_update(env)
         self.logger.info(f"Environment {env_config['name']} has been updated or created.")
 
-    @catch_exception
     def create_or_update_docker_environment(self, docker_env_config: dict) -> None:
         """
         Creates or updates a Docker environment based on provided configuration. There is no logic

@@ -5,11 +5,15 @@ import argparse
 from pathlib import Path
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
-class BicepDeployment:
-    """A class to handle the deployment process using Bicep templates."""
 
-    def __init__(self, logger, template_file, parameters):
-        """Initializes the BicepDeployment class with a logger, template file, and parameters.
+class BicepDeployment:
+    """
+    A class to handle the deployment process using Bicep templates.
+    """
+
+    def __init__(self, logger, template_file: str, parameters: str) -> None:
+        """
+        Initialize the BicepDeployment class with a logger, template file, and parameters.
 
         Args:
             logger: The logger instance for logging events.
@@ -20,9 +24,10 @@ class BicepDeployment:
         self.parameters = parameters
         self.logger = logger
 
-    @staticmethod
-    def get_env_variable(var_name):
-        """Retrieves the value of the specified environment variable.
+    @classmethod
+    def get_env_variable(cls, var_name: str) -> str:
+        """
+        Retrieve the value of the specified environment variable.
 
         Args:
             var_name: The name of the environment variable.
@@ -33,13 +38,16 @@ class BicepDeployment:
         Returns:
             The value of the specified environment variable.
         """
-        if var_name in os.environ:
+        try:
             return os.environ[var_name]
-        else:
-            raise Exception(f"{var_name} environment variable not set")
+        except KeyError:
+            log_event(cls.logger, 'error', f'{var_name} environment variable not set')
+            raise
 
-    def get_location_from_parameters_file(self, parameters_file):
-        """Retrieves the location value from the specified parameters JSON file.
+
+    def get_location_from_parameters_file(self, parameters_file: str) -> str:
+        """
+        Retrieve the location value from the specified parameters JSON file.
 
         Args:
             parameters_file: The parameters JSON file.
@@ -53,19 +61,20 @@ class BicepDeployment:
         parameters_file_path = Path(parameters_file)
         if not parameters_file_path.is_file():
             log_event(self.logger, 'error', f'Parameters file {parameters_file} does not exist')
-            raise Exception(f'Parameters file {parameters_file} does not exist')
+            raise FileNotFoundError(f'Parameters file {parameters_file} does not exist')
 
         with parameters_file_path.open('r') as f:
             parameters = json.load(f)
 
-        if 'parameters' in parameters and 'location' in parameters['parameters'] and 'value' in parameters['parameters']['location']:
+        try:
             return parameters['parameters']['location']['value']
-        else:
+        except KeyError:
             log_event(self.logger, 'error', 'Location is not specified in the parameters file')
-            raise Exception('Location is not specified in the parameters file')
+            raise
 
-    def run_command(self, cmd):
-        """Runs a shell command and returns its output. Raises an exception if it fails.
+    def run_command(self, cmd: str) -> str:
+        """
+        Run a shell command and returns its output. Raises an exception if it fails.
 
         Args:
             cmd: The shell command.
@@ -77,17 +86,17 @@ class BicepDeployment:
             The output from the shell command.
         """
         log_event(self.logger, 'info', f'Running command: {cmd}')
-        with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
-            stdout, stderr = process.communicate()
+        process = subprocess.run(cmd, shell=True, capture_output=True)
 
         if process.returncode != 0:
-            log_event(self.logger, 'error', f'Command failed with error:\n{stderr.decode()}')
-            raise Exception(f'Command failed with error:\n{stderr.decode()}')
-        else:
-            return stdout.decode()
+            log_event(self.logger, 'error', f'Command failed with error:\n{process.stderr.decode()}')
+            raise Exception(f'Command failed with error:\n{process.stderr.decode()}')
 
-    def create_bicep_deployment(self, location):
-        """Creates a Bicep deployment using the Azure CLI.
+        return process.stdout.decode()
+
+    def create_bicep_deployment(self, location: str) -> str:
+        """
+        Create a Bicep deployment using the Azure CLI.
 
         Args:
             location: The location for the Bicep deployment.
@@ -98,8 +107,9 @@ class BicepDeployment:
         cmd = f'az deployment sub create --location {location} --template-file {self.template_file} --parameters {self.parameters}'
         return self.run_command(cmd)
 
-    def set_aml_workspace_and_resource_group_as_defaults(self, workspace, resource_group):
-        """Sets the AML workspace and its resource group as defaults using the Azure CLI.
+    def set_aml_workspace_and_resource_group_as_defaults(self, workspace: str, resource_group: str) -> None:
+        """
+        Set the AML workspace and its resource group as defaults using the Azure CLI.
 
         Args:
             workspace: The AML workspace.
@@ -109,9 +119,10 @@ class BicepDeployment:
         self.run_command(f'az configure --defaults group={resource_group}')
         self.run_command(f'az configure --defaults workspace={workspace}')
 
-
-    def execute(self):
-        """The main function for executing the Bicep deployment process."""
+    def execute(self) -> None:
+        """
+        The main function for executing the Bicep deployment process.
+        """
         try:
             location = self.get_location_from_parameters_file(self.parameters)
             output = self.create_bicep_deployment(location)
@@ -123,7 +134,6 @@ class BicepDeployment:
 
             # Set workspace and resource group as defaults
             self.set_aml_workspace_and_resource_group_as_defaults(workspace, resource_group)
-
 
             # Check if workspace and resource group are set as defaults
             default_settings = json.loads(self.run_command('az configure --list-defaults -o json'))
@@ -144,8 +154,11 @@ class BicepDeployment:
         except Exception as e:
             log_event(self.logger, 'error', f'Failed to create Bicep deployment: {e}')
 
-if __name__ == '__main__':
-    """The main entry point of the script. Initializes the BicepDeployment instance and executes it."""
+
+def main() -> None:
+    """
+    The main entry point of the script. Initializes the BicepDeployment instance and executes it.
+    """
     logger = setup_logger(__name__)
 
     parser = argparse.ArgumentParser(description='Create a Bicep deployment.')
@@ -158,3 +171,7 @@ if __name__ == '__main__':
 
     deploy = BicepDeployment(logger, args.template_file, args.parameters)
     deploy.execute()
+
+
+if __name__ == '__main__':
+    main()

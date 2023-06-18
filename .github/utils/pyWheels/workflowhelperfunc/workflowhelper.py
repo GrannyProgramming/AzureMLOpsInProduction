@@ -4,7 +4,6 @@ import os
 import logging
 from azure.ai.ml import MLClient
 from azure.identity import DefaultAzureCredential
-from functools import wraps
 
 def log_event(logger, level, event_message):
     """Log events at different levels.
@@ -149,23 +148,3 @@ def initialize_mlclient():
         workspace_name=workspace_name,
         credential=credential
     )
-
-def catch_exception(func):
-    """
-    A decorator that wraps a function to catch and log any exceptions that occur 
-    during the execution of the function.
-
-    Args:
-        func (function): The function to be wrapped.
-
-    Returns:
-        function: The wrapped function.
-    """
-    @wraps(func)
-    def inner(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            args[0].logger.error(f"Failed to execute function: {func.__name__}. Error: {e}")
-            raise
-    return inner  

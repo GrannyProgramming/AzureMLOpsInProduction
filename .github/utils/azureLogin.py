@@ -1,50 +1,67 @@
 import os
 import subprocess
-from workflowhelperfunc.workflowhelper import setup_logger, log_event
+import logging
 
-def login_to_service_principal(logger):
+
+def get_env_variable(name):
+    """
+    Get the environment variable or return exception.
+
+    This function tries to get the value of an environment variable.
+    If the environment variable is not set, it logs an error message and raises an exception.
+
+    Parameters:
+    name (str): The name of the environment variable.
+
+    Returns:
+    str: The value of the environment variable.
+
+    Raises:
+    Exception: If the environment variable is not set.
+    """
+    try:
+        return os.environ[name]
+    except KeyError:
+        logging.error(f"Environment variable {name} not set.")
+        raise
+
+
+def login_to_service_principal(client_id, client_secret, tenant_id):
     """
     Login to the Azure service principal.
     
     This function logs in to the Azure service principal using the az cli. 
-    It gets the credentials from the environment variables ARM_CLIENT_ID, ARM_CLIENT_SECRET, and ARM_TENANT_ID.
-    
+    It gets the credentials from the provided arguments.
+
     Parameters:
-    logger (Logger): Logger object for logging events.
+    client_id (str): The client id of the Azure service principal.
+    client_secret (str): The client secret of the Azure service principal.
+    tenant_id (str): The tenant id of the Azure service principal.
 
     Raises:
-    Exception: If any of the required environment variables are missing.
+    subprocess.CalledProcessError: If the az cli login command fails.
     """
-    # Get secrets from environment variables
-    arm_client_id = os.getenv('ARM_CLIENT_ID')
-    arm_client_secret = os.getenv('ARM_CLIENT_SECRET')
-    arm_tenant_id = os.getenv('ARM_TENANT_ID')
-
-    if not all([arm_client_id, arm_client_secret, arm_tenant_id]):
-        log_event(logger, 'error', "One or more required environment variables are missing!")
-        raise Exception("One or more required environment variables are missing!")
-
-    # Use az cli to log in
     login_command = [
         'az', 'login',
         '--service-principal',
-        '--username', arm_client_id,
-        '--password', arm_client_secret,
-        '--tenant', arm_tenant_id
+        '--username', client_id,
+        '--password', client_secret,
+        '--tenant', tenant_id
     ]
 
     try:
-        # Call the login command
         subprocess.check_call(login_command)
-        log_event(logger, 'info', "Successfully logged into the Azure service principal.")
+        logging.info("Successfully logged into the Azure service principal.")
     except subprocess.CalledProcessError as e:
-        log_event(logger, 'error', f"Failed to login: {e}")
+        logging.error(f"Failed to login: {e}")
         raise
 
+
 if __name__ == '__main__':
-    """
-    Main execution of the script: Setup the logger and login to the Azure service principal.
-    """
-    logger = setup_logger(__name__)    
-    # Call the function
-    login_to_service_principal(logger)
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+    
+    client_id = get_env_variable('ARM_CLIENT_ID')
+    client_secret = get_env_variable('ARM_CLIENT_SECRET')
+    tenant_id = get_env_variable('ARM_TENANT_ID')
+
+    login_to_service_principal(client_id, client_secret, tenant_id)

@@ -68,13 +68,38 @@ class EnvironmentManager:
         Returns:
             dict: The prepared configuration.
         """
-        env_config = {
-            'image': config['image'],
-            'name': config['name'],
-            'version': new_version,
-            'conda_file': f"{config['name']}.yml",
-        }
+        if 'BuildContext' in config:
+            env_config = {
+                'build': BuildContext(path=config['BuildContext']['path']),
+                'name': config['name'],
+                'version': new_version
+            }
+        else:
+            env_config = {
+                'image': config['image'],
+                'name': config['name'],
+                'version': new_version,
+                'conda_file': f"{config['name']}.yml",
+            }
         return env_config
+
+    @catch_exception
+    def _get_existing_environment(self, env_name):
+        """
+        Get an existing environment based on provided name.
+
+        Args:
+            env_name : The environment name.
+            
+        Returns:
+            Environment: The existing environment if found, else None.
+        """
+        existing_env = next((env for env in self.ml_client.environments.list() 
+                            if env.name == env_name), None)
+        if existing_env:
+            existing_env = self.ml_client.environments.get(name=existing_env.name, 
+                                                        version=existing_env.latest_version)
+        return existing_env
 
     @catch_exception
     def create_or_update_environment(self, env_config: dict) -> None:
@@ -92,12 +117,9 @@ class EnvironmentManager:
 
         self.create_yaml_file(f"{env_config['name']}.yml", conda_dependencies)
 
-        existing_env = next((env for env in self.ml_client.environments.list() 
-                            if env.name == env_config['name']), None)
+        existing_env = self._get_existing_environment(env_config['name'])
 
         if existing_env:
-            existing_env = self.ml_client.environments.get(name=existing_env.name, 
-                                                         version=existing_env.latest_version)
             existing_deps = existing_env.conda_file.get('dependencies') if existing_env else None
 
             if existing_deps == env_config['dependencies']:
@@ -127,24 +149,20 @@ class EnvironmentManager:
         Args:
             docker_env_config : The configuration details for Docker environment.
         """
-        existing_env = next((env for env in self.ml_client.environments.list() 
-                            if env.name == docker_env_config['name']), None)
+        existing_env = self._get_existing_environment(docker_env_config['name'])
 
         if existing_env:
-            existing_env = self.ml_client.environments.get(name=existing_env.name, 
-                                                        version=existing_env.latest_version)
             if  docker_env_config['version'] <= existing_env.version:
                 self.logger.info(f"Environment '{docker_env_config['name']}' with version {docker_env_config['version']} already exists. No changes have been made.")
                 return
 
             self.logger.info(f"Updating the environment {docker_env_config['name']}.")
+            new_version = docker_env_config['version']
         else:
             self.logger.info(f"Creating new Docker environment {docker_env_config['name']}.")
+            new_version = '1'
 
-        env = Environment(build=BuildContext(path=docker_env_config['BuildContext']['path']), 
-                        name=docker_env_config['name'], 
-                        version=docker_env_config['version'])
-
+        env = Environment(**self.prepare_env_config(docker_env_config, new_version))
         self.ml_client.environments.create_or_update(env)
         self.logger.info(f"Docker environment {docker_env_config['name']} has been updated or created.")
 

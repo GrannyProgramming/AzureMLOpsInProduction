@@ -2,8 +2,7 @@ import json
 import sys
 from azure.ai.ml.entities import Environment, BuildContext
 import ruamel.yaml as yaml
-from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event
-from functools import wraps
+from workflowhelperfunc.workflowhelper import initialize_mlclient, setup_logger, log_event, catch_exception
 
 class EnvironmentManager:
     """
@@ -21,31 +20,10 @@ class EnvironmentManager:
         self.ml_client = ml_client
         self.logger = logger
 
-    def catch_exception(func):
-        """
-        A decorator that wraps a function to catch and log any exceptions that occur 
-        during the execution of the function.
-
-        Args:
-            func (function): The function to be wrapped.
-
-        Returns:
-            function: The wrapped function.
-        """
-        @wraps(func)
-        def inner(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                args[0].logger.error(f"Failed to execute function: {func.__name__}. Error: {e}")
-                raise
-        return inner  # Make the wrapped function a staticmethod.
-
-
     @catch_exception
     def create_yaml_file(self, filename: str, content: dict) -> None:
         """
-        Creates a YAML file with the given content.
+        Creates a YAML file with the given content in the correct format.
 
         Args:
             filename : Name of the file to be created.
@@ -59,7 +37,7 @@ class EnvironmentManager:
     @staticmethod
     def prepare_env_config(config: dict, new_version: str) -> dict:
         """
-        Prepares the environment configuration.
+        Prepares the environment configuration for both docker and Conda.
 
         Args:
             config : The configuration details.
@@ -86,7 +64,7 @@ class EnvironmentManager:
     @catch_exception
     def _get_existing_environment(self, env_name):
         """
-        Get an existing environment based on provided name.
+        Get an existing environment based on provided name and get the latest version.
 
         Args:
             env_name : The environment name.
@@ -104,7 +82,8 @@ class EnvironmentManager:
     @catch_exception
     def create_or_update_environment(self, env_config: dict) -> None:
         """
-        Creates or updates an Azure ML environment based on provided configuration.
+        Creates or updates an Azure ML environment based on provided configuration. Logic for auto
+        incrementing the version is also handled here for conda environments.
 
         Args:
             env_config : The configuration details.
@@ -144,7 +123,8 @@ class EnvironmentManager:
     @catch_exception
     def create_or_update_docker_environment(self, docker_env_config: dict) -> None:
         """
-        Creates or updates a Docker environment based on provided configuration.
+        Creates or updates a Docker environment based on provided configuration. There is no logic
+        for auto incrementing the version for Docker environments.
 
         Args:
             docker_env_config : The configuration details for Docker environment.

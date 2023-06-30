@@ -3,6 +3,7 @@ import json
 import copy
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
+from workflowhelperfunc.workflowhelper import initialize_mlclient
 
 def replace_references(data, original):
     if isinstance(data, dict):
@@ -23,19 +24,19 @@ def replace_references(data, original):
         return data
 
 def create_component_from_json(component):
-    inputs = {k: Input(**v) for k, v in component['inputs'].items()}
-    outputs = {k: Output(**v) for k, v in component['outputs'].items()}
+    inputs = {k: Input(type=v['type']) for k, v in component['inputs'].items()}  # assuming type is a string
+    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  # assuming type is a string
 
     new_component = command(
         name=component['name'],
         display_name=component['display_name'],
         inputs=inputs,
         outputs=outputs,
-        code=component['command']['reference'], 
-        command=component['command'],
-        environment=component['environment']['reference'], 
+        code=component['code_filepath'],
+        command=component['command'],  # actual command should be the value
+        environment=component['environment'],  # reference replaced with actual environment
     )
-    
+
     return new_component
 
 def create_components_from_json_file(json_file):
@@ -55,3 +56,12 @@ def create_components_from_json_file(json_file):
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument
 components = create_components_from_json_file(json_file)
+
+# Assuming you have ml_client instance
+
+for component in components:
+    client=initialize_mlclient()
+    component = client.create_or_update(component.component)
+    print(
+        f"Component {component.name} with Version {component.version} is registered"
+    )

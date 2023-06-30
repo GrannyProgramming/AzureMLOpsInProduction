@@ -15,7 +15,7 @@
     "pytorch":"azureml:AzureML-PyTorch-1.6-ubuntu18.04-py37-cpu-inference@latest",
     "tensorflow":"azureml:AzureML-TensorFlow-2.3-ubuntu18.04-py37-cpu-inference@latest"
   },
-  "code_filepath": {
+  "code_filepaths": {
     "prep": "dataScience/nyc_src/src/prep.py",
     "transform": "dataScience/nyc_src/src/transform.py",
     "predict": "dataScience/nyc_src/src/predict.py",
@@ -40,6 +40,7 @@
       "outputs": {
         "prep_data": { "type": {"reference": "data_types.folder"} }
       },
+      "code_filepath": {"reference": "code_filepaths.prep"},
       "command": {"reference": "commands.prep"}
     },
     {
@@ -52,6 +53,7 @@
       "outputs": {
         "transformed_data": { "type": {"reference": "data_types.folder"} }
       },
+      "code_filepath": {"reference": "code_filepaths.transform"},
       "command": {"reference": "commands.transform"}
     },
     {
@@ -65,6 +67,7 @@
       "outputs": {
         "predictions": { "type": {"reference": "data_types.folder"} }
       },
+      "code_filepath": {"reference": "code_filepaths.predict"},
       "command": {"reference": "commands.predict"}
     },
     {
@@ -78,6 +81,7 @@
       "outputs": {
         "score_report": { "type": {"reference": "data_types.folder"} }
       },
+      "code_filepath": {"reference": "code_filepaths.score"},
       "command": {"reference": "commands.score"}
     },
     {
@@ -97,6 +101,7 @@
         "model_output": { "type": {"reference": "data_types.model"} },
         "test_data": { "type": {"reference": "data_types.folder"} }
       },
+      "code_filepath": {"reference": "code_filepaths.train"},
       "command": {"reference": "commands.train"}
     }
   ]

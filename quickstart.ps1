@@ -57,7 +57,8 @@ foreach ($env in $jsonContent.PSObject.Properties.Name) {
     }
 
     # Create the environment
-    gh api repos/$GH_OWNER/$GH_REPO/environments -X POST -F name=$env
+    gh api -X PUT repos/$GH_OWNER/$GH_REPO/environments/$env
+
 
     gh secret set ARM_CLIENT_ID -r "$GH_OWNER/$GH_REPO" --body $clientId --env=$env
     gh secret set ARM_CLIENT_SECRET -r "$GH_OWNER/$GH_REPO" --body $clientSecret --env=$env
@@ -70,5 +71,7 @@ echo "Service principals created and saved in GitHub Secrets"
 ## Convert to ps core 7 test and review 
 ## if ($main_sp_name_obj_id -eq "None" ) { $main_sp_name_obj_id=( az ad sp show --id $Client_ID --query "{roleBeneficiaryObjID:objectId}" -o tsv ) }
 # add below 
-# $environments = @('sandbox', 'development', 'uat', 'production')
 
+
+# $environments = @('sandbox', 'development', 'uat', 'production')
+## We can create a workflow to replace the environments with different names 

@@ -164,8 +164,8 @@ def main() -> None:
 
         for docker_env_config in config.get('docker_build', []):
             env_manager.create_or_update_docker_environment(docker_env_config)
-    except Exception as e:
-        log_event(logger, 'error', f"An error occurred during execution: {e}")
+    except Exception as err:
+        log_event(logger, 'error', f"An error occurred during execution: {err}")
         sys.exit(1)
 
 if __name__ == '__main__':

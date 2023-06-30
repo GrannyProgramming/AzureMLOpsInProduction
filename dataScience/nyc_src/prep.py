@@ -28,7 +28,7 @@ all_columns = {
     "vendorID": "vendor",
     "lpepPickupDatetime": "pickup_datetime",
     "lpepDropoffDatetime": "dropoff_datetime",
-    "tpepPickupDateTime": "pickup_datetime",
+    "tpepPickupDamok'//'teTime": "pickup_datetime",
     "tpepDropoffDateTime": "dropoff_datetime",
     "pickupLongitude": "pickup_longitude",
     "pickupLatitude": "pickup_latitude",

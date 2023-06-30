@@ -25,7 +25,7 @@ class BicepDeployment:
         self.logger = logger
 
     @classmethod
-    def get_env_variable(cls, var_name: str) -> str:
+    def get_env_variable(cls, instance, var_name: str) -> str:
         """
         Retrieve the value of the specified environment variable.
 
@@ -41,7 +41,7 @@ class BicepDeployment:
         try:
             return os.environ[var_name]
         except KeyError:
-            log_event(cls.logger, 'error', f'{var_name} environment variable not set')
+            log_event(instance.logger, 'error', f'{var_name} environment variable not set')
             raise
 
 
@@ -156,20 +156,22 @@ class BicepDeployment:
 
 
 def main() -> None:
-    """
-    The main entry point of the script. Initializes the BicepDeployment instance and executes it.
-    """
     logger = setup_logger(__name__)
 
     parser = argparse.ArgumentParser(description='Create a Bicep deployment.')
-    parser.add_argument('--template-file', default=BicepDeployment.get_env_variable('BICEP_MAIN_PATH'),
+
+    deploy = BicepDeployment(logger, None, None)  # create instance with None parameters temporarily
+
+    parser.add_argument('--template-file', default=deploy.get_env_variable(deploy, 'BICEP_MAIN_PATH'),
                         help='Bicep template file')
-    parser.add_argument('--parameters', default=BicepDeployment.get_env_variable('BICEP_PARAMETER_PATH'),
+    parser.add_argument('--parameters', default=deploy.get_env_variable(deploy, 'BICEP_PARAMETER_PATH'),
                         help='Parameters for the Bicep file')
 
     args = parser.parse_args()
 
-    deploy = BicepDeployment(logger, args.template_file, args.parameters)
+    # Assign the correct parameters after parsing the command line arguments
+    deploy.template_file = args.template_file
+    deploy.parameters = args.parameters
     deploy.execute()
 
 

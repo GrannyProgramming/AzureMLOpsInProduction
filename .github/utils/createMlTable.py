@@ -1,6 +1,6 @@
 import argparse
-import mltable
 from pathlib import Path
+import mltable
 from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
 ## This logic needs to be reviewed and updated, don't think deleting a file is the right way to go
@@ -17,15 +17,16 @@ def create_directories(save_dir, logger):
 
     # Define subdirectories for MLTable 
     mltable_dir = save_dir / "MLTable"
-    
+
     # Check if a file with the same name exists
     if mltable_dir.is_file():
-        log_event(logger, 'info', f"A file with the same name '{mltable_dir}' already exists. Deleting it.")
+        log_event(logger, 'info', f"A file with the same name '{mltable_dir}' already exists. \
+                   Deleting it.")
         mltable_dir.unlink()
-    
+
     # Create the subdirectories if they do not exist
     mltable_dir.mkdir(parents=True, exist_ok=True)
-    
+
     return mltable_dir
 
 
@@ -39,7 +40,8 @@ def load_data():
     # Define the data source
     paths = [
         {
-            "pattern": f"wasbs://nyctlc@azureopendatastorage.blob.core.windows.net/{color}/puYear={year}/puMonth=*/**/*.parquet"
+            "pattern": f"wasbs://nyctlc@azureopendatastorage.blob.core.windows\
+                .net/{color}/puYear={year}/puMonth=*/**/*.parquet"
         }
         for color in ["green", "yellow"]
         for year in range(2015, 2020)
@@ -98,8 +100,8 @@ def main():
         save_data(tbl, mltable_dir)
 
         log_event(logger, 'info', "ML table created and saved successfully.")
-    except Exception as e:
-        log_event(logger, 'error', f"An error occurred: {str(e)}")
+    except Exception as error:
+        log_event(logger, 'error', f"An error occurred: {str(error)}")
 
 
 if __name__ == "__main__":

@@ -1,12 +1,12 @@
-from typing import Tuple, Dict, Union
+from typing import Tuple
+import os
 from azure.ai.ml.entities import AmlCompute, ComputeInstance
 from workflowhelperfunc.workflowhelper import setup_logger, log_event, initialize_mlclient, load_config
-import os
+
 
 class ComputeManager:
     """Manage Azure ML Compute resources.
     """
-
     def __init__(self):
         """Initialize ComputeManager with environment variables, directories, config, and Azure ML client."""
         self.logger = setup_logger(__name__)
@@ -49,7 +49,8 @@ class ComputeManager:
         Returns:
             The config file path.
         """
-        config_file = os.path.join(self.root_dir, "variables", f'{self.environment}', "compute", "compute.json")
+        config_file = os.path.join(self.root_dir, "variables",\
+                                   f'{self.environment}', "compute", "compute.json")
         return config_file
 
     def handle_existing_compute(self, compute_type: str, compute_name: str) -> bool:
@@ -64,13 +65,15 @@ class ComputeManager:
         """
         try:
             if self.client.compute.get(compute_name) is not None:
-                log_event(self.logger, 'info', f"{compute_type.capitalize()} compute '{compute_name}' already exists.")
+                log_event(self.logger, 'info', f"{compute_type.capitalize()}\
+                           compute '{compute_name}' already exists.")
                 return True
-        except Exception as e:
-            if 'Not Found' in str(e):
-                log_event(self.logger, 'info', f"{compute_type.capitalize()} compute '{compute_name}' does not exist and will be created.")
+        except Exception as error:
+            if 'Not Found' in str(error):
+                log_event(self.logger, 'info', f"{compute_type.capitalize()}\
+                           compute '{compute_name}' does not exist and will be created.")
             else:
-                log_event(self.logger, 'error', f"An unexpected error occurred: {e}")
+                log_event(self.logger, 'error', f"An unexpected error occurred: {error}")
             return False
         return False
 
@@ -86,9 +89,9 @@ class ComputeManager:
             if compute_type in self.compute_types:
                 compute = self.compute_types[compute_type](name=compute_name, **compute_config)
                 self.client.compute.begin_create_or_update(compute)
-                log_event(self.logger, 'info', f"{compute_type.capitalize()} compute '{compute_name}' has been created.")
+                log_event(self.logger, 'info', f"{compute_type.capitalize()}\
+                           compute '{compute_name}' has been created.")
 
 if __name__ == "__main__":
-    """Main execution of the script: Initialize the ComputeManager and execute it."""
     manager = ComputeManager()
     manager.execute()

@@ -1,3 +1,4 @@
+import sys
 import json
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml import load_component, Input
@@ -50,8 +51,11 @@ def nyc_taxi_data_regression(pipeline_raw_data: Input, compute_train_node: str):
 
 ml_client = initialize_mlclient()
 
+# Fetch the json file from command line arguments
+json_file_path = sys.argv[1]
+
 # Load the json file
-with open('config.json', 'r') as f:
+with open(json_file_path, 'r') as f:
     config = json.load(f)
 
 for pipeline_config in config['pipelines']:

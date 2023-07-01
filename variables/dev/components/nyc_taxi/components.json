@@ -18,11 +18,11 @@
     "tensorflow":"azureml:AzureML-TensorFlow-2.3-ubuntu18.04-py37-cpu-inference@latest"
   },
   "code_filepaths": {
-    "prep": "dataScience/nyc_src/src/prep.py",
-    "transform": "dataScience/nyc_src/src/transform.py",
-    "predict": "dataScience/nyc_src/src/predict.py",
-    "score": "dataScience/nyc_src/src/score.py",
-    "train": "dataScience/nyc_src/src/train.py"
+    "prep": "data_science/nyc_taxi/src/prep.py",
+    "transform": "data_science/nyc_taxi/src/transform.py",
+    "predict": "data_science/nyc_taxi/src/predict.py",
+    "score": "data_science/nyc_taxi/src/score.py",
+    "train": "data_science/nyc_taxi/src/train.py"
   },
   "commands": {
     "prep": {"command": "python prep.py --raw_data {raw_data} --prep_data {prep_data}"},

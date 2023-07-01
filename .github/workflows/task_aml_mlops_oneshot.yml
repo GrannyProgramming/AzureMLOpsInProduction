@@ -80,23 +80,17 @@ jobs:
       # @grannyProgramming - should I force a environment update if the version is updated but the dependencies are the same?
       # @GrannyProgramming - Not sure if I can use the same logic for dockerfiles as I did for the conda file
       - name: Create AML Environments
-        env:
-          ENVIRONMENT: ${{ matrix.environment }}
         run: | 
           python3 mlops/sdkv2/create_environments.py variables/${{ matrix.environment }}/environments/environments.json
 
       - name: Create Components
-        env:
-          ENVIRONMENT: ${{ matrix.environment }}
         run: | 
-          python3 mlops/sdkv2/create_components.py variables/${{ matrix.environment }}/components/nyc_taxi/components.json
+          python3 mlops/sdkv2/create_component.py variables/${{ matrix.environment }}/components/nyc_taxi/components.json
   
       - name: Create Pipelines
-        env:
-          ENVIRONMENT: ${{ matrix.environment }}
         run: | 
           python3 mlops/sdkv2/create_pipeline.py variables/${{ matrix.environment }}/pipelines/nyc_taxi/pipelines.json
-
+          
 
 
       ## Monitoring stuff, alerts not working yet, everything is gucchi

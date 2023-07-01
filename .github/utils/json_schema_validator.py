@@ -2,7 +2,7 @@ import os
 import sys
 import json
 from jsonschema import validate, ValidationError
-from workflow_utils.workflow_utils import setup_logger, log_event
+from workflowhelperfunc.workflowhelper import setup_logger, log_event
 
 
 class SchemaValidator:

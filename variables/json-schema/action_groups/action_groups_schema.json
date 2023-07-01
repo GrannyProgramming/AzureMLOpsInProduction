@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "action_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_group_name": { "type": "string", "maxLength": 12 },
+          "location": { "type": "string" },
+          "receivers": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "sms": { 
+                "type": "array",
+                "items": { "$ref": "#/definitions/SmsReceiver" }
+              },
+              "webhook": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "azure_app_push": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/AzureAppPushReceiver" }
+              },
+              "voice": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/VoiceReceiver" }
+              },
+              "azure_arm_role": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/ArmRoleReceiver" }
+              },
+              "azure_function": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/AzureFunctionReceiver" }
+              },
+              "azure_logic_app": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/LogicAppReceiver" }
+              },
+              "automation_runbook": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/AutomationRunbookReceiver" }
+              }
+            }
+          },
+          "severity": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["action_group_name", "location", "receivers", "severity"]
+      }
+    }
+  },
+  "required": ["action_groups"],
+  "definitions": {
+    "AzureAppPushReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email_address": { "type": "string" }
+      },
+      "required": ["name", "email_address"],
+      "additionalProperties": true
+    },
+    "ArmRoleReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role_id": { "type": "string" },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["name", "role_id"],
+      "additionalProperties": true
+    },
+    "AutomationRunbookReceiver": {
+      "type": "object",
+      "properties": {
+        "automation_account_id": { "type": "string" },
+        "runbook_name": { "type": "string" },
+        "webhook_resource_id": { "type": "string" },
+        "is_global_runbook": { "type": "boolean" },
+        "name": { "type": ["string", "null"] },
+        "service_uri": { "type": ["string", "null"] },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["automation_account_id", "runbook_name", "webhook_resource_id", "is_global_runbook"],
+      "additionalProperties": true
+    },
+    "SmsReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "country_code": { "type": "string" },
+        "phone_number": { "type": "string" },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["name", "country_code", "phone_number"],
+      "additionalProperties": true
+    },
+    "VoiceReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "country_code": { "type": "string" },
+        "phone_number": { "type": "string" },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["name", "country_code", "phone_number"],
+      "additionalProperties": true
+    },
+    "AzureFunctionReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "function_app_resource_id": { "type": "string" },
+        "function_name": { "type": "string" },
+        "http_trigger_url": { "type": "string" },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["name", "function_app_resource_id", "function_name", "http_trigger_url"],
+      "additionalProperties": true
+    },
+    "LogicAppReceiver": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "resource_id": { "type": "string" },
+        "callback_url": { "type": "string" },
+        "use_common_alert_schema": { "type": "boolean", "default": false }
+      },
+      "required": ["name", "resource_id", "callback_url"],
+      "additionalProperties": true
+    }
+  }
+}

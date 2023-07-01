@@ -1,15 +1,17 @@
 {
-  "pipeline_name": "pipeline-amcg-001",
   "default_environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
   "default_type": "command",
   "data_types": {
     "folder": "uri_folder",
-    "model": "mlflow_model",
-    "number": "number"
+    "file": "uri_file",
+    "mltable": "mltable"
   },
   "default_values": {
     "test_split_ratio": 0.2
   },
+  "model": {
+    "mlflow": "mlflow_model"
+    },
   "environments": {
     "sklearn":"azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
     "pytorch":"azureml:AzureML-PyTorch-1.6-ubuntu18.04-py37-cpu-inference@latest",
@@ -61,7 +63,7 @@
       "display_name": "PredictTaxiFares",
       "environment": {"reference": "environments.sklearn"},
       "inputs": {
-        "model_input": { "type": {"reference": "data_types.model"} },
+        "model_input": { "type": {"reference": "model.mlflow"} },
         "test_data": { "type": {"reference": "data_types.folder"} }
       },
       "outputs": {
@@ -76,7 +78,7 @@
       "environment": {"reference": "environments.sklearn"},
       "inputs": {
         "predictions": { "type": {"reference": "data_types.folder"} },
-        "model": { "type": {"reference": "data_types.model"} }
+        "model": { "type": {"reference": "model.mlflow"} }
       },
       "outputs": {
         "score_report": { "type": {"reference": "data_types.folder"} }
@@ -91,14 +93,14 @@
       "inputs": {
         "train_data": { "type": {"reference": "data_types.folder"} },
         "test_split_ratio": {
-          "type": {"reference": "data_types.number"},
+          "type": "number",
           "min": 0,
           "max": 1,
           "default": {"reference": "default_values.test_split_ratio"}
         }
       },
       "outputs": {
-        "model_output": { "type": {"reference": "data_types.model"} },
+        "model_output": { "type": {"reference": "model.mlflow"} },
         "test_data": { "type": {"reference": "data_types.folder"} }
       },
       "code_filepath": {"reference": "code_filepaths.train"},

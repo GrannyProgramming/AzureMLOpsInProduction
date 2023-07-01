@@ -2,7 +2,7 @@ import os
 import sys
 import json
 from jsonschema import validate, ValidationError
-from workflowhelperfunc.workflowhelper import setup_logger, log_event
+from workflow_utils.workflow_utils import setup_logger, log_event
 
 
 class SchemaValidator:
@@ -48,13 +48,13 @@ class SchemaValidator:
 
         # Replace the first directory with 'json-schema'
         try:
-            dir_components[1] = 'json-schema'
+            dir_components[1] = 'json_schema'
         except IndexError:
             log_event(self.logger, 'error', f"The path '{dir_path}' does not have the expected structure. Skipping this path.")
             return None
 
         # Get the base name of the JSON file and remove the '.json' extension
-        schema_file_name = os.path.splitext(json_file)[0] + 'Schema.json'
+        schema_file_name = os.path.splitext(json_file)[0] + '_schema.json'
 
         # Reconstruct the schema file path
         schema_path = os.path.join(*dir_components, schema_file_name)

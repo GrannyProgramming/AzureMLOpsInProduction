@@ -1,0 +1,244 @@
+{
+  "alerts": [
+    {
+      "alert_name": "AML Jobs - Consistently Failing Jobs",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 5,
+        "query": "AmlComputeJobEvent | where ErrorDetails != '' | summarize FailureCount=count() by JobName | where FailureCount > 5",
+        "metric_measure_column": "FailureCount"
+      },
+      "description": "This query shows jobs that have failed more than five times.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "24h",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "AML Jobs - Error Codes Count",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeJobEvent | where ErrorDetails != '' | extend ErrorCode=extract('ErrorCode: ([^,]+)', 1, ErrorDetails) | summarize ErrorCodeCount=count() by JobName, ErrorCode | order by ErrorCodeCount desc",
+        "metric_measure_column": "ErrorCodeCount"
+      },
+      "description": "This query identifies which error codes are most common for each job.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "24h",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "AML Cluster - Failure Rate",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeJobEvent | summarize TotalJobs=count(), FailedJobs=countif(ErrorDetails != '') by ClusterName | extend FailureRate = round(FailedJobs*100.0/TotalJobs, 2)",
+        "metric_measure_column": "FailureRate"
+      },
+      "description": "This query calculates the failure rate for each cluster.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "24h",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "AML Cluster - Scale Down Rate",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeClusterEvent | where NodeIdleTimeSecondsBeforeScaleDown > 1000 and TimeGenerated between (datetime(2023-01-01T00:00:00Z)..datetime(2023-12-31T23:59:59Z)) | summarize scaleDownCount=count() by bin(TimeGenerated, 1d)",
+        "metric_measure_column": "scaleDownCount"
+      },
+      "description": "This query identifies how many times the scale down occurred due to idle nodes each day in the year 2023.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "24h",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "AML Cluster - Quota Utilization",
+      "condition": {
+        "time_aggregation": "Average",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeClusterEvent | extend QuotaUtilized = todouble(QuotaUtilized), QuotaAllocated = todouble(QuotaAllocated) | project TimeGenerated, QuotaUtilized, QuotaAllocated | summarize QuotaUtilizedAvg=avg(QuotaUtilized), QuotaAllocatedAvg=avg(QuotaAllocated) by bin(TimeGenerated, 1d)",
+        "metric_measure_column": "QuotaUtilizedAvg"
+      },
+      "description": "This query provides average daily quota utilized and quota allocated for better understanding of your resource management.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "24h",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Evolution of Job Errors Over Time",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeJobEvent | where ErrorDetails != '' | extend ErrorCode=extract('ErrorCode: ([^,]+)', 1, ErrorDetails) | summarize count() by bin(TimeGenerated, 1d), ErrorCode",
+        "metric_measure_column": "count"
+      },
+      "description": "This query provides a daily error count for each type of error.",
+      "severity": 2,
+      "evaluation_frequency": "24h",
+      "window_size": "30d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Nodes Deallocation Due to Low Priority Eviction",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeClusterEvent | where NodeDeallocationOption == 'lowpriority' | summarize Count=count() by bin(TimeGenerated, 1h)",
+        "metric_measure_column": "Count"
+      },
+      "description": "This query visualizes how frequently low priority nodes are deallocated.",
+      "severity": 3,
+      "evaluation_frequency": "1h",
+      "window_size": "7d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Errors in Compute Cluster Events",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeClusterEvent | where ClusterErrorCodes != '' | count",
+        "metric_measure_column": "count"
+      },
+      "description": "This can alert you to any persistent issues with the compute cluster that might need addressing. Frequent errors could indicate an issue with cluster configuration or capacity.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Unusual Spikes in Job Failures",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeJobEvent | where ErrorDetails != '' | make-series Count=count() default=0 on TimeGenerated in range(datetime(2023-01-01T00:00:00Z), datetime(2023-12-31T23:59:59Z), 1h) | extend (anomalies, score, baseline) = series_decompose_anomalies(Count) | mv-expand TimeGenerated to typeof(datetime), Count to typeof(long), anomalies to typeof(double), score to typeof(double), baseline to typeof(long) | where anomalies > 0",
+        "metric_measure_column": "Count"
+      },
+      "description": "This query leverages the anomaly detection capabilities of KQL to detect unusual spikes in job failures.",
+      "severity": 1,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Sudden Changes in Resource Utilization",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 0,
+        "query": "AmlComputeCpuGpuUtilization | extend Utilization_numeric = todouble(Utilization) | make-series UtilizationSeries=avg(Utilization_numeric) default=0 on TimeGenerated in range(datetime(2023-01-01T00:00:00Z), datetime(2023-12-31T23:59:59Z), 1h) | extend (anomalies, score, baseline) = series_decompose_anomalies(UtilizationSeries) | mv-expand TimeGenerated to typeof(datetime), UtilizationSeries to typeof(long), anomalies to typeof(double), score to typeof(double), baseline to typeof(long) | where anomalies > 0",
+        "metric_measure_column": "Count"
+      },
+      "description": "This query detects sudden changes in CPU/GPU utilization which could indicate a problem with the underlying resources.",
+      "severity": 2,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Most Utilized Compute Clusters",
+      "condition": {
+        "time_aggregation": "Average",
+        "operator": "GreaterThan",
+        "threshold": 0.8,
+        "query": "AmlComputeClusterEvent | summarize AverageUtilization=avg(todouble(QuotaUtilized)/todouble(QuotaAllocated)) by ClusterName | order by AverageUtilization desc",
+        "metric_measure_column": "AverageUtilization"
+      },
+      "description": "This query helps identify the most utilized compute clusters, which could be candidates for scaling.",
+      "severity": 2,
+      "evaluation_frequency": "24h",
+      "window_size": "30d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Compute Clusters with High Node Idle Times",
+      "condition": {
+        "time_aggregation": "Sum",
+        "operator": "GreaterThan",
+        "threshold": 7200,
+        "query": "AmlComputeClusterEvent | summarize TotalIdleTime=sum(NodeIdleTimeSecondsBeforeScaleDown) by ClusterName | order by TotalIdleTime desc",
+        "metric_measure_column": "TotalIdleTime"
+      },
+      "description": "This query finds compute clusters where nodes are often idle, which could be candidates for downscaling.",
+      "severity": 3,
+      "evaluation_frequency": "24h",
+      "window_size": "30d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Resource Usage over Time",
+      "condition": {
+        "time_aggregation": "Sum",
+        "operator": "GreaterThan",
+        "threshold": 1000,
+        "query": "Usage | summarize TotalQuantity=sum(Quantity) by ResourceUri, bin(TimeGenerated, 1d)",
+        "metric_measure_column": "TotalQuantity"
+      },
+      "description": "This query provides an overview of how the usage of each resource changes over time.",
+      "severity": 2,
+      "evaluation_frequency": "24h",
+      "window_size": "30d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Comparison of Latency and Quantity",
+      "condition": {
+        "time_aggregation": "Average",
+        "operator": "GreaterThan",
+        "threshold": 2,
+        "query": "Usage | summarize AvgLatency=avg(AvgLatencyInSeconds), TotalQuantity=sum(Quantity) by bin(TimeGenerated, 1h)",
+        "metric_measure_column": "AvgLatency"
+      },
+      "description": "This query compares the average latency and total quantity over time.",
+      "severity": 2,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Extremely High Error Rates",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 1000,
+        "query": "AmlComputeJobEvent | where ErrorDetails != '' | summarize ErrorCount = count() by bin(TimeGenerated, 1h) | where ErrorCount > 1000",
+        "metric_measure_column": "ErrorCount"
+      },
+      "description": "This could indicate a serious system issue, like a faulty deployment or a significant infrastructure problem.",
+      "severity": 4,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    },
+    {
+      "alert_name": "Unusual System Resource Usage",
+      "condition": {
+        "time_aggregation": "Count",
+        "operator": "GreaterThan",
+        "threshold": 50,
+        "query": "AmlComputeCpuGpuUtilization | extend Utilization_numeric = todouble(Utilization) | where Utilization_numeric > 0.95 | summarize HighUtilizationCount = count() by bin(TimeGenerated, 1h) | where HighUtilizationCount > 50",
+        "metric_measure_column": "HighUtilizationCount"
+      },
+      "description": "This could indicate a system malfunction or a cyber attack.",
+      "severity": 4,
+      "evaluation_frequency": "1h",
+      "window_size": "1d",
+      "action_group_name": []
+    }
+  ]
+}

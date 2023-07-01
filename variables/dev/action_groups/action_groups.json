@@ -1,0 +1,157 @@
+{
+    "action_groups": [
+        {
+            "action_group_name": "ag_email",
+            "location": "global",
+            "receivers": {
+                "email": [
+                    "harryfr@microsoft.com",
+                    "amcgonigle@microsoft.com"
+                ]
+            },
+            "severity": [
+                "Sev4"
+            ]
+        },
+        {
+            "action_group_name": "ag_sms",
+            "location": "global",
+            "receivers": {
+                "sms": [
+                    {
+                        "name": "receiver1",
+                        "country_code": "44",
+                        "phone_number": "8447859654"
+                    },
+                    {
+                        "name": "receiver2",
+                        "country_code": "1",
+                        "phone_number": "8445577641"
+                    }
+                ]
+            },
+            "severity": [
+                "Sev3"
+            ]
+        },
+        {
+            "action_group_name": "ag_webhook",
+            "location": "global",
+            "receivers": {
+                "webhook": [
+                    "http://requestb.in/1bq62iu1",
+                    "http://requestb.in/1bq62iu2"
+                ]
+            },
+            "severity": [
+                "Sev2"
+            ]
+        },
+        {
+            "action_group_name": "ag_app_push",
+            "location": "global",
+            "receivers": {
+                "azure_app_push": [
+                    {
+                        "name": "app_push_1",
+                        "email_address": "email1@example.com"
+                    },
+                    {
+                        "name": "app_push_2",
+                        "email_address": "email2@example.com"
+                    }
+                ]
+            },
+            "severity": [
+                "Sev4"
+            ]
+        },
+        {
+            "action_group_name": "ag_voice",
+            "location": "global",
+            "receivers": {
+                "voice": [
+                    {
+                        "name": "receiver1",
+                        "country_code": "1",
+                        "phone_number": "8447859654"
+                    }
+                ]
+            },
+            "severity": [
+                "Sev1"
+            ]
+        },
+        {
+            "action_group_name": "ag_arm_role",
+            "location": "global",
+            "receivers": {
+                "azure_arm_role": [
+                    {
+                        "name": "role_name_1",
+                        "role_id": "role_id_1",
+                        "use_common_alert_schema": false
+                    }
+                ]
+            },
+            "severity": [
+                "Sev2"
+            ]
+        },
+        {
+            "action_group_name": "ag_func_app",
+            "location": "global",
+            "receivers": {
+                "azure_function": [
+                    {
+                        "name": "function_name_1",
+                        "function_app_resource_id": "function_app_resource_id_1",
+                        "function_name": "function_name_1",
+                        "http_trigger_url": "http://requestb.in/1bq62iu1",
+                        "use_common_alert_schema": false
+                    }
+                ]
+            },
+            "severity": [
+                "Sev1"
+            ]
+        },
+        {
+            "action_group_name": "ag_log_app",
+            "location": "global",
+            "receivers": {
+                "azure_logic_app": [
+                    {
+                        "name": "resource_id_1",
+                        "resource_id": "resource_id_1",
+                        "callback_url": "http://requestb.in/1bq62iu1",
+                        "use_common_alert_schema": false
+                    }
+                ]
+            },
+            "severity": [
+                "Sev1"
+            ]
+        },
+        {
+            "action_group_name": "ag_auto_runb",
+            "location": "global",
+            "receivers": {
+                "automation_runbook": [
+                    {
+                        "name": "runbook_name_1",
+                        "automation_account_id": "automation_account_id_1",
+                        "runbook_name": "runbook_name_1",
+                        "webhook_resource_id": "webhook_resource_id_1",
+                        "is_global_runbook": true,
+                        "service_uri": "http://requestb.in/1bq62iu1",
+                        "use_common_alert_schema": false
+                    }
+                ]
+            },
+            "severity": [
+                "Sev1"
+            ]
+        }
+    ]
+}

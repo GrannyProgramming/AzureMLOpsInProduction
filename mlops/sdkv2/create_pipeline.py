@@ -6,8 +6,6 @@ from workflowhelperfunc.workflowhelper import initialize_mlclient
 import inspect
 
 def load_component_by_name(name):
-    sig = inspect.signature(component)
-    print(f"Component {name} accepts the following parameters: {sig}")  
     return load_component(client=ml_client, name=[name], version=latest_version)
 
 @pipeline

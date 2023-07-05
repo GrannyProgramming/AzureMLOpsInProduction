@@ -3,7 +3,7 @@
   "pipelines": [
     {
       "name": "nyc_taxi_pipeline",
-      "compute": "cpu_compute_target",
+      "compute": "cpu-cluster003",
       "file_paths": {
         "raw_data_path": "./dataEngineer/nyc_taxi/data_csv"
       },

@@ -6,7 +6,21 @@ from workflowhelperfunc.workflowhelper import initialize_mlclient
 import inspect
 
 def load_component_by_name(name):
-    return load_component(client=ml_client, name=[name], version=latest_version)
+    # Get existing component from the client
+    existing_component = next((component for component in ml_client.components.list() 
+                            if component.name == name), None)
+    
+    # If component exists, get its latest version
+    if existing_component:
+        existing_component = ml_client.components.get(name=existing_component.name, 
+                                                        version=existing_component.latest_version)
+        # Load the component with the latest version
+        component_func = load_component(client=ml_client, name=existing_component.name, version=existing_component.version)
+    else:
+        print(f"Component with name {name} does not exist.")
+        component_func = None
+    
+    return component_func
 
 @pipeline
 def data_pipeline(raw_data: Input):

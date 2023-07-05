@@ -57,8 +57,6 @@ def create_components_from_json_file(json_file):
 json_file = sys.argv[1]  # get json filepath from command line argument
 components = create_components_from_json_file(json_file)
 
-# Assuming you have ml_client instance
-
 for component in components:
     client=initialize_mlclient()
     component = client.create_or_update(component.component)

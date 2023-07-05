@@ -1,9 +1,8 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 _Social buttons_
 
-[![grannyprogramming - ds-aml-mlops](https://img.shields.io/static/v1?label=grannyprogramming&message=ds-aml-mlops&color=blue&logo=github)](https://github.com/grannyprogramming/ds-aml-mlops "Go to GitHub repo")
-[![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
-[![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
+[![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/stars)
+[![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/forks)
 
 # Introduction to Azure Machine Learning and MLOps
 

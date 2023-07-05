@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
 
-# 💡 Overview of this Repository
+# 💡 Overview of this ds-aml-mlops
 This repository provides a comprehensive, modular, and end-to-end solution for MLOps in Azure. It is based on established pattern architectures and is designed with customization in mind, understanding that every organization has its own unique requirements.
 
 Here's what this repository aims to achieve:
@@ -29,10 +29,10 @@ With this repository, you should be able to get your MLOps up and running in Azu
 
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
-   1. [What is MLOps?](##what-is-mlops)
-   2. [Applying MLOps in Azure](##applying-mlops-in-azure)
+   1. [What is MLOps?](#what-is-mlops)
+   2. [Applying MLOps in Azure](#applying-mlops-in-azure)
 2. [Components of MLOps](#components-of-mlops)
-3. [Forking the Repository](#forking-the-repository)
+3. [Forking the Repository](#🍴-forking-the-repository)
 4. [Quickstart Guide](#quickstart-guide)
    1. [What You'll Need](##what-youll-need)
    2. [Steps](##steps)
@@ -83,7 +83,7 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
 1. **Go to the Repository**: 🔎 Navigate to the main page of the repository on GitHub.
 
-2. **Optionally - Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry. Might be useful as new features currently in preview will be incorporated into this repo in the future.
+2. **Optionally - Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry. Might be useful as new features currently in preview will be incorporated into this repo at a future date.
 
     [![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
 
@@ -136,7 +136,7 @@ Welcome to the **Quickstart Guide**! 🎉 This document will assist you step by 
     - Authenticate with GitHub
     - Extract the configuration details from your JSON file for each environment
     - Log in to Azure and set up the corresponding service principal for each environment
-    - Gracefully update GitHub with the details for each environment
+    - Gracefully update GitHub with the details for each environment and thier respective secrets
 
 4. **Follow the Prompts**: 📢 The script will guide you through the rest of the process. It might ask for your GitHub credentials (if you haven't logged in before) or ask to create a service principal in Azure.
 
@@ -162,13 +162,13 @@ Here's how to do it using the GitHub CLI:
 
     This will display a list of all workflows in your repository.
 
-2. **Run the Workflow**: 🏃‍♀️ Once you've identified the workflow you want to run, in our case the workflow will be called "task_aml_mlops_e2e" you can dispatch it using the following command:
+2. **Run the Workflow**: 🏃‍♀️ Once you've identified the workflow you want to run, in our case the workflow will be called "Azure ML Workflow" you can dispatch it using the following command:
 
     ```bash
     gh workflow run WORKFLOW_NAME.yml
     ```
 
-    Replace `WORKFLOW_NAME.yml` with the actual filename of your workflow i.e., "task_aml_mlops_e2e".
+    Replace `WORKFLOW_NAME.yml` with the actual filename of your workflow i.e., "Azure ML Workflow".
 
 3. **Check Workflow Status**: 📊 To check the status of your workflow, use:
 
@@ -191,8 +191,6 @@ If you prefer to visually check the status of your workflows, GitHub's user inte
 4. **Check Run Details**: 🕵️‍♀️ Once you click on a specific run, you'll see a summary at the top of the page, and a detailed log of the run at the bottom. If the run is still in progress, you can watch the logs update in real-time.
 
 That's it! You've successfully navigated to and viewed your workflow runs on GitHub. You can return to this page at any time to view the status of a run, or to troubleshoot if something goes wrong.
-
-That's it! Your GitHub workflow should now be running. Once it's completed, you can check the logs for any output or errors.
 
 🔧 Remember, GitHub workflows are highly customizable. Always check the `.github/workflows` directory in your repository to understand what your workflows are doing and what inputs they might require.
 

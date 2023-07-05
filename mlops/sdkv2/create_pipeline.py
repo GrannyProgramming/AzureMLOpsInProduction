@@ -3,7 +3,7 @@ import json
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml import load_component, Input
 from workflowhelperfunc.workflowhelper import initialize_mlclient
-
+ 
 def load_component_by_name(name):
     existing_component = next((component for component in ml_client.components.list() 
                             if component.name == name), None)
@@ -88,5 +88,5 @@ for pipeline_config in config['pipelines']:
 
     pipeline_job = ml_client.jobs.create_or_update(
         pipeline_job, experiment_name=f"{pipeline_config['name']}_with_pipeline_component"
-    )
+    ) 
     print(pipeline_job)

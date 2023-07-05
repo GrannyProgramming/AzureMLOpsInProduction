@@ -21,7 +21,7 @@ def load_component_by_name(name):
         component_func = None
     
     return component_func
-
+ 
 @pipeline
 def data_pipeline(raw_data: Input):
     """pipeline component with data prep and transformation defined via yaml."""

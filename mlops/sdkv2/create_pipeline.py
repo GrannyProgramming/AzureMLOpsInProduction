@@ -88,5 +88,5 @@ for pipeline_config in config['pipelines']:
 
     pipeline_job = ml_client.jobs.create_or_update(
         pipeline_job, experiment_name=f"{pipeline_config['name']}_with_pipeline_component"
-    ) 
+    )
     print(pipeline_job)

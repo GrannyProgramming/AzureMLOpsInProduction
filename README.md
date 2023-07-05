@@ -6,19 +6,18 @@
 [![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
 
 # Table of Contents
-
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
-   1. [What is MLOps?](#what-is-mlops)
-   2. [Applying MLOps in Azure](#applying-mlops-in-azure)
+   1. [What is MLOps?](##what-is-mlops)
+   2. [Applying MLOps in Azure](##applying-mlops-in-azure)
 2. [Components of MLOps](#components-of-mlops)
 3. [Forking the Repository](#forking-the-repository)
 4. [Quickstart Guide](#quickstart-guide)
-   1. [What You'll Need](#what-youll-need)
-   2. [Steps](#steps)
-   3. [Help](#help)
+   1. [What You'll Need](##what-youll-need)
+   2. [Steps](##steps)
+   3. [Help](##help)
 5. [Running the GitHub Workflow](#running-the-github-workflow)
-6. [Checking Workflow Status via UI](#checking-workflow-status-via-ui)
-7. [Understanding the GitHub Actions Workflow](#understanding-the-github-actions-workflow)
+    1. [Checking Workflow Status via UI](##checking-workflow-status-via-ui)
+    2. [Understanding the GitHub Actions Workflow](##understanding-the-github-actions-workflow)
 
 # Introduction to Azure Machine Learning and MLOps
 
@@ -56,7 +55,7 @@ Here are some of the key components associated with MLOps in Azure:
 
 10. **Governance**: Policies and regulations that guide how machine learning models are developed and used, including data privacy and ethical considerations.
 
-## 🍴 Forking the Repository
+# 🍴 Forking the Repository
 
 Before you start, you need a copy of the repository in your GitHub account. This process is known as "forking". Here's how to do it:
 
@@ -129,7 +128,7 @@ If you encounter any issues, please check:
 - ✔️ You've installed all necessary tools (PowerShell, GitHub CLI, Azure CLI).
 - ✔️ Your internet connection, as the script requires access to GitHub and Azure.
 
-## 🚀 Running the GitHub Workflow
+# 🚀 Running the GitHub Workflow
 
 After setting up the service principal and GitHub secrets, you're ready to kick off the GitHub workflow. This workflow should be set up for manual triggering using `workflow_dispatch`. 
 
@@ -181,49 +180,44 @@ That's it! Your GitHub workflow should now be running. Once it's completed, you 
 
 Your GitHub Actions Workflow, named `Azure ML Workflow`, is triggered whenever a push event is made to the `main` branch. It consists of several jobs, each with individual tasks or "steps".
 
-## 🚀 Understanding the GitHub Actions Workflow
+1. **Checkout Code**: Utilizes the `actions/checkout@v3` action to clone the repository into the GitHub runner. This makes your entire codebase available for subsequent steps in the workflow.
 
-1. **Checkout Code**: Utilizes the `actions/checkout@v3` action to clone the repository into the GitHub runner.
+2. **Set Up Python 3.9**: Leverages the `actions/setup-python@v4` action to set up a specific Python version (3.9) in the runner's environment. This ensures that all subsequent steps using Python are executed with the correct Python version.
 
-2. **Set Up Python 3.9**: Leverages the `actions/setup-python@v4` action to set up a specific Python version (3.9).
+3. **Install Dependencies**: Executes a Python script [`install_dependencies.py`](.github/utils/install_dependencies.py) that manages the installation of necessary Python packages and dependencies required for the rest of the workflow.
 
-3. **Install Dependencies**: Executes the [install_dependencies.py](./github/utils/install_dependencies.py) script that manages the installation of necessary Python packages.
+4. **Build Wheel And Install Helper Functions**: This step includes two tasks. First, it changes the current directory to where the Python wheel configurations are (`py_wheels`), then runs `setup.py` to build a wheel distribution of helper functions. Finally, it installs the generated wheel files, making these functions available for import in other scripts.
 
-4. **Build Wheel And Install Helper Functions**: Executes a script located in the [py_wheels directory](./github/utils/py_wheels).
+5. **Json Schema Validation**: Executes a Python script [`json_schema_validator.py`](.github/utils/json_schema_validator.py) to validate the structure of your JSON configuration files. This is crucial for ensuring data integrity and error prevention.
 
-5. **Json Schema Validation**: Executes the [json_schema_validator.py](./github/utils/json_schema_validator.py) script to validate the structure of your JSON configuration files.
+6. **Set Env Variables**: Executes a Python script [`set_env_variables.py`](.github/utils/set_env_variables.py) that sets environment variables for the runner based on parameters specified in a JSON file. This allows these variables to be used in subsequent steps.
 
-6. **Set Env Variables**: Executes the [set_env_variables.py](./github/utils/set_env_variables.py) script to set environment variables for the runner.
+7. **Azure Login**: This step authenticates with Azure using service principal credentials stored as GitHub secrets. This authenticated session is used for deploying resources and managing services within Azure in subsequent steps.
 
-7. **Azure Login**: Authenticates with Azure using service principal credentials.
+8. **Compile & Deploy Bicep Templates**: Compiles your Bicep infrastructure-as-code templates into ARM templates using the `bicep build` command. It then runs a Python script [`create_azure_resources.py`](.github/utils/create_azure_resources.py) to deploy these templates to Azure, effectively setting up your required cloud resources.
 
-8. **Compile & Deploy Bicep Templates**: Executes the [create_azure_resources.py](./github/utils/create_azure_resources.py) script to deploy ARM templates to Azure.
+9. **Create AML Instance/Clusters**: Executes a Python script [`create_compute.py`](mlops/sdkv2/create_compute.py) to set up an Azure Machine Learning workspace and create associated compute clusters within it.
 
-9. **Create AML Instance/Clusters**: Executes the [create_compute.py](./mlops/sdkv2/create_compute.py) script to set up an Azure Machine Learning workspace.
+10. **Create An MLtable**: Executes a Python script [`createMlTable.py`](dataEngineer/nyc_taxi/src/createMlTable.py) to create a table in your Azure Machine Learning workspace, serving as a place to store and manage your ML data.
 
-10. **Create An MLtable**: Executes the [createMlTable.py](./dataEngineer/nyc_taxi/src/createMlTable.py) script to create a table in your Azure Machine Learning workspace.
+11. **Create Data Assets**: Executes a Python script [`create_data_asset.py`](mlops/sdkv2/create_data_asset.py) that creates data assets in Azure Machine Learning based on a provided JSON file. Data assets can include datasets, datastores, and more.
 
-11. **Create Data Assets**: Executes the [create_data_asset.py](./mlops/sdkv2/create_data_asset.py) script to create data assets in Azure Machine Learning.
+12. **Create AML Environments**: Executes a Python script [`create_environments.py`](mlops/sdkv2/create_environments.py) to create multiple Azure Machine Learning environments from a provided JSON file. These environments can then be used to run training scripts or host models.
 
-12. **Create AML Environments**: Executes the [create_environments.py](./mlops/sdkv2/create_environments.py) script to create multiple Azure Machine Learning environments.
+13. **Create Components**: Executes a Python script [`create_component.py`](mlops/sdkv2/create_component.py) that creates pipeline components in Azure Machine Learning. These components define individual steps in the ML workflow, such as data preparation, model training, and model deployment.
 
-13. **Create Components**: Executes the [create_component.py](./mlops/sdkv2/create_component.py) script to create components in Azure Machine Learning.
+14. **Create Pipelines**: Executes a Python script [`create_pipeline.py`](mlops/sdkv2/create_pipeline.py) to create ML pipelines in your Azure Machine Learning workspace. These pipelines orchestrate the execution of your ML workflow, using the components defined in the previous step.
 
-14. **Create Pipelines**: Executes the [create_pipeline.py](./mlops/sdkv2/create_pipeline.py) script to create pipelines in Azure Machine Learning.
+15. **Create action groups**: Executes a Python script [`create_action_groups.py`](mlops/monitoring/azure_monitor/create_action_groups.py) to create Action Groups in Azure. Action Groups manage the notifications for alerts triggered by your Azure resources.
 
-15. **Create action groups**: Executes the [create_action_groups.py](./mlops/monitoring/azure_monitor/create_action_groups.py) script to create action groups in Azure Monitor.
+16. **Create alert processing rules based on severity**: Executes a script [`alert_processing_rules.py`](mlops/monitoring/azure_monitor/alert_processing_rules.py) to create rules in Azure Monitor. These rules define what actions to take when an alert with a specific severity is triggered.
 
-16. **Create alert processing rules based on severity**: Executes the [alert_processing_rules.py](./mlops/monitoring/azure_monitor/alert_processing_rules.py) script that creates alert processing rules in Azure Monitor.
-
-17. **Create AML Alerts**: Executes the [create_alerts.py](./mlops/monitoring/azure_monitor/create_alerts.py) script to create alert rules in Azure Monitor.
-
-These links are placeholders. Make sure to replace them with the actual paths of your Python scripts in your repository.
-
+17. **Create AML Alerts**: Executes a script [`create_alerts.py`](mlops/monitoring/azure_monitor/create_alerts.py) to create alerts in Azure Monitor. Alerts are triggered by specific conditions in your Azure resources, enabling proactive monitoring and management.
 
 Each step in this workflow plays a crucial role in ensuring a successful execution of your MLOps pipeline. From setting up the correct environment and installing dependencies, to deploying resources in Azure, and even setting up alerts to monitor your resources - everything is automated and visible through GitHub Actions.
 
 
 
-## License
+# License
 
 Released under [MIT](/LICENSE) by [@grannyprogramming](https://github.com/grannyprogramming).

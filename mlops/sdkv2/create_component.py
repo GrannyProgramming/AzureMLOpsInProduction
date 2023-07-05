@@ -23,9 +23,14 @@ def replace_references(data, original):
     else:
         return data
 
-def create_component_from_json(component):
+def create_component_from_json(component, references):
     inputs = {k: Input(type=v['type']) for k, v in component['inputs'].items()}  # assuming type is a string
     outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  # assuming type is a string
+
+    # resolve command arguments
+    command_str = component['command']['command']
+    for input_name in inputs.keys():
+        command_str = command_str.replace(f'{{{input_name}}}', references[input_name])
 
     new_component = command(
         name=component['name'],
@@ -33,13 +38,13 @@ def create_component_from_json(component):
         inputs=inputs,
         outputs=outputs,
         code=component['code_filepath'],
-        command=component['command'],  # actual command should be the value
+        command=command_str,  # actual command should be the value
         environment=component['environment'],  # reference replaced with actual environment
     )
 
     return new_component
 
-def create_components_from_json_file(json_file):
+def create_components_from_json_file(json_file, references):
     with open(json_file, 'r') as f:
         data = json.load(f)
 
@@ -49,13 +54,14 @@ def create_components_from_json_file(json_file):
     # Replace all the references
     resolved_json = replace_references(json_copy, data)
 
-    components = [create_component_from_json(component) for component in resolved_json['components']]
+    components = [create_component_from_json(component, references) for component in resolved_json['components']]
 
     return components
 
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument
-components = create_components_from_json_file(json_file)
+references = {}  # TODO: you need to provide actual mappings from argument names to values
+components = create_components_from_json_file(json_file, references)
 
 for component in components:
     client=initialize_mlclient()

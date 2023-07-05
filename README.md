@@ -32,14 +32,14 @@ With this repository, you should be able to get your MLOps up and running in Azu
    1. [What is MLOps?](#what-is-mlops)
    2. [Applying MLOps in Azure](#applying-mlops-in-azure)
 2. [Components of MLOps](#components-of-mlops)
-3. [Forking the Repository](#🍴-forking-the-repository)
-4. [Quickstart Guide](#quickstart-guide)
-   1. [What You'll Need](##what-youll-need)
-   2. [Steps](##steps)
-   3. [Help](##help)
-5. [Running the GitHub Workflow](#running-the-github-workflow)
-    1. [Checking Workflow Status via UI](##checking-workflow-status-via-ui)
-    2. [Understanding the GitHub Actions Workflow](##understanding-the-github-actions-workflow)
+3. [Forking the Repository](#-forking-the-repository)
+4. [Quickstart Guide](#-quickstart-guide)
+   1. [What You'll Need](#-what-youll-need)
+   2. [Steps](#-steps)
+   3. [Help](#-help)
+5. [Running the GitHub Workflow](#-running-the-github-workflow)
+    1. [Checking Workflow Status via UI](#-checking-workflow-status-via-ui)
+    2. [Understanding the GitHub Actions Workflow](#-understanding-the-github-actions-workflow)
 
 # Introduction to Azure Machine Learning and MLOps
 

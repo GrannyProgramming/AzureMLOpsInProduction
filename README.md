@@ -47,17 +47,17 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
 1. **Go to the Repository**: 🔎 Navigate to the main page of the repository on GitHub.
 
-1.1 **Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry
+2. **Optionally - Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry
 
 [![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
 
-2. **Fork the Repository**: 🍴 Click on the "Star" button for easier reference in the future to this repo (top right) and then "Fork" button at the top-right of the page. This will create a copy of the repository under your GitHub account.
+3. **Fork the Repository**: 🍴 Click on the "Star" button for easier reference in the future to this repo (top right) and then "Fork" button at the top-right of the page. This will create a copy of the repository under your GitHub account.
 
 [![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/fork)
 
 
 
-3. **Clone the Repository**: 💻 Now, you need a local copy of the repository on your computer. Open your terminal (or PowerShell), navigate to the directory where you want to clone the repository, and run the following command:
+4. **Clone the Repository**: 💻 Now, you need a local copy of the repository on your computer. Open your terminal (or PowerShell), navigate to the directory where you want to clone the repository, and run the following command:
 
     ```bash
     git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
@@ -65,7 +65,7 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
     Make sure to replace `YOUR_USERNAME` with your GitHub username, and `REPO_NAME` with the name of the repository. 
 
-4. **Navigate to the Repository Directory**: 🗺️ Once the repository is cloned, use the `cd` command to navigate into it:
+5. **Navigate to the Repository Directory**: 🗺️ Once the repository is cloned, use the `cd` command to navigate into it:
 
     ```bash
     cd REPO_NAME

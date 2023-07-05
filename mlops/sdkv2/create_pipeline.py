@@ -3,7 +3,6 @@ import json
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml import load_component, Input
 from workflowhelperfunc.workflowhelper import initialize_mlclient
-import inspect
 
 def load_component_by_name(name):
     existing_component = next((component for component in ml_client.components.list() 
@@ -20,24 +19,11 @@ def load_component_by_name(name):
     return component_func
 
 @pipeline
-def data_pipeline(raw_data: Input):
-    prep_taxi_data = load_component_by_name('prep_taxi_data')
-    if prep_taxi_data is None:
-        return None
-    prep_node = prep_taxi_data(raw_data=raw_data)
-
-    taxi_feature_engineering = load_component_by_name('taxi_feature_engineering')
-    if taxi_feature_engineering is None:
-        return None
-    transform_node = taxi_feature_engineering(clean_data=prep_node.outputs.prep_data)
-    return {"train_data": transform_node.outputs.transformed_data}
-
-@pipeline
 def train_pipeline(train_data: Input, compute_train_node: str):
     train_linear_regression_model = load_component_by_name('train_linear_regression_model')
     if train_linear_regression_model is None:
         return None
-    train_node = train_linear_regression_model(train_data=train_data)
+    train_node = train_linear_regression_model(train_data=train_data, test_split_ratio=0.2)
     train_node.compute = compute_train_node
 
     predict_taxi_fares = load_component_by_name('predict_taxi_fares')
@@ -60,6 +46,7 @@ def train_pipeline(train_data: Input, compute_train_node: str):
         "predictions": predict_node.outputs.predictions,
         "score_report": score_node.outputs.score_report,
     }
+
 
 @pipeline
 def nyc_taxi_data_regression(pipeline_raw_data: Input, compute_train_node: str):

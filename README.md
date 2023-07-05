@@ -1,3 +1,6 @@
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+
 # Introduction to Azure Machine Learning and MLOps
 
 Azure Machine Learning is a comprehensive cloud-based machine learning service from Microsoft that offers capabilities for building, training, and deploying machine learning models. It simplifies the process of creating models by providing an easy-to-use interface and a wide range of tools and services.
@@ -46,14 +49,16 @@ Before you start, you need a copy of the repository in your GitHub account. This
     [watch this repo](https://github.com/grannyprogramming/repository/subscription)
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/grannyprogramming" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true" aria-label="Follow @buttons on GitHub">Follow @buttons</a>
+<a class="github-button" href="https://github.com/GrannyProgramming/ds-aml-mlops" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-show-count="true" aria-label="Star GrannyProgramming/ds-aml-mlops on GitHub">Star</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/grannyprogramming/ds-aml-mlops" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-show-count="true" aria-label="Star buttons/github-buttons on GitHub">Star</a>
+<a class="github-button" href="https://github.com/GrannyProgramming/ds-aml-mlops/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork GrannyProgramming/ds-aml-mlops on GitHub">Fork</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/grannyprogramming/ds-aml-mlops/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork buttons/github-buttons on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/GrannyProgramming" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true" aria-label="Follow @GrannyProgramming on GitHub">Follow @GrannyProgramming</a>
 
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/GrannyProgramming/ds-aml-mlops/subscription" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-eye" data-show-count="true" aria-label="Watch GrannyProgramming/ds-aml-mlops on GitHub">Watch</a>
 
 3. **Clone the Repository**: 💻 Now, you need a local copy of the repository on your computer. Open your terminal (or PowerShell), navigate to the directory where you want to clone the repository, and run the following command:
 

@@ -1,7 +1,7 @@
 <!-- Place this tag in your head or just before your close body tag. -->
 _Social buttons_
 
-[![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/star)
+[![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
 [![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/fork)
 
 # Introduction to Azure Machine Learning and MLOps
@@ -46,12 +46,12 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
 1. **Go to the Repository**: 🔎 Navigate to the main page of the repository on GitHub.
 
-2. **Fork the Repository**: 🍴 Click on the "Star" button for easier reference in the future and then "Fork" button at the top-right of the page. This will create a copy of the repository under your GitHub account.
-
-    [fork my repository](https://github.com/grannyprogramming/repository/fork)
-    [watch this repo](https://github.com/grannyprogramming/repository/subscription)
+2. **Fork the Repository**: 🍴 Click on the "Star" button for easier reference in the future to this repo (top right) and then "Fork" button at the top-right of the page. This will create a copy of the repository under your GitHub account.
 
 [![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
+[![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/fork)
+
+
 
 3. **Clone the Repository**: 💻 Now, you need a local copy of the repository on your computer. Open your terminal (or PowerShell), navigate to the directory where you want to clone the repository, and run the following command:
 

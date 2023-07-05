@@ -49,10 +49,10 @@ Before you start, you need a copy of the repository in your GitHub account. This
 <a class="github-button" href="https://github.com/grannyprogramming" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true" aria-label="Follow @buttons on GitHub">Follow @buttons</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/grannyprogramming/github-buttons" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-show-count="true" aria-label="Star buttons/github-buttons on GitHub">Star</a>
+<a class="github-button" href="https://github.com/grannyprogramming/ds-aml-mlops" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-show-count="true" aria-label="Star buttons/github-buttons on GitHub">Star</a>
 
 <!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/grannyprogramming/github-buttons/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork buttons/github-buttons on GitHub">Fork</a>
+<a class="github-button" href="https://github.com/grannyprogramming/ds-aml-mlops/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-show-count="true" aria-label="Fork buttons/github-buttons on GitHub">Fork</a>
 
 
 3. **Clone the Repository**: 💻 Now, you need a local copy of the repository on your computer. Open your terminal (or PowerShell), navigate to the directory where you want to clone the repository, and run the following command:

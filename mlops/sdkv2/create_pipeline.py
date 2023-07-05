@@ -19,6 +19,14 @@ def load_component_by_name(name):
     return component_func
 
 @pipeline
+def data_pipeline(raw_data: Input):
+    """pipeline component with data prep and transformation defined via yaml."""
+    prep_node = prep_taxi_data(raw_data=raw_data)
+    transform_node = taxi_feature_engineering(clean_data=prep_node.outputs.prep_data)
+    return {"train_data": transform_node.outputs.transformed_data}
+
+
+@pipeline
 def train_pipeline(train_data: Input, compute_train_node: str):
     train_linear_regression_model = load_component_by_name('train_linear_regression_model')
     if train_linear_regression_model is None:

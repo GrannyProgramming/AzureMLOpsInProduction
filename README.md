@@ -1,8 +1,9 @@
 <!-- Place this tag in your head or just before your close body tag. -->
-_Social buttons_
-
 [![stars - ds-aml-mlops](https://img.shields.io/github/stars/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops)
 [![forks - ds-aml-mlops](https://img.shields.io/github/forks/grannyprogramming/ds-aml-mlops?style=social)](https://github.com/grannyprogramming/ds-aml-mlops/fork)
+[![GitHub tag](https://img.shields.io/github/tag/grannyprogramming/ds-aml-mlops?include_prereleases=&sort=semver&color=blue)](https://github.com/grannyprogramming/ds-aml-mlops/releases/)
+[![License](https://img.shields.io/badge/License-MIT-blue)](#license)
+[![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
 
 # Introduction to Azure Machine Learning and MLOps
 
@@ -74,7 +75,7 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
 Now you're ready to run the `quickstart.ps1` script! 🚀 Remember, you'll need to pass the path to your JSON configuration file as an argument. 
 
-# 🚀 Quickstart Guide
+# 🚀 Quickstart Guide 
 
 Welcome to the **Quickstart Guide**! 🎉 This document will assist you step by step to run the `quickstart.ps1` script. This incredible script helps in setting up various environments for your project using a provided JSON configuration file. 
 
@@ -113,3 +114,59 @@ If you encounter any issues, please check:
 - ✔️ You've installed all necessary tools (PowerShell, GitHub CLI, Azure CLI).
 - ✔️ Your internet connection, as the script requires access to GitHub and Azure.
 
+## 🚀 Running the GitHub Workflow
+
+After setting up the service principal and GitHub secrets, you're ready to kick off the GitHub workflow. This workflow should be set up for manual triggering using `workflow_dispatch`. 
+
+Here's how to do it using the GitHub CLI:
+
+1. **List All Workflows**: 👀 First, list all workflows available in your repository. In your terminal or PowerShell, type the following command:
+
+    ```bash
+    gh workflow list
+    ```
+
+    This will display a list of all workflows in your repository.
+
+2. **Run the Workflow**: 🏃‍♀️ Once you've identified the workflow you want to run, in our case the workflow will be called "task_aml_mlops_e2e" you can dispatch it using the following command:
+
+    ```bash
+    gh workflow run WORKFLOW_NAME.yml
+    ```
+
+    Replace `WORKFLOW_NAME.yml` with the actual filename of your workflow i.e., "task_aml_mlops_e2e".
+
+3. **Check Workflow Status**: 📊 To check the status of your workflow, use:
+
+    ```bash
+    gh run list
+    ```
+
+    This command will list all recent workflow runs, along with their status (completed, in-progress, failed, etc.)
+
+## 🖥️ Checking Workflow Status via UI
+
+If you prefer to visually check the status of your workflows, GitHub's user interface provides a detailed view of each workflow run. Here's how to access it:
+
+1. **Go to Your Repository**: 🔍 Navigate to the main page of your repository on GitHub.
+
+2. **Access Actions Tab**: 🎬 Click on the "Actions" tab at the top of the repository page. This tab provides an overview of all workflow runs associated with your repository.
+
+    ![Actions Tab](https://docs.github.com/assets/images/help/repository/repo-tabs-actions.png)
+
+3. **View Workflow Runs**: 👀 Here, you'll see a list of all runs for all workflows in your repository, with the most recent runs listed first. You can click on the name of a run to view more detailed information.
+
+4. **Check Run Details**: 🕵️‍♀️ Once you click on a specific run, you'll see a summary at the top of the page, and a detailed log of the run at the bottom. If the run is still in progress, you can watch the logs update in real-time.
+
+That's it! You've successfully navigated to and viewed your workflow runs on GitHub. You can return to this page at any time to view the status of a run, or to troubleshoot if something goes wrong.
+
+That's it! Your GitHub workflow should now be running. Once it's completed, you can check the logs for any output or errors.
+
+🔧 Remember, GitHub workflows are highly customizable. Always check the `.github/workflows` directory in your repository to understand what your workflows are doing and what inputs they might require.
+
+
+
+
+## License
+
+Released under [MIT](/LICENSE) by [@grannyprogramming](https://github.com/grannyprogramming).

@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
 
-# 💡Overview of this Repository
+# 💡 Overview of this Repository
 This repository provides a comprehensive, modular, and end-to-end solution for MLOps in Azure. It is based on established pattern architectures and is designed with customization in mind, understanding that every organization has its own unique requirements.
 
 Here's what this repository aims to achieve:
@@ -25,7 +25,7 @@ The repository is built with collaboration in mind. The code and the structure o
 5. 🏢 Enterprise Readiness
 This repository is ready for enterprise implementation. It has been tested and proven to be robust and efficient, and it is versatile enough to be adapted to different organizational needs.
 
-With this repository, you should be able to get your MLOps up and running in Azure in just a few hours. So, start exploring and happy codin
+With this repository, you should be able to get your MLOps up and running in Azure in just a few hours. So, start exploring and happy coding!
 
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)

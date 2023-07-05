@@ -54,7 +54,7 @@ MLOps, or DevOps for Machine Learning, brings together the best practices from t
 With Azure Machine Learning, you can implement MLOps practices to automate and manage the lifecycle of your machine learning models. This includes the creation of reusable pipelines, automation of machine learning tasks, continuous integration and delivery (CI/CD) of models, model versioning, and monitoring of model performance.
 
 # Components of MLOps
-
+ deleret
 Here are some of the key components associated with MLOps in Azure:
 
 1. **Data**: The raw material for any machine learning model. The quality and relevance of your data significantly impacts the model's performance.

@@ -5,6 +5,21 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
 
+# Table of Contents
+
+1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
+   1. [What is MLOps?](#what-is-mlops)
+   2. [Applying MLOps in Azure](#applying-mlops-in-azure)
+2. [Components of MLOps](#components-of-mlops)
+3. [Forking the Repository](#forking-the-repository)
+4. [Quickstart Guide](#quickstart-guide)
+   1. [What You'll Need](#what-youll-need)
+   2. [Steps](#steps)
+   3. [Help](#help)
+5. [Running the GitHub Workflow](#running-the-github-workflow)
+6. [Checking Workflow Status via UI](#checking-workflow-status-via-ui)
+7. [Understanding the GitHub Actions Workflow](#understanding-the-github-actions-workflow)
+
 # Introduction to Azure Machine Learning and MLOps
 
 Azure Machine Learning is a comprehensive cloud-based machine learning service from Microsoft that offers capabilities for building, training, and deploying machine learning models. It simplifies the process of creating models by providing an easy-to-use interface and a wide range of tools and services.

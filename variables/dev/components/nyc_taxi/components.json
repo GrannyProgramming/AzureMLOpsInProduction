@@ -11,11 +11,11 @@
   },
   "model": {
     "mlflow": "mlflow_model"
-    },
+  },
   "environments": {
-    "sklearn":"azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
-    "pytorch":"azureml:AzureML-PyTorch-1.6-ubuntu18.04-py37-cpu-inference@latest",
-    "tensorflow":"azureml:AzureML-TensorFlow-2.3-ubuntu18.04-py37-cpu-inference@latest"
+    "sklearn": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+    "pytorch": "azureml:AzureML-PyTorch-1.6-ubuntu18.04-py37-cpu-inference@latest",
+    "tensorflow": "azureml:AzureML-TensorFlow-2.3-ubuntu18.04-py37-cpu-inference@latest"
   },
   "code_filepaths": {
     "prep": "data_science/nyc_taxi/src/prep.py",
@@ -25,86 +25,171 @@
     "train": "data_science/nyc_taxi/src/train.py"
   },
   "commands": {
-    "prep": {"command": "python prep.py --raw_data {raw_data} --prep_data {prep_data}"},
-    "transform": {"command": "python transform.py --clean_data {clean_data} --transformed_data {transformed_data}"},
-    "predict": {"command": "python predict.py --model_input {model_input} --test_data {test_data} --predictions {predictions}"},
-    "score": {"command": "python score.py --predictions {predictions} --model {model} --score_report {score_report}"},
-    "train": {"command": "python train.py --train_data {train_data} --test_data {test_data} --model_output {model_output} --test_split_ratio {test_split_ratio}"}
+    "prep": "python prep.py --raw_data {raw_data} --prep_data {prep_data}",
+    "transform": "python transform.py --clean_data {clean_data} --transformed_data {transformed_data}",
+    "predict": "python predict.py --model_input {model_input} --test_data {test_data} --predictions {predictions}",
+    "score": "python score.py --predictions {predictions} --model {model} --score_report {score_report}",
+    "train": "python train.py --train_data {train_data} --test_data {test_data} --model_output {model_output} --test_split_ratio {test_split_ratio}"
   },
   "components": [
     {
       "name": "prep_taxi_data",
       "display_name": "PrepTaxiData",
-      "environment": {"reference": "environments.sklearn"},
+      "environment": {
+        "reference": "environments.sklearn"
+      },
       "inputs": {
-        "raw_data": { "type": {"reference": "data_types.folder"}, "optional": true }
+        "raw_data": {
+          "type": {
+            "reference": "data_types.folder"
+          },
+          "optional": true
+        }
       },
       "outputs": {
-        "prep_data": { "type": {"reference": "data_types.folder"} }
+        "prep_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
-      "code_filepath": {"reference": "code_filepaths.prep"},
-      "command": {"reference": "commands.prep"}
+      "code_filepath": {
+        "reference": "code_filepaths.prep"
+      },
+      "command": {
+        "reference": "commands.prep"
+      }
     },
     {
       "name": "taxi_feature_engineering",
       "display_name": "TaxiFeatureEngineering",
-      "environment": {"reference": "environments.sklearn"},
+      "environment": {
+        "reference": "environments.sklearn"
+      },
       "inputs": {
-        "clean_data": { "type": {"reference": "data_types.folder"} }
+        "clean_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
       "outputs": {
-        "transformed_data": { "type": {"reference": "data_types.folder"} }
+        "transformed_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
-      "code_filepath": {"reference": "code_filepaths.transform"},
-      "command": {"reference": "commands.transform"}
+      "code_filepath": {
+        "reference": "code_filepaths.transform"
+      },
+      "command": {
+        "reference": "commands.transform"
+      }
     },
     {
       "name": "predict_taxi_fares",
       "display_name": "PredictTaxiFares",
-      "environment": {"reference": "environments.sklearn"},
+      "environment": {
+        "reference": "environments.sklearn"
+      },
       "inputs": {
-        "model_input": { "type": {"reference": "model.mlflow"} },
-        "test_data": { "type": {"reference": "data_types.folder"} }
+        "model_input": {
+          "type": {
+            "reference": "model.mlflow"
+          }
+        },
+        "test_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
       "outputs": {
-        "predictions": { "type": {"reference": "data_types.folder"} }
+        "predictions": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
-      "code_filepath": {"reference": "code_filepaths.predict"},
-      "command": {"reference": "commands.predict"}
+      "code_filepath": {
+        "reference": "code_filepaths.predict"
+      },
+      "command": {
+        "reference": "commands.predict"
+      }
     },
     {
       "name": "score_model",
       "display_name": "ScoreModel",
-      "environment": {"reference": "environments.sklearn"},
+      "environment": {
+        "reference": "environments.sklearn"
+      },
       "inputs": {
-        "predictions": { "type": {"reference": "data_types.folder"} },
-        "model": { "type": {"reference": "model.mlflow"} }
+        "predictions": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        },
+        "model": {
+          "type": {
+            "reference": "model.mlflow"
+          }
+        }
       },
       "outputs": {
-        "score_report": { "type": {"reference": "data_types.folder"} }
+        "score_report": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
-      "code_filepath": {"reference": "code_filepaths.score"},
-      "command": {"reference": "commands.score"}
+      "code_filepath": {
+        "reference": "code_filepaths.score"
+      },
+      "command": {
+        "reference": "commands.score"
+      }
     },
     {
       "name": "train_linear_regression_model",
       "display_name": "TrainLinearRegressionModel",
-      "environment": {"reference": "environments.sklearn"},
+      "environment": {
+        "reference": "environments.sklearn"
+      },
       "inputs": {
-        "train_data": { "type": {"reference": "data_types.folder"} },
+        "train_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        },
         "test_split_ratio": {
           "type": "number",
           "min": 0,
           "max": 1,
-          "default": {"reference": "default_values.test_split_ratio"}
+          "default": {
+            "reference": "default_values.test_split_ratio"
+          }
         }
       },
       "outputs": {
-        "model_output": { "type": {"reference": "model.mlflow"} },
-        "test_data": { "type": {"reference": "data_types.folder"} }
+        "model_output": {
+          "type": {
+            "reference": "model.mlflow"
+          }
+        },
+        "test_data": {
+          "type": {
+            "reference": "data_types.folder"
+          }
+        }
       },
-      "code_filepath": {"reference": "code_filepaths.train"},
-      "command": {"reference": "commands.train"}
+      "code_filepath": {
+        "reference": "code_filepaths.train"
+      },
+      "command": {
+        "reference": "commands.train"
+      }
     }
   ]
 }

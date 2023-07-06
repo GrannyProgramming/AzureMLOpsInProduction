@@ -71,13 +71,31 @@ def create_components_from_json_file(json_file):
 
     return components
 
+def compare_and_update_component(client, component):
+    try:
+        # Retrieve existing component
+        azure_component = client.get_component(component.name, component.version)
+
+        # Compare schemas
+        if azure_component.get_schema() == component.get_schema():
+            print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")
+        else:
+            print(f"Component {component.name} with Version {component.version} schema differs. Updating component.")
+            updated_component = client.create_or_update(component)
+            print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
+    except Exception as e:
+        # If component does not exist, create new component
+        print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
+        new_component = client.create_or_update(component)
+        print(f"Created Component {new_component.name} with Version {new_component.version}")
+
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument
 components = create_components_from_json_file(json_file)
 
+# Initialize Azure ML client
+client = initialize_mlclient()
+
+# Iterate over all components and compare/update them
 for component in components:
-    client=initialize_mlclient()
-    component = client.create_or_update(component.component)
-    print(
-        f"Component {component.name} with Version {component.version} is registered"
-    )
+    compare_and_update_component(client, component)

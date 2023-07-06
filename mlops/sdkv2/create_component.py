@@ -5,6 +5,16 @@ from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
+def generate_references(data):
+    references = {}
+    for key, value in data.items():
+        if isinstance(value, dict):
+            for subkey, subvalue in value.items():
+                references[f"{key}.{subkey}"] = subvalue
+        else:
+            references[key] = value
+    return references
+
 def replace_references(data, original):
     if isinstance(data, dict):
         if 'reference' in data:
@@ -44,15 +54,18 @@ def create_component_from_json(component, references):
 
     return new_component
 
-def create_components_from_json_file(json_file, references):
+def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
 
     # Create a deep copy of the original json data to not modify the original structure
     json_copy = copy.deepcopy(data)
 
+    # Generate references from JSON root
+    references = generate_references(json_copy)
+
     # Replace all the references
-    resolved_json = replace_references(json_copy, data)
+    resolved_json = replace_references(json_copy, references)
 
     components = [create_component_from_json(component, references) for component in resolved_json['components']]
 
@@ -60,8 +73,7 @@ def create_components_from_json_file(json_file, references):
 
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument
-references = {}  # TODO: you need to provide actual mappings from argument names to values
-components = create_components_from_json_file(json_file, references)
+components = create_components_from_json_file(json_file)
 
 for component in components:
     client=initialize_mlclient()

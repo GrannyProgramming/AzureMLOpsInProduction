@@ -1,3 +1,10 @@
+"""
+1. Reads a JSON file that contains the list of pipelines to be created.
+2. For each pipeline, it loads the pipeline components mentioned in the JSON file.
+3. Creates a pipeline job using the pipeline components loaded in step 2.
+4. Submits the pipeline job to create a new experiment run. 
+"""
+
 import sys
 import json
 from azure.ai.ml.dsl import pipeline

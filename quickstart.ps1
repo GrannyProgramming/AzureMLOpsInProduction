@@ -21,7 +21,7 @@ $previousSPName = $null
 $clientId = $null
 $clientSecret = $null
 $tenantId = $null
-
+#VYa$5uSQ(wK.6P/
 foreach ($env in $jsonContent.PSObject.Properties.Name) {
     $envDetails = $jsonContent.$env
 

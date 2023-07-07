@@ -8,4 +8,5 @@
         100
     ],
     "editor.formatOnSave": true,
+    "files.eol": "\n"
 }

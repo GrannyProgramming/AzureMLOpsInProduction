@@ -239,3 +239,7 @@ Each step in this workflow plays a crucial role in ensuring a successful executi
 # License
 
 Released under [MIT](/LICENSE) by [@grannyprogramming](https://github.com/grannyprogramming).
+
+# ✨ Contributors 
+<td align="center"><a href="https://github.com/grannyprogramming"><img src="https://avatars.githubusercontent.com/u/53883501?v=4" width="100px;" alt=""/><br /><sub><b>Alex McGonigle</b></sub></a><br /></td>
+

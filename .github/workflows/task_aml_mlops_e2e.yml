@@ -71,11 +71,11 @@ jobs:
 
       # Create data asseets 
       # @GrannyProgramming should I leave the unused file types in the json?
-      # - name: Create Data Assets
-      #   env:
-      #     ENVIRONMENT: ${{ matrix.environment }}
-      #   run: | 
-      #     python3 mlops/sdkv2/create_data_asset.py variables/dev/data_assests/data_assets.json
+      - name: Create Data Assets
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+        run: | 
+          python3 mlops/sdkv2/create_data_asset.py variables/dev/data_assests/data_assets.json
 
       # @grannyProgramming - should I force a environment update if the version is updated but the dependencies are the same?
       # @GrannyProgramming - Not sure if I can use the same logic for dockerfiles as I did for the conda file

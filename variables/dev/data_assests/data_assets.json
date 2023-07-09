@@ -8,15 +8,15 @@
         },
         {
             "type": "uri_folder",
-            "name": "This is an example uri_folder def.",
-            "description": "<description goes here>",
-            "path": "<path>"
+            "name": "NYC_taxi_folder",
+            "description": "folder type data for NYC taxi data",
+            "path": "dataEngineer/nyc_taxi/data_csv"
         },
         {
             "type": "mltable",
             "name": "NYC_taxi",
             "description": "MLTAble from NYC taxi data",
-            "path": "dataScience/src/data/MLTable"
+            "path": "dataEngineer/src/data/MLTable"
         }
     ]
 }

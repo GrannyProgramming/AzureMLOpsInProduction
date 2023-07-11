@@ -123,7 +123,7 @@
           "model_output": {"reference": "input_and_output_types.mlflow_model"},
           "test_data": {"reference": "input_and_output_types.uri_folder"}
         },
-      "env": {"reference": "environments.sklearn"},
+      "env": {"reference": "environments.pytorch"},
       "resources": {"reference": "resources.instance_count"},
       "distribution": {"reference": "distribution.pytorch"}
     }

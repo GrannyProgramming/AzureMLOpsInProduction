@@ -38,8 +38,8 @@ def replace_references(data, original):
         return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=v['type']) for k, v in component['inputs'].items()}  # assuming type is a string
-    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  # assuming type is a string
+    inputs = {k: Input(type=references[v['reference']]['type']) for k, v in component['inputs'].items()}  # resolve reference before getting type
+    outputs = {k: Output(type=references[v['reference']]['type']) for k, v in component['outputs'].items()}  # resolve reference before getting type
 
     # resolve command arguments
     command_str = component['command']['command']

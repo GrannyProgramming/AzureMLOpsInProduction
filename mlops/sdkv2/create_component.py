@@ -89,7 +89,7 @@ def compare_and_update_component(client, component):
     try:
         # Retrieve existing component
         azure_component = client.components.get(component.name, component.version)
-
+        print(azure_component)
         # Compare schemas
         if azure_component.get_schema() == component.get_schema():
             print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")

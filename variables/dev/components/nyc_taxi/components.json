@@ -31,7 +31,6 @@
       "type": "number",
       "optional": true,
       "min": 0,
-      "default": 0.2,
       "max": 1
     },
     "integer": {
@@ -118,7 +117,7 @@
       "filepath": "train.py",
       "inputs": {
         "train_data": {"reference": "input_and_output_types.uri_folder"},
-        "test_split_ratio": {"reference": "input_and_output_types.number"}
+        "test_split_ratio": {"reference": "input_and_output_types.number", "default": 0.2}
         }, 
         "outputs": {
           "model_output": {"reference": "input_and_output_types.mlflow_model"},

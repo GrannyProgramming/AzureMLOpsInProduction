@@ -42,6 +42,9 @@ def create_component_from_json(component, references):
     print("Component inputs:", component["inputs"])
     print("Component outputs:", component["outputs"])
 
+    # Generate display_name from name
+    display_name = component['name'].replace('_', ' ').title()
+
     # Resolve references for inputs and outputs
     inputs = {k: Input(type=references[v['reference']]['type'], default=v.get('default', None)) for k, v in component['inputs'].items()}  
     outputs = {k: Output(type=references[v['reference']]['type']) for k, v in component['outputs'].items()}  
@@ -56,7 +59,7 @@ def create_component_from_json(component, references):
 
     new_component = command(
         name=component['name'],
-        display_name=component['display_name'],
+        display_name=display_name,
         inputs=inputs,
         outputs=outputs,
         code=code_filepath,
@@ -65,6 +68,7 @@ def create_component_from_json(component, references):
     )
 
     return new_component
+
 
 
 def create_components_from_json_file(json_file):

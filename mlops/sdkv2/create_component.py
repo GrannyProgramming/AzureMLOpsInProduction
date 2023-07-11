@@ -15,6 +15,28 @@ def generate_references(data):
             references[key] = value
     return references
 
+def replace_references(data, original):
+    if isinstance(data, dict):
+        if 'reference' in data and isinstance(data['reference'], str):
+            parts = data['reference'].split('.')
+            ref_data = original
+            for part in parts:
+                if isinstance(ref_data, dict) and part in ref_data:
+                    ref_data = ref_data.get(part)
+                else:
+                    ref_data = data  # Return the original dictionary if the reference cannot be resolved
+                    break
+            return ref_data
+        else:
+            new_dict = {}
+            for key, value in data.items():
+                new_dict[key] = replace_references(value, original)
+            return new_dict
+    elif isinstance(data, list):
+        return [replace_references(item, original) for item in data]
+    else:
+        return data
+
 def create_component_from_json(component, references):
     print("Creating component", component["name"])
     print("Component inputs:", component["inputs"])
@@ -46,6 +68,7 @@ def create_component_from_json(component, references):
     )
 
     return new_component
+
 
 
 

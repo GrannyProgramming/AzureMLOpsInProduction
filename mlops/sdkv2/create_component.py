@@ -38,17 +38,14 @@ def replace_references(data, original):
         return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=v['type']) for k, v in component['inputs'].items()}  # assuming type is a string
-    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  # assuming type is a string
+    # Resolve references for inputs and outputs
+    inputs = {k: Input(type=references[v['reference']]['type']) for k, v in component['inputs'].items()}  
+    outputs = {k: Output(type=references[v['reference']]['type']) for k, v in component['outputs'].items()}  
 
     # generate command string
-    command_inputs = ' '.join('--{name} {{{{inputs.{name}}}}}'.format(name=name) for name in inputs.keys())
-    command_outputs = ' '.join('--{name} {{{{outputs.{name}}}}}'.format(name=name) for name in outputs.keys())
-    command_str = 'python {filepath} {inputs} {outputs}'.format(
-        filepath=component['filepath'],
-        inputs=command_inputs,
-        outputs=command_outputs
-    )
+    command_inputs = ' '.join('--{name} ${{{{{inputs.{name}}}}}}' if not references[v['reference']].get('optional', False) else '$[[--{name} ${{{{inputs.{name}}}}]]' for name, v in component['inputs'].items())
+    command_outputs = ' '.join('--{name} ${{{outputs.{name}}}}' for name in outputs.keys())
+    command_str = f'python {component["filepath"]} {command_inputs} {command_outputs}'
 
     # concatenate base path with relative path
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

@@ -88,7 +88,12 @@ def create_components_from_json_file(json_file):
 def compare_and_update_component(client, component):
     try:
         # Retrieve existing component
-        azure_component = client.components.get(component.name, component.version)
+        azure_component = next((comp for comp in client.components.list() 
+                                if comp.name == component.name), None)
+        if azure_component:
+            azure_component = client.components.get(name=azure_component.name, 
+                                                    version=azure_component.latest_version)
+
         print(azure_component)
         # Compare schemas
         if azure_component.get_schema() == component.get_schema():

@@ -45,7 +45,7 @@ def create_component_from_json(component, references):
     # generate command string
     command_inputs = ' '.join('--{name} ${{{{{inputs.{name}}}}}}' if not references[v['reference']].get('optional', False) else '$[[--{name} ${{{{inputs.{name}}}}]]' for name, v in component['inputs'].items())
     command_outputs = ' '.join('--{name} ${{{outputs.{name}}}}' for name in outputs.keys())
-    command_str = f'python {component["filepath"]} {command_inputs} {command_outputs}'
+    command_str = f'python {component["filepath"]} ${{inputs.{command_inputs}}} ${{outputs.{command_outputs}}}'
 
     # concatenate base path with relative path
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
@@ -86,7 +86,7 @@ def create_components_from_json_file(json_file):
     return components
 
 def compare_and_update_component(client, component):
-    # try:
+    try:
         # Retrieve existing component
         azure_component = next((comp for comp in client.components.list() 
                                 if comp.name == component.name), None)
@@ -96,17 +96,17 @@ def compare_and_update_component(client, component):
 
         print(azure_component)
         # Compare schemas
-    #     if azure_component.get_schema() == component.get_schema():
-    #         print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")
-    #     else:
-    #         print(f"Component {component.name} with Version {component.version} schema differs. Updating component.")
-    #         updated_component = client.create_or_update(component)
-    #         print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
-    # except Exception as e:
-    #     # If component does not exist, create new component
-    #     print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
-    #     new_component = client.create_or_update(component)
-    #     print(f"Created Component {new_component.name} with Version {new_component.version}")
+        if azure_component.get_schema() == component.get_schema():
+            print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")
+        else:
+            print(f"Component {component.name} with Version {component.version} schema differs. Updating component.")
+            updated_component = client.create_or_update(component)
+            print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
+    except Exception as e:
+        # If component does not exist, create new component
+        print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
+        new_component = client.create_or_update(component)
+        print(f"Created Component {new_component.name} with Version {new_component.version}")
 
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument

@@ -86,7 +86,7 @@ def create_components_from_json_file(json_file):
     return components
 
 def compare_and_update_component(client, component):
-    try:
+    # try:
         # Retrieve existing component
         azure_component = next((comp for comp in client.components.list() 
                                 if comp.name == component.name), None)
@@ -94,16 +94,16 @@ def compare_and_update_component(client, component):
             azure_component = client.components.get(name=azure_component.name, 
                                                     version=azure_component.latest_version)
 
-        print(azure_component)
-        # Compare schemas
-        if azure_component.get_schema() == component.get_schema():
-            print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")
-        else:
-            print(f"Component {component.name} with Version {component.version} schema differs. Updating component.")
-            updated_component = client.create_or_update(component)
-            print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
-    except Exception as e:
-        # If component does not exist, create new component
+    #     print(azure_component)
+    #     # Compare schemas
+    #     if azure_component.get_schema() == component.get_schema():
+    #         print(f"Component {component.name} with Version {component.version} already exists and has same schema. No update required.")
+    #     else:
+    #         print(f"Component {component.name} with Version {component.version} schema differs. Updating component.")
+    #         updated_component = client.create_or_update(component)
+    #         print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
+    # except Exception as e:
+    #     # If component does not exist, create new component
         print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
         new_component = client.create_or_update(component)
         print(f"Created Component {new_component.name} with Version {new_component.version}")

@@ -38,13 +38,6 @@ def replace_references(data, original):
         return data
 
 def create_component_from_json(component, references):
-    print("Creating component", component["name"])
-    print("Component inputs:", component["inputs"])
-    print("Component outputs:", component["outputs"])
-
-    # Generate display_name from name
-    display_name = component['name'].replace('_', ' ').title()
-
     # Resolve references for inputs and outputs
     inputs = {k: Input(type=references[v['reference']]['type'], default=v.get('default', None)) for k, v in component['inputs'].items()}  
     outputs = {k: Output(type=references[v['reference']]['type']) for k, v in component['outputs'].items()}  
@@ -57,19 +50,22 @@ def create_component_from_json(component, references):
     # concatenate base path with relative path
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
 
+    # resolve environment
+    environment = references[component['env']['reference']]['env']
+
+    # generate display name
+    display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
+
     new_component = command(
         name=component['name'],
-        display_name=display_name,
+        display_name=display_name,  # generated display name
         inputs=inputs,
         outputs=outputs,
         code=code_filepath,
-        command=command_str,  # actual command should be the value
-        environment=component['env']['env'],  # reference replaced with actual environment string
+        command=command_str,
+        environment=environment,  # resolved environment
     )
-
     return new_component
-
-
 
 
 def create_components_from_json_file(json_file):

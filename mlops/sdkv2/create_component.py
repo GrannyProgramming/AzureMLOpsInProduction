@@ -38,13 +38,17 @@ def replace_references(data, original):
         return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=references[v['reference']]['type']) for k, v in component['inputs'].items()}  # resolve reference before getting type
-    outputs = {k: Output(type=references[v['reference']]['type']) for k, v in component['outputs'].items()}  # resolve reference before getting type
+    inputs = {k: Input(type=v['type']) for k, v in component['inputs'].items()}  # assuming type is a string
+    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  # assuming type is a string
 
-    # resolve command arguments
-    command_str = component['command']['command']
-    for input_name in inputs.keys():
-        command_str = command_str.replace(f'{{{input_name}}}', references[input_name])
+    # generate command string
+    command_inputs = ' '.join('--{name} {{{{inputs.{name}}}}}'.format(name=name) for name in inputs.keys())
+    command_outputs = ' '.join('--{name} {{{{outputs.{name}}}}}'.format(name=name) for name in outputs.keys())
+    command_str = 'python {filepath} {inputs} {outputs}'.format(
+        filepath=component['filepath'],
+        inputs=command_inputs,
+        outputs=command_outputs
+    )
 
     # concatenate base path with relative path
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
@@ -60,6 +64,7 @@ def create_component_from_json(component, references):
     )
 
     return new_component
+
 
 def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:

@@ -17,11 +17,15 @@ def generate_references(data):
 
 def replace_references(data, original):
     if isinstance(data, dict):
-        if 'reference' in data:
+        if 'reference' in data and isinstance(data['reference'], str):
             parts = data['reference'].split('.')
             ref_data = original
             for part in parts:
-                ref_data = ref_data[part]
+                if isinstance(ref_data, dict) and part in ref_data:
+                    ref_data = ref_data.get(part)
+                else:
+                    ref_data = data  # Return the original dictionary if the reference cannot be resolved
+                    break
             return ref_data
         else:
             new_dict = {}
@@ -42,14 +46,17 @@ def create_component_from_json(component, references):
     for input_name in inputs.keys():
         command_str = command_str.replace(f'{{{input_name}}}', references[input_name])
 
+    # concatenate base path with relative path
+    code_filepath = references['component_filepaths.base_path'] + component['filepath']
+
     new_component = command(
         name=component['name'],
         display_name=component['display_name'],
         inputs=inputs,
         outputs=outputs,
-        code=component['code_filepath'],
+        code=code_filepath,
         command=command_str,  # actual command should be the value
-        environment=component['environment'],  # reference replaced with actual environment
+        environment=component['env'],  # reference replaced with actual environment
     )
 
     return new_component
@@ -67,7 +74,7 @@ def create_components_from_json_file(json_file):
     # Replace all the references
     resolved_json = replace_references(json_copy, references)
 
-    components = [create_component_from_json(component, references) for component in resolved_json['components']]
+    components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
 
     return components
 

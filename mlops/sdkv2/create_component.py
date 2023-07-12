@@ -20,14 +20,21 @@ def replace_references(data, references):
         for key, value in data.items():
             if isinstance(value, dict):
                 if 'reference' in value:
-                    ref_value = references.get(value['reference'], value['reference'])
-                    data[key] = ref_value
+                    ref_key = value['reference']
+                    ref_value = references.get(ref_key, value['reference'])
+                    if ref_key in references:
+                        # Replace the dictionary containing 'reference' key with the actual value
+                        data[key] = ref_value.split('.')[-1]
+                    else:
+                        # If the reference key does not exist in the references, keep the original dictionary
+                        continue
                 else:
                     replace_references(value, references)
     elif isinstance(data, list):
         for item in data:
             replace_references(item, references)
     return data
+
 
 def create_component_from_json(component, references):
     inputs = {k: Input(type=references.get(v, None), default=None) if isinstance(v, str) else Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  

@@ -9,7 +9,7 @@ def generate_references(data, parent_key=''):
     references = {}
     for key, value in data.items():
         full_key = f"{parent_key}.{key}" if parent_key else key
-        if isinstance(value, dict):
+        if isinstance(value, dict) and not 'reference' in value:
             references.update(generate_references(value, full_key))
         else:
             references[full_key] = value
@@ -20,7 +20,8 @@ def replace_references(data, references):
         for key, value in data.items():
             if isinstance(value, dict):
                 if 'reference' in value:
-                    data[key] = references.get(value['reference'], None)
+                    ref_value = references.get(value['reference'], value['reference'])
+                    value['reference'] = ref_value
                 else:
                     replace_references(value, references)
     elif isinstance(data, list):
@@ -29,8 +30,11 @@ def replace_references(data, references):
     return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=references[v['type']], default=v.get('default', None)) for k, v in component['inputs'].items()}  
-    outputs = {k: Output(type=references[v['type']]) for k, v in component['outputs'].items()}  
+    print("Component:\n", json.dumps(component, indent=2))
+    inputs = {k: Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  
+    print("Inputs:\n", json.dumps(inputs, indent=2))
+    outputs = {k: Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
+    print("Outputs:\n", json.dumps(outputs, indent=2))
     command_str = 'python {component["filepath"]} ' + ' '.join("--{name} ${{{{{inputs.{name}}}}}}" for name in component['inputs']) + ' ' + ' '.join("--{name} ${{{outputs.{name}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[component['env']['env']]

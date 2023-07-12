@@ -32,9 +32,9 @@ def replace_references(data, references):
 def create_component_from_json(component, references):
     print("Component:\n", json.dumps(component, indent=2))
     inputs = {k: Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  
-    print("Inputs:\n", json.dumps(inputs, indent=2))
+    print("Inputs:\n", str(inputs))
     outputs = {k: Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
-    print("Outputs:\n", json.dumps(outputs, indent=2))
+    print("Outputs:\n", str(inputs))
     command_str = 'python {component["filepath"]} ' + ' '.join("--{name} ${{{{{inputs.{name}}}}}}" for name in component['inputs']) + ' ' + ' '.join("--{name} ${{{outputs.{name}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[component['env']['env']]

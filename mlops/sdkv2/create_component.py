@@ -17,21 +17,20 @@ def generate_references(data):
 
 def replace_references(data, original):
     if isinstance(data, dict):
-        if 'reference' in data and isinstance(data['reference'], str):
-            parts = data['reference'].split('.')
-            ref_data = original
-            for part in parts:
-                if isinstance(ref_data, dict) and part in ref_data:
-                    ref_data = ref_data.get(part)
-                else:
-                    ref_data = data  # Return the original dictionary if the reference cannot be resolved
-                    break
-            return ref_data
-        else:
-            new_dict = {}
-            for key, value in data.items():
-                new_dict[key] = replace_references(value, original)
-            return new_dict
+        new_data = {}
+        for key, value in data.items():
+            if key == 'reference' and isinstance(value, str):
+                parts = value.split('.')
+                ref_data = original
+                for part in parts:
+                    if isinstance(ref_data, dict) and part in ref_data:
+                        ref_data = ref_data.get(part)
+                    else:
+                        break
+                new_data[key] = ref_data
+            else:
+                new_data[key] = replace_references(value, original)
+        return new_data
     elif isinstance(data, list):
         return [replace_references(item, original) for item in data]
     else:
@@ -65,10 +64,7 @@ def create_component_from_json(component, references):
         command=command_str,
         environment=environment,  # resolved environment
     )
-
-    print(new_component)
     return new_component
-
 
 def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
@@ -82,8 +78,6 @@ def create_components_from_json_file(json_file):
 
     # Replace all the references
     resolved_json = replace_references(json_copy, references)
-
-    print(resolved_json)
 
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
 
@@ -110,7 +104,6 @@ def compare_and_update_component(client, component):
         print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
         new_component = client.create_or_update(component)
         print(f"Created Component {new_component.name} with Version {new_component.version}")
-
 
 # use the function to create components
 json_file = sys.argv[1]  # get json filepath from command line argument

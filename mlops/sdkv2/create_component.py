@@ -53,10 +53,21 @@ def create_component_from_json(component, references):
 def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
+
     references = generate_references(data)
-    resolved_json = replace_references(copy.deepcopy(data), references)
+
+    print(f"Generated references: {references}")  # Debug print
+
+    try:
+        resolved_json = replace_references(copy.deepcopy(data), references)
+    except ValueError as e:
+        print(f"References at the time of error: {references}")  # Debug print
+        raise e
+    print(f"Resolved JSON: {resolved_json}")  # Debug print
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
+
     return components
+
 
 def compare_and_update_component(client, component):
     try:

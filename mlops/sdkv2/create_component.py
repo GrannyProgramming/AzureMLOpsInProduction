@@ -10,7 +10,11 @@ def generate_references(data, parent_key=''):
     for key, value in data.items():
         full_key = f"{parent_key}.{key}" if parent_key else key
         if isinstance(value, dict):
-            references.update(generate_references(value, full_key))
+            # If the value is a type definition or an environment definition, add it as a reference as a whole
+            if ('type' in value and not isinstance(value['type'], dict)) or 'env' in value:
+                references[full_key] = value
+            else:
+                references.update(generate_references(value, full_key))
         else:
             references[full_key] = value
     return references

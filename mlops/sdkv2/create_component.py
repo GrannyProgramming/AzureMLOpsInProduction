@@ -81,6 +81,8 @@ def create_components_from_json_file(json_file):
     # Replace all the references
     resolved_json = replace_references(json_copy, references)
 
+    print(resolved_json)
+
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
 
     return components

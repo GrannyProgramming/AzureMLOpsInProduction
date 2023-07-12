@@ -39,7 +39,7 @@ def replace_references(data, references):
 def create_component_from_json(component, references):
     inputs = {k: Input(type=references.get(v, None), default=None) if isinstance(v, str) else Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
-    command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{f'inputs.{name}'}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{f'outputs.{name}'}}}" for name in component['outputs'])
+    command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = component['env']
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))

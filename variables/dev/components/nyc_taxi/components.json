@@ -29,40 +29,40 @@
   "input_and_output_types": {
     "number": {
       "type": "number",
-      "optional": true,
+      "optional": "True",
       "min": 0,
       "max": 1
     },
     "integer": {
       "type": "integer",
-      "optional": true,
+      "optional": "True",
       "min": 0,
       "max": 1
     },
     "boolean": {
       "type": "boolean",
-      "optional": false
+      "optional": "False"
     },
     "string": { 
       "type": "string",
       "enum": ["a", "b", "c"],
-      "optional": false
+      "optional": "False"
     },
     "uri_file": {
       "type": "uri_file",
-      "optional": false
+      "optional": "False"
     },
     "uri_folder": {
       "type": "uri_folder",
-      "optional": false
+      "optional": "False"
     },
     "mltable": {
       "type": "mltable",
-      "optional": false
+      "optional": "False"
     },
     "mlflow_model": {
       "type": "mlflow_model",
-      "optional": false
+      "optional": "False"
     }
   },
   "components_framework": {

@@ -65,6 +65,8 @@ def create_component_from_json(component, references):
         command=command_str,
         environment=environment,  # resolved environment
     )
+
+    print(new_component)
     return new_component
 
 

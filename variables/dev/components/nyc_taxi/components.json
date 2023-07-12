@@ -1,6 +1,6 @@
 {
   "component_filepaths": {
-    "base_path": "data_science/nyc_taxi/src/"
+    "base_path": "./data_science/nyc_taxi/src/"
     },
     "environments": {
       "sklearn": {

@@ -20,17 +20,12 @@ def replace_references(data, references):
         for key, value in data.items():
             if isinstance(value, dict):
                 if 'reference' in value:
-                    if value['reference'] in references:
-                        data[key] = references[value['reference']]
-                    else:
-                        raise ValueError(f"Reference '{value['reference']}' not found.")
+                    data[key] = references.get(value['reference'], None)
                 else:
-                    data[key] = replace_references(value, references)
-            else:
-                replace_references(value, references)
+                    replace_references(value, references)
     elif isinstance(data, list):
-        for i in range(len(data)):
-            data[i] = replace_references(data[i], references)
+        for item in data:
+            replace_references(item, references)
     return data
 
 def create_component_from_json(component, references):

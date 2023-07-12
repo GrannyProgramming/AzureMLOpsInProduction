@@ -75,11 +75,11 @@ def compare_and_update_component(client, component):
             print(f"Component {component.name} with Version {component.version} already exists and is identical. No update required.")
         else:
             print(f"Component {component.name} with Version {component.version} differs. Updating component.")
-            updated_component = client.create_or_update(component)
+            updated_component = client.components.create_or_update(component)
             print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
     except Exception as e:
         print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
-        new_component = client.create_or_update(component)
+        new_component = client.components.create_or_update(component)
         print(f"Created Component {new_component.name} with Version {new_component.version}")
 
 json_file = sys.argv[1]

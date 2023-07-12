@@ -22,12 +22,12 @@ def replace_references(data, references):
                 if 'reference' in value:
                     ref_key = value['reference']
                     ref_value = references.get(ref_key, value['reference'])
-                    if ref_key in references:
-                        # Replace the dictionary containing 'reference' key with the actual value
+                    if isinstance(ref_value, str):
+                        # If the referenced value is a string, take the last part of the reference key
                         data[key] = ref_value.split('.')[-1]
                     else:
-                        # If the reference key does not exist in the references, keep the original dictionary
-                        continue
+                        # If the referenced value is not a string, use it directly
+                        data[key] = ref_value
                 else:
                     replace_references(value, references)
     elif isinstance(data, list):

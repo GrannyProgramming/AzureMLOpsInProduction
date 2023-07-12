@@ -10,10 +10,12 @@ def generate_references(data, parent_key=''):
     for key, value in data.items():
         full_key = f"{parent_key}.{key}" if parent_key else key
         if isinstance(value, dict):
-            references.update(generate_references(value, full_key))
+            if 'reference' not in value:  # Skip dictionaries which are references themselves
+                references.update(generate_references(value, full_key))
         else:
             references[full_key] = value
     return references
+
 
 def replace_references(data, references):
     if isinstance(data, dict):

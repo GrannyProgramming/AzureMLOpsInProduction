@@ -56,9 +56,9 @@ def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
     references = generate_references(data)
-    print(references)
+    print("references variable: ",references)
     resolved_json = replace_references(copy.deepcopy(data), references)
-    print(resolved_json)
+    print("resolved_json variable: ", resolved_json)
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
     return components
 

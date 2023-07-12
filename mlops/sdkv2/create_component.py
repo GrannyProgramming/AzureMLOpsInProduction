@@ -10,12 +10,10 @@ def generate_references(data, parent_key=''):
     for key, value in data.items():
         full_key = f"{parent_key}.{key}" if parent_key else key
         if isinstance(value, dict):
-            if 'reference' not in value:  # Skip dictionaries which are references themselves
-                references.update(generate_references(value, full_key))
+            references.update(generate_references(value, full_key))
         else:
             references[full_key] = value
     return references
-
 
 def replace_references(data, references):
     if isinstance(data, dict):
@@ -33,11 +31,11 @@ def replace_references(data, references):
     return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=references[v['type']], default=v.get('default', None)) for k, v in component['inputs'].items()}  
-    outputs = {k: Output(type=references[v['type']]) for k, v in component['outputs'].items()}  
+    inputs = {k: Input(type=v['type'], default=v.get('default', None)) for k, v in component['inputs'].items()}  
+    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  
     command_str = 'python {component["filepath"]} ' + ' '.join("--{name} ${{{{{inputs.{name}}}}}}" for name in component['inputs']) + ' ' + ' '.join("--{name} ${{{outputs.{name}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
-    environment = references[component['env']]
+    environment = component['env']['env']
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
     new_component = command(
         name=component['name'],
@@ -53,21 +51,10 @@ def create_component_from_json(component, references):
 def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
-
     references = generate_references(data)
-
-    print(f"Generated references: {references}")  # Debug print
-
-    try:
-        resolved_json = replace_references(copy.deepcopy(data), references)
-    except ValueError as e:
-        print(f"References at the time of error: {references}")  # Debug print
-        raise e
-    print(f"Resolved JSON: {resolved_json}")  # Debug print
+    resolved_json = replace_references(copy.deepcopy(data), references)
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
-
     return components
-
 
 def compare_and_update_component(client, component):
     try:

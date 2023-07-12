@@ -10,11 +10,7 @@ def generate_references(data, parent_key=''):
     for key, value in data.items():
         full_key = f"{parent_key}.{key}" if parent_key else key
         if isinstance(value, dict):
-            # If the value is a type definition or an environment definition, add it as a reference as a whole
-            if ('type' in value and not isinstance(value['type'], dict)) or 'env' in value:
-                references[full_key] = value
-            else:
-                references.update(generate_references(value, full_key))
+            references.update(generate_references(value, full_key))
         else:
             references[full_key] = value
     return references
@@ -22,24 +18,27 @@ def generate_references(data, parent_key=''):
 def replace_references(data, references):
     if isinstance(data, dict):
         for key, value in data.items():
-            if isinstance(value, dict) and 'reference' in value:
-                if value['reference'] in references:
-                    data[key] = references[value['reference']]
+            if isinstance(value, dict):
+                if 'reference' in value:
+                    if value['reference'] in references:
+                        data[key] = references[value['reference']]
+                    else:
+                        raise ValueError(f"Reference '{value['reference']}' not found.")
                 else:
-                    raise ValueError(f"Reference '{value['reference']}' not found.")
+                    data[key] = replace_references(value, references)
             else:
                 replace_references(value, references)
     elif isinstance(data, list):
-        for item in data:
-            replace_references(item, references)
+        for i in range(len(data)):
+            data[i] = replace_references(data[i], references)
     return data
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=v['type'], default=v.get('default', None)) for k, v in component['inputs'].items()}  
-    outputs = {k: Output(type=v['type']) for k, v in component['outputs'].items()}  
+    inputs = {k: Input(type=references[v['type']], default=v.get('default', None)) for k, v in component['inputs'].items()}  
+    outputs = {k: Output(type=references[v['type']]) for k, v in component['outputs'].items()}  
     command_str = 'python {component["filepath"]} ' + ' '.join("--{name} ${{{{{inputs.{name}}}}}}" for name in component['inputs']) + ' ' + ' '.join("--{name} ${{{outputs.{name}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
-    environment = component['env']['env']
+    environment = references[component['env']['env']]
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
     new_component = command(
         name=component['name'],

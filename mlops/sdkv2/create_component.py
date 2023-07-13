@@ -51,7 +51,7 @@ def create_component_from_json(component, references):
         code=code_filepath,
         command=command_str,
         environment=environment,
-        version=10
+        version="10"
     )
     # print("new_component variable: ", new_component)
     return new_component

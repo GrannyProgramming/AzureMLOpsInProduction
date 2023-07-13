@@ -1,9 +1,8 @@
 import sys
 import json
 import copy
-from azure.ai.ml.entities import CommandComponent
+from azure.ai.ml import command
 from azure.ai.ml import Input, Output
-import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
 def generate_references(data, parent_key=''):
@@ -45,28 +44,15 @@ def create_component_from_json(component, references):
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
     
-    # new_component = CommandComponent(
-    #     name=component['name'],
-    #     display_name=display_name,
-    #     inputs=inputs,
-    #     outputs=outputs,
-    #     code=code_filepath,
-    #     command=command_str,
-    #     environment=environment
-    # )
-
-    data = {
-        'name': component['name'],
-        'display_name': display_name,
-        'inputs': inputs,
-        'outputs': outputs,
-        'code': code_filepath,
-        'command': command_str,
-        'environment': environment
-    }
-    
-    with open('output.yml', 'w') as new_component:
-        yaml.round_trip_dump(data, new_component, indent=4, block_seq_indent=2)
+    new_component = command(
+        name=component['name'],
+        display_name=display_name,
+        inputs=inputs,
+        outputs=outputs,
+        code=code_filepath,
+        command=command_str,
+        environment=environment
+    )
 
     print("new_component variable: ", new_component)
     return new_component
@@ -91,11 +77,11 @@ def compare_and_update_component(client, component):
             print(f"Component {component.name} with Version {component.version} already exists and is identical. No update required.")
         else:
             print(f"Component {component.name} with Version {component.version} differs. Updating component.")
-            updated_component = client.components.create_or_update(component)
+            updated_component = client.create_or_update(component.component)
             print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
     except Exception as e:
         print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
-        new_component = client.components.create_or_update(component)
+        new_component = client.create_or_update(component.component)
         print(f"Created Component {new_component.name} with Version {new_component.version}")
 
 json_file = sys.argv[1]

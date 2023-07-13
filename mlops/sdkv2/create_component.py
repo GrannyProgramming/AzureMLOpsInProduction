@@ -46,6 +46,7 @@ def create_component_from_json(component, references):
             if default_value is not None:
                 default_value = references.get(default_value, default_value)
             inputs[k] = Input(type=references.get(v['reference'], None), default=default_value)
+        print(f'Input: {k}, Default: {inputs[k].default}')
 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])

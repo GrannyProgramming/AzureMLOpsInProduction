@@ -37,8 +37,15 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-    inputs = {k: Input(type=references.get(v, None), default=None) if isinstance(v, str) else Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  
-    print("inputs variable: ", inputs) 
+    inputs = {}
+    for k, v in component['inputs'].items():
+        type_reference = f'input_and_output_types.{v}.type'
+        default_reference = f'components_framework.{component["name"]}.inputs.{k}.default'
+        input_type = references.get(type_reference, None)
+        default_value = references.get(default_reference, None)
+        inputs[k] = Input(type=input_type, default=default_value)
+
+        print(f'Input: {k}, Type: {input_type}, Default: {default_value}') 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

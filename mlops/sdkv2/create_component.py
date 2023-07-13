@@ -39,12 +39,19 @@ def replace_references(data, references):
 def create_component_from_json(component, references):
     inputs = {}
     for k, v in component['inputs'].items():
-        type_reference = f'input_and_output_types.{v}.type'
-        default_reference = f'components_framework.{component["name"]}.inputs.{k}'
+        # Check if v is a string (indicating a reference) or a dictionary (indicating a direct value)
+        if isinstance(v, str):
+            # It's a string, so we get the reference
+            type_reference = f'input_and_output_types.{v}.type'
+            default_value = None
+        else:
+            # It's a dictionary, so we get the direct value
+            type_reference = f'input_and_output_types.{v["reference"]}.type'
+            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
         input_type = references.get(type_reference, None)
-        default_value = references.get(default_reference, None)
         inputs[k] = Input(type=input_type, default=default_value)
 
+        
         print(f'Input: {k}, Type: {input_type}, Default: {default_value}') 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])

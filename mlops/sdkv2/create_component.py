@@ -37,21 +37,9 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-    inputs = {}
-    for k, v in component['inputs'].items():
-        if isinstance(v, dict):
-            type_reference = v['reference']
-            default_value = v.get('default', None)  # Get the default value directly from v
-        else:
-            type_reference = v
-            default_value = None  # or some other default value
-
-        input_type = references.get(type_reference, None)
-        print(f'Creating input with type: {input_type}, default: {default_value}')
-        inputs[k] = Input(type=input_type, default=default_value)
-        print(f'Input: {k}, Default: {inputs[k].default}')
+    inputs = {k: Input(type=references.get(v, None), default=None) if isinstance(v, str) else Input(type=references.get(v['reference'], None), default=v.get('default', None)) for k, v in component['inputs'].items()}  
+    print("inputs variable: ", inputs) 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
-    
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
@@ -71,14 +59,13 @@ def create_component_from_json(component, references):
     return new_component
 
 
-
 def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
     references = generate_references(data)
-    print("references variable: ",references)
+    # print("references variable: ",references)
     resolved_json = replace_references(copy.deepcopy(data), references)
-    print("resolved_json variable: ", resolved_json)
+    # print("resolved_json variable: ", resolved_json)
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]
     return components
 

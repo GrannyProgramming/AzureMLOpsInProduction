@@ -44,7 +44,7 @@ def create_component_from_json(component, references):
         else:  # In this case, v is a dict
             type_reference = v['reference']
             input_type = references.get(type_reference, None)
-            default_value = v.get('default', None)
+            default_value = v.get('default', None)  # Get the default value directly from v
             inputs[k] = Input(type=input_type, default=default_value)
 
         print(f'Input: {k}, Default: {inputs[k].default}')

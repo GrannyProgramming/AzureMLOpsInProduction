@@ -37,6 +37,7 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
+    inputs = {}
     for k, v in component['inputs'].items():
         if isinstance(v, dict):
             type_reference = v['reference']

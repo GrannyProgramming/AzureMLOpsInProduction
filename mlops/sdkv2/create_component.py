@@ -41,10 +41,12 @@ def create_component_from_json(component, references):
     for k, v in component['inputs'].items():
         if isinstance(v, str):
             inputs[k] = Input(type=references.get(v, None), default=None)
-        else:
-            input_type = references.get(v['reference'], None)
+        else:  # In this case, v is a dict
+            type_reference = v['reference']
+            input_type = references.get(type_reference, None)
             default_value = v.get('default', None)
             inputs[k] = Input(type=input_type, default=default_value)
+
         print(f'Input: {k}, Default: {inputs[k].default}')
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     

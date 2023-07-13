@@ -38,6 +38,7 @@ def replace_references(data, references):
 
 def create_component_from_json(component, references):
     inputs = {}
+    print
     for k, v in component['inputs'].items():
         if isinstance(v, str):
             inputs[k] = Input(type=references.get(v, None), default=None)
@@ -72,7 +73,7 @@ def create_components_from_json_file(json_file):
     with open(json_file, 'r') as f:
         data = json.load(f)
     references = generate_references(data)
-    # print("references variable: ",references)
+    print("references variable: ",references)
     resolved_json = replace_references(copy.deepcopy(data), references)
     print("resolved_json variable: ", resolved_json)
     components = [create_component_from_json(component, references) for component in resolved_json['components_framework'].values()]

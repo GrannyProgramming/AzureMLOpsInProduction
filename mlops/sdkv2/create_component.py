@@ -1,7 +1,7 @@
 import sys
 import json
 import copy
-from azure.ai.ml import command
+from azure.ai.ml import CommandComponent
 from azure.ai.ml import Input, Output
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
@@ -43,7 +43,7 @@ def create_component_from_json(component, references):
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
-    new_component = command(
+    new_component = CommandComponent(
         name=component['name'],
         display_name=display_name,
         inputs=inputs,

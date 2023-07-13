@@ -3,6 +3,7 @@ import json
 import copy
 from azure.ai.ml.entities import CommandComponent
 from azure.ai.ml import Input, Output
+import ruamel.yaml as yaml
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 
 def generate_references(data, parent_key=''):
@@ -43,15 +44,30 @@ def create_component_from_json(component, references):
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
-    new_component = CommandComponent(
-        name=component['name'],
-        display_name=display_name,
-        inputs=inputs,
-        outputs=outputs,
-        code=code_filepath,
-        command=command_str,
-        environment=environment
-    )
+    
+    # new_component = CommandComponent(
+    #     name=component['name'],
+    #     display_name=display_name,
+    #     inputs=inputs,
+    #     outputs=outputs,
+    #     code=code_filepath,
+    #     command=command_str,
+    #     environment=environment
+    # )
+
+    data = {
+        'name': component['name'],
+        'display_name': display_name,
+        'inputs': inputs,
+        'outputs': outputs,
+        'code': code_filepath,
+        'command': command_str,
+        'environment': environment
+    }
+    
+    with open('output.yml', 'w') as new_component:
+        yaml.round_trip_dump(data, new_component, indent=4, block_seq_indent=2)
+
     print("new_component variable: ", new_component)
     return new_component
 

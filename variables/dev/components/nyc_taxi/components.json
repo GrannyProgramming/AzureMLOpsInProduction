@@ -117,7 +117,7 @@
       "filepath": "train.py",
       "inputs": {
         "train_data": {"reference": "input_and_output_types.uri_folder"},
-        "test_split_ratio": {"reference": "input_and_output_types.number", "default": 0.2}
+        "test_split_ratio": {"reference": "input_and_output_types.number", "default": "0.2"}
         }, 
         "outputs": {
           "model_output": {"reference": "input_and_output_types.mlflow_model"},

@@ -37,13 +37,13 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-        inputs = {}
-        for k, v in component['inputs'].items():
-            type_reference = f'input_and_output_types.{v}.type'
-            default_reference = f'components_framework.{component["name"]}.inputs.{k}'
-            input_type = references.get(type_reference, None)
-            default_value = references.get(default_reference, None)
-            inputs[k] = Input(type=input_type, default=default_value)
+    inputs = {}
+    for k, v in component['inputs'].items():
+        type_reference = f'input_and_output_types.{v}.type'
+        default_reference = f'components_framework.{component["name"]}.inputs.{k}'
+        input_type = references.get(type_reference, None)
+        default_value = references.get(default_reference, None)
+        inputs[k] = Input(type=input_type, default=default_value)
 
         print(f'Input: {k}, Type: {input_type}, Default: {default_value}') 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  

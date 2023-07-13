@@ -38,18 +38,14 @@ def replace_references(data, references):
 
 def create_component_from_json(component, references):
     inputs = {}
-    print
     for k, v in component['inputs'].items():
         if isinstance(v, str):
             inputs[k] = Input(type=references.get(v, None), default=None)
         else:
-            default_value = v.get('default', None)
-            if default_value is not None:
-                default_value = references.get(default_value, default_value)
-            inputs[k] = Input(type=references.get(v['reference'], None), default=default_value)
+            inputs[k] = Input(type=references.get(v['reference'], None), default=v.get('default', None))
         print(f'Input: {k}, Default: {inputs[k].default}')
-
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
+    
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
@@ -67,6 +63,7 @@ def create_component_from_json(component, references):
 
     print("new_component variable: ", new_component)
     return new_component
+
 
 
 def create_components_from_json_file(json_file):

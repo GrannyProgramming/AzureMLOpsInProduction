@@ -52,7 +52,7 @@ def create_component_from_json(component, references):
         command=command_str,
         environment=environment
     )
-    # print("new_component variable: ", new_component)
+    print("new_component variable: ", new_component)
     return new_component
 
 

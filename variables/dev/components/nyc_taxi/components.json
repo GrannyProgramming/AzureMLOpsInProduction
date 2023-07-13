@@ -7,7 +7,7 @@
         "env": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest"
       },
       "pytorch": {
-        "env": "azureml:AzureML-PyTorch-1.6-ubuntu18.04-py37-cpu-inference@latest"
+        "env": "AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest"
       }
     },
   "resources": {

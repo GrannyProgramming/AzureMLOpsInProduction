@@ -1,7 +1,7 @@
 import sys
 import json
 import copy
-from azure.ai.ml import CommandComponent
+from azure.ai.ml.entities import CommandComponent
 from azure.ai.ml import Input, Output
 from workflowhelperfunc.workflowhelper import initialize_mlclient
 

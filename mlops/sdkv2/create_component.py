@@ -37,17 +37,28 @@ def replace_references(data, references):
 
 def parse_default_values(component_inputs, references):
     inputs_with_defaults = {}
+    print("component_inputs:", component_inputs)
+    print("references:", references)
     for input_name, input_properties in component_inputs.items():
-        if 'default' in input_properties:
-            # If the 'default' field is present in the component input, use it
-            default_value = input_properties['default']
-        else:
-            # Otherwise, find the referenced type and use its default value
-            ref_key = input_properties['reference']
-            default_value = references.get(f'{ref_key}.default')
+        print(f"Processing input '{input_name}' with properties: {input_properties}")
+        if isinstance(input_properties, dict):
+            if 'default' in input_properties:
+                # If the 'default' field is present in the component input, use it
+                default_value = input_properties['default']
+                print(f"Default value for '{input_name}' found in the component input: {default_value}")
+            else:
+                # Otherwise, find the referenced type and use its default value
+                ref_key = input_properties['reference']
+                default_value = references.get(f'{ref_key}.default')
+                print(f"Default value for '{input_name}' found in the references: {default_value}")
 
-        # Add the input properties to the result, including the parsed default value
-        inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
+            # Add the input properties to the result, including the parsed default value
+            inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
+            print(f"Final input properties for '{input_name}': {inputs_with_defaults[input_name]}")
+        else:
+            # If the input_properties is not a dictionary, just use it as is
+            inputs_with_defaults[input_name] = input_properties
+            print(f"Input properties for '{input_name}' is not a dictionary. Using as is: {inputs_with_defaults[input_name]}")
 
     return inputs_with_defaults
 

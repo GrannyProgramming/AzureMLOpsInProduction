@@ -44,29 +44,31 @@ def create_component_from_json(component, references):
     inputs = {}
 
     for k, v in component['inputs'].items():
+        default_value = None  # Initialize default_value
 
         if isinstance(v, str):
             input_type = references[f'input_and_output_types.{v}.type']
-
+            # Try getting the default value directly from 'input_and_output_types'
+            default_value = references.get(f'input_and_output_types.{v}.default')
         else:   
             input_def = references.get(f'components_framework.{component["name"]}.inputs.{k}')
-      
             # Then extract default from it
-            default_value = input_def.get('default')
+            if input_def is not None and isinstance(input_def, dict):
+                default_value = input_def.get('default')
 
-            print(f"Default value for {k}: {default_value}")
-        # Try hard-coded default
-        # default_value = "0.2"
+        # If default_value is still None, try another way to get it
+        if default_value is None:
+            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+
+        print(f"Default value for {k}: {default_value}")
 
         if input_type in ["string", "integer", "number", "boolean"]:
-        
             inputs[k] = Input(type=input_type, default=default_value)
-
         else:
-
             inputs[k] = Input(type=input_type)
 
     print("INPUTS:", inputs)
+
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

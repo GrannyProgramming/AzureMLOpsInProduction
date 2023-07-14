@@ -37,7 +37,7 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-
+def create_component_from_json(component, references):
     print("REFERENCES:", references)
 
     inputs = {}
@@ -48,21 +48,32 @@ def create_component_from_json(component, references):
 
         if isinstance(v, str):
             input_type = references[f'input_and_output_types.{v}.type']
-            # Check 2: Try getting the default value directly from 'input_and_output_types'
-            default_value = references.get(f'input_and_output_types.{v}.default')
-        else:   
+        else:
             input_def = references.get(f'components_framework.{component["name"]}.inputs.{k}')
             if input_def and 'reference' in input_def:
                 ref_key = input_def['reference']
                 input_type = references[f'{ref_key}.type']
+
                 # Check 1: Extract default from 'components_framework' inside 'inputs'
                 if 'default' in input_def:
                     default_value = input_def['default']
 
         # If default_value is still None, try another way to get it
         if default_value is None:
+            # Check 2: Try getting the default value directly from 'input_and_output_types'
+            default_value = references.get(f'input_and_output_types.{v}.default')
             # Check 3: Try getting the default value directly from 'components_framework' but outside 'inputs'
-            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+            if default_value is None:
+                default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+
+        if default_value is not None:
+            # Convert the default value to the correct type
+            if input_type == 'number':
+                default_value = float(default_value)
+            elif input_type == 'integer':
+                default_value = int(default_value)
+            elif input_type == 'boolean':
+                default_value = bool(default_value)
 
         print(f"Default value for {k}: {default_value}")
 
@@ -72,7 +83,9 @@ def create_component_from_json(component, references):
             inputs[k] = Input(type=input_type)
 
     print("INPUTS:", inputs)
-    
+
+
+
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

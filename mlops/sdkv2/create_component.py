@@ -41,14 +41,14 @@ def create_component_from_json(component, references):
     for k, v in component['inputs'].items():
         if isinstance(v, str):
         # Reference
-        type_reference = f'input_and_output_types.{v}.type'
-        default_value = None 
+            type_reference = f'input_and_output_types.{v}.type'
+            default_value = None 
         else:
-        # Direct value
-        type_reference = f'input_and_output_types.{v["reference"]}.type'
+            # Direct value
+            type_reference = f'input_and_output_types.{v["reference"]}.type'
         
-        # Look up default value from references
-        default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
+            # Look up default value from references
+            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
 
         input_type = references.get(type_reference, None)
         inputs[k] = Input(type=input_type, default=default_value)

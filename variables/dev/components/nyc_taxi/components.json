@@ -83,7 +83,7 @@
         },
         "test_split_ratio": {
           "reference": "input_and_output_types.number",
-          "default": "0.3"
+          "default": 0.2
         }
       },
       "outputs": {

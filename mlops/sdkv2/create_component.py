@@ -39,13 +39,16 @@ def parse_default_values(component_inputs, references):
     inputs_with_defaults = {}
     for input_name, input_properties in component_inputs.items():
         if isinstance(input_properties, dict):
-            if 'default' in input_properties:
-                # If the 'default' field is present in the component input, use it
-                default_value = input_properties['default']
-            else:
-                # Otherwise, find the referenced type and use its default value
+            if 'reference' in input_properties:
+                # Find the referenced type and use its default value
                 ref_key = input_properties['reference']
-                default_value = references.get(f'{ref_key}.default')
+                default_value = references.get(f'{ref_key}.default', None)
+                if 'default' in input_properties:
+                    # If a 'default' field is also present in the component input, override the referenced default with it
+                    default_value = input_properties['default']
+            else:
+                default_value = None
+
             # Add the input properties to the result, including the parsed default value
             inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
         else:
@@ -80,14 +83,15 @@ def create_component_from_json(component, references):
 
 def create_components_from_json_file(json_file):
     with open(json_file) as f:
-        data = json.load(f)
+        json_data = json.load(f)
 
-    references = generate_references(data)
-    
-    print("REFERENCES:", references)
+    # Generate the references
+    references = generate_references(json_data)
 
-    resolved_json = replace_references(copy.deepcopy(data), references)
+    # Replace references in the JSON data
+    resolved_json = replace_references(copy.deepcopy(json_data), references)
 
+    # Create the components
     components = [create_component_from_json(c, references) for c in resolved_json['components_framework'].values()]
 
     return components
@@ -110,6 +114,6 @@ def compare_and_update_component(client, component):
 
 json_file = sys.argv[1]
 components = create_components_from_json_file(json_file)
-client = initialize_mlclient()
-for component in components:
-    compare_and_update_component(client, component)
+# client = initialize_mlclient()
+# for component in components:
+#     compare_and_update_component(client, component)

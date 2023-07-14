@@ -63,6 +63,7 @@ def parse_default_values(component_inputs, references):
     return inputs_with_defaults
 
 
+
 def create_component_from_json(component, references):
     print("REFERENCES:", references)
 
@@ -96,6 +97,7 @@ def create_component_from_json(component, references):
         environment=environment
     )
 
+    print("component_inputs:", component_inputs)
     print("new_component variable: ", new_component)
     return new_component
 

@@ -37,23 +37,38 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
+    print("Component:", component)
     inputs = {}
+    
     for k, v in component['inputs'].items():
+
+        print("Input def:", v)
+
         if isinstance(v, str):
         # Reference
             type_reference = f'input_and_output_types.{v}.type'
-            default_value = None 
+            default_value = None
+
         else:
             # Direct value
             type_reference = f'input_and_output_types.{v["reference"]}.type'
-        
-            # Look up default value from references
+            
+            print("Type reference:", type_reference)
+            
             default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
 
+            print(f"Default value for {k}: {default_value}")
+        
         input_type = references.get(type_reference, None)
+
+        # Try hard-coded default
+        default_value = "0.2" 
+
         inputs[k] = Input(type=input_type, default=default_value)
 
-    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}
+    print("INPUTS:", inputs)
+
+    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
@@ -75,16 +90,16 @@ def create_component_from_json(component, references):
 
 def create_components_from_json_file(json_file):
     with open(json_file) as f:
-        data = json.load(f) 
+        data = json.load(f)
 
-    # Generate references first  
-    references = generate_references(data)  
+    references = generate_references(data)
+    
+    print("REFERENCES:", references)
 
-    # Replace references in a copy of data
-    resolved_json = replace_references(copy.deepcopy(data), references)  
+    resolved_json = replace_references(copy.deepcopy(data), references)
 
-    # Now create components
     components = [create_component_from_json(c, references) for c in resolved_json['components_framework'].values()]
+
     return components
 
 def compare_and_update_component(client, component):

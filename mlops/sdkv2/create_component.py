@@ -35,31 +35,45 @@ def replace_references(data, references):
             replace_references(item, references)
     return data
 
-def parse_default_values(component_inputs, references):
-    inputs_with_defaults = {}
-    for input_name, input_properties in component_inputs.items():
-        if isinstance(input_properties, dict):
-            if 'reference' in input_properties:
-                # Find the referenced type and use its default value
-                ref_key = input_properties['reference']
-                default_value = references.get(f'{ref_key}.default', None)
-                if 'default' in input_properties:
-                    # If a 'default' field is also present in the component input, override the referenced default with it
-                    default_value = input_properties['default']
-            else:
-                default_value = None
+def set_default_value(k, v, component, references):
+    default_value = None  # Initialize default_value
 
-            # Add the input properties to the result, including the parsed default value
-            inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
-        else:
-            # if not a dictionary, get the reference and use its default value
-            ref_key = input_properties
-            default_value = references.get(f'{ref_key}.default')
-            inputs_with_defaults[input_name] = {'type': input_properties, 'default': default_value}
-    return inputs_with_defaults
+    if isinstance(v, str):
+        input_type = references.get(f'input_and_output_types.{v}.type', None)
+        # Try getting the default value directly from 'input_and_output_types'
+        default_value = references.get(f'input_and_output_types.{v}.default')
+    else:   
+        input_type = references.get(f'input_and_output_types.{v["reference"]}.type', None)
+        input_def = references.get(f'components_framework.{component["name"]}.inputs.{k}')
+        # Then extract default from it
+        if input_def is not None and isinstance(input_def, dict):
+            default_value = input_def.get('default')
+
+    # If default_value is still None, try another way to get it
+    if default_value is None:
+        default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+
+    return default_value, input_type
 
 def create_component_from_json(component, references):
-    inputs = parse_default_values(component['inputs'], references) 
+
+    print("REFERENCES:", references)
+    print(references.get('components_framework.train.inputs.test_split_ratio.default'))
+
+    inputs = {}
+
+    for k, v in component['inputs'].items():
+        default_value, input_type = set_default_value(k, v, component, references)  # Use the new function here
+        print(f"Default value for {k}: {default_value}")
+
+        if input_type in ["string", "integer", "number", "boolean"]:
+            inputs[k] = Input(type=input_type, default=default_value)
+        else:
+            inputs[k] = Input(type=input_type)
+
+    print("INPUTS:", inputs)
+
+    
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

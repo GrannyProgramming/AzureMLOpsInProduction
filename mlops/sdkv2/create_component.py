@@ -37,7 +37,7 @@ def replace_references(data, references):
 
 def parse_default_values(component_inputs, references):
     inputs_with_defaults = {}
-    print("component_inputs:", component_inputs)
+    print("component_inputs:", component_inputs")
     print("references:", references)
     for input_name, input_properties in component_inputs.items():
         print(f"Processing input '{input_name}' with properties: {input_properties}")
@@ -63,11 +63,24 @@ def parse_default_values(component_inputs, references):
     return inputs_with_defaults
 
 
-
 def create_component_from_json(component, references):
     print("REFERENCES:", references)
-    inputs = parse_default_values(component['inputs'], references)
-    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
+
+    # Look up the full properties of each input type from the references
+    component_inputs = {
+        name: references.get(f'input_and_output_types.{input_type}') 
+        for name, input_type in component['inputs'].items()
+    }
+    print("component_inputs:", component_inputs)
+
+    inputs = parse_default_values(component_inputs, references)
+
+    outputs = {
+        k: Output(type=references.get(v, None)) 
+        if isinstance(v, str) else Output(type=references.get(v['reference'], None)) 
+        for k, v in component['outputs'].items()
+    }
+
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references

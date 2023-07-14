@@ -56,7 +56,7 @@ def create_component_from_json(component, references):
     outputs = {k: references.get(v, None) if isinstance(v, str) else references.get(v['reference'], None) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
-    environment = references[f'environments.{component["env"]}.env']
+    environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
     
     new_component = {
@@ -68,7 +68,7 @@ def create_component_from_json(component, references):
         'command': command_str,
         'environment': environment
     }
-
+    print(new_component)
     return new_component
 
 

@@ -65,6 +65,10 @@ def parse_default_values(component_inputs, references):
 
 
 def create_component_from_json(component, references):
+def create_component_from_json(component, references):
+    print("REFERENCES:", references)
+
+    # Look up the full properties of each input type from the references
     component_inputs = {
         name: references.get(f'input_and_output_types.{input_type}') 
         for name, input_type in component['inputs'].items()
@@ -78,7 +82,6 @@ def create_component_from_json(component, references):
         if isinstance(v, str) else Output(type=references.get(v['reference'], None)) 
         for k, v in component['outputs'].items()
     }
-    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references

@@ -39,25 +39,29 @@ def replace_references(data, references):
 def create_component_from_json(component, references):
 
     print("REFERENCES:", references)
-    print(references.get('components_framework.train.inputs.test_split_ratio.default'))
 
     inputs = {}
 
     for k, v in component['inputs'].items():
         default_value = None  # Initialize default_value
+        input_type = None
 
         if isinstance(v, str):
             input_type = references[f'input_and_output_types.{v}.type']
-            # Try getting the default value directly from 'input_and_output_types'
+            # Check 2: Try getting the default value directly from 'input_and_output_types'
             default_value = references.get(f'input_and_output_types.{v}.default')
         else:   
             input_def = references.get(f'components_framework.{component["name"]}.inputs.{k}')
-            # Then extract default from it
-            if input_def is not None and isinstance(input_def, dict):
-                default_value = input_def.get('default')  # This will now overwrite the default value if one is found
+            if input_def and 'reference' in input_def:
+                ref_key = input_def['reference']
+                input_type = references[f'{ref_key}.type']
+                # Check 1: Extract default from 'components_framework' inside 'inputs'
+                if 'default' in input_def:
+                    default_value = input_def['default']
 
         # If default_value is still None, try another way to get it
         if default_value is None:
+            # Check 3: Try getting the default value directly from 'components_framework' but outside 'inputs'
             default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
 
         print(f"Default value for {k}: {default_value}")
@@ -67,6 +71,8 @@ def create_component_from_json(component, references):
         else:
             inputs[k] = Input(type=input_type)
 
+    print("INPUTS:", inputs)
+    
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

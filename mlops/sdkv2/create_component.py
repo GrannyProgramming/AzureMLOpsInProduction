@@ -39,6 +39,7 @@ def replace_references(data, references):
 def create_component_from_json(component, references):
 
     print("REFERENCES:", references)
+    print(references.get('components_framework.train.inputs.test_split_ratio.default'))
 
     inputs = {}
 

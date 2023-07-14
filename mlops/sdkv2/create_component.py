@@ -49,12 +49,12 @@ def create_component_from_json(component, references):
             input_type = references[f'input_and_output_types.{v}.type']
 
         else:   
-            input_type = references[f'input_and_output_types.{v["reference"]}.type']
+            input_def = references.get(f'components_framework.{component["name"]}.inputs.{k}')
+      
+            # Then extract default from it
+            default_value = input_def.get('default')
 
-            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
-        
             print(f"Default value for {k}: {default_value}")
-
         # Try hard-coded default
         # default_value = "0.2"
 

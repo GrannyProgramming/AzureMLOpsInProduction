@@ -61,6 +61,7 @@ def create_component_from_json(component, references):
         if default_value is None:
             # Check 2: Try getting the default value directly from 'input_and_output_types'
             default_value = references.get(f'input_and_output_types.{v}.default')
+
             # Check 3: Try getting the default value directly from 'components_framework' but outside 'inputs'
             if default_value is None:
                 default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
@@ -82,8 +83,6 @@ def create_component_from_json(component, references):
             inputs[k] = Input(type=input_type)
 
     print("INPUTS:", inputs)
-
-
 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])

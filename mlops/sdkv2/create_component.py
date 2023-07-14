@@ -37,36 +37,34 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-    print("Component:", component)
+
     inputs = {}
     
     for k, v in component['inputs'].items():
-
-        print("Input def:", v)
-
+        # Determine input type
         if isinstance(v, str):
-        # Reference
-            type_reference = f'input_and_output_types.{v}.type'
-            default_value = None
+            input_type = references[f'input_and_output_types.{v}.type'] 
+        else:  
+            input_type = references[f'input_and_output_types.{v["reference"]}.type']
+
+        # Look up default value   
+        default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+
+        # Handle primitive vs non-primitive types
+        if input_type in ["string", "integer", "number", "boolean"]:
+        
+        # Primitive type, set default
+            inputs[k] = Input(type=input_type, default=default_value)
 
         else:
-            # Direct value
-            type_reference = f'input_and_output_types.{v["reference"]}.type'
-            
-            print("Type reference:", type_reference)
-            
-            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
 
-            print(f"Default value for {k}: {default_value}")
-        
-        input_type = references.get(type_reference, None)
+        # Non-primitive, don't set default
+            inputs[k] = Input(type=input_type)  
 
-        # Try hard-coded default
-        default_value = "0.2" 
+        # Set default separately
+        if default_value:
+            inputs[k]._default = default_value
 
-        inputs[k] = Input(type=input_type, default=default_value)
-
-    print("INPUTS:", inputs)
 
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])

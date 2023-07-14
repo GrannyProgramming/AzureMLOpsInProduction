@@ -53,7 +53,20 @@ def set_default_value(k, v, component, references):
     if default_value is None:
         default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
 
+    # If default_value is a string and can be converted to a float or integer, do so
+    if isinstance(default_value, str):
+        try:
+            # Try converting to float first
+            default_value = float(default_value)
+            # If the result is an integer, convert to int
+            if default_value.is_integer():
+                default_value = int(default_value)
+        except ValueError:
+            # If the conversion fails, keep it as a string
+            pass
+
     return default_value, input_type
+
 
 def create_component_from_json(component, references):
 

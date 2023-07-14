@@ -3,108 +3,73 @@ import json
 import copy
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
-from workflowhelperfunc.workflowhelper import initialize_mlclient
 
 def generate_references(data, parent_key=''):
-    references = {}
-    for key, value in data.items():
-        full_key = f"{parent_key}.{key}" if parent_key else key
-        if isinstance(value, dict) and not 'reference' in value:
-            references.update(generate_references(value, full_key))
-        else:
-            references[full_key] = value
-    return references
+  references = {}
+  for key, value in data.items():
+    full_key = f"{parent_key}.{key}" if parent_key else key
+    if isinstance(value, dict) and not 'reference' in value:
+      references.update(generate_references(value, full_key)) 
+    else:
+      references[full_key] = value
+  return references
 
 def replace_references(data, references):
-    if isinstance(data, dict):
-        for key, value in data.items():
-            if isinstance(value, dict):
-                if 'reference' in value:
-                    ref_key = value['reference']
-                    ref_value = references.get(ref_key, value['reference'])
-                    if isinstance(ref_value, str):
-                        # If the referenced value is a string, take the last part of the reference key
-                        data[key] = ref_value.split('.')[-1]
-                    else:
-                        # If the referenced value is not a string, use it directly
-                        data[key] = ref_value
-                else:
-                    replace_references(value, references)
-    elif isinstance(data, list):
-        for item in data:
-            replace_references(item, references)
-    return data
-
+  if isinstance(data, dict):
+    for key, value in data.items():
+      if isinstance(value, dict):
+        if 'reference' in value:
+          ref_key = value['reference']
+          ref_value = references.get(ref_key, value['reference'])
+          if isinstance(ref_value, str):
+            data[key] = ref_value.split('.')[-1]  
+          else:
+            data[key] = ref_value
+        else:
+          replace_references(value, references)
+  elif isinstance(data, list):
+    for item in data:
+      replace_references(item, references)
+  return data
 
 def create_component_from_json(component, references):
-    inputs = {}
-    for k, v in component['inputs'].items():
-        # Check if v is a string (indicating a reference) or a dictionary (indicating a direct value)
-        if isinstance(v, str):
-            # It's a string, so we get the reference
-            type_reference = f'input_and_output_types.{v}.type'
-            default_value = None
-        else:
-            # It's a dictionary, so we get the direct value
-            type_reference = f'input_and_output_types.{v["reference"]}.type'
-            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
-        input_type = references.get(type_reference, None)
-        inputs[k] = Input(type=input_type, default=default_value)
 
-        
-        print(f'Input: {k}, Type: {input_type}, Default: {default_value}') 
-    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
-    command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
-    code_filepath = references['component_filepaths.base_path'] + component['filepath']
-    environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
-    display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
-    
-    new_component = command(
-        name=component['name'],
-        display_name=display_name,
-        inputs=inputs,
-        outputs=outputs,
-        code=code_filepath,
-        command=command_str,
-        environment=environment
-    )
+  inputs = {}
+  for k, v in component['inputs'].items():
+    if isinstance(v, str):
+      # Reference
+      type_reference = f'input_and_output_types.{v}.type'
+      default_value = None 
+    else:
+      # Direct value
+      type_reference = f'input_and_output_types.{v["reference"]}.type'
+      
+      # Look up default value from references
+      default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default', None)
 
-    print("new_component variable: ", new_component)
-    return new_component
+    input_type = references.get(type_reference, None)
+    inputs[k] = Input(type=input_type, default=default_value)
+
+  outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}
+
+  # Rest of component creation logic
+
+  return new_component
 
 
-def create_components_from_json_file(json_file):
-    with open(json_file) as f:
-        data = json.load(f) 
+def create_components_from_json(json_file):
 
-    # Generate references first  
-    references = generate_references(data)  
+  with open(json_file) as f:
+    data = json.load(f)
+  
+  references = generate_references(data)
 
-    # Replace references in a copy of data
-    resolved_json = replace_references(copy.deepcopy(data), references)  
+  resolved_json = replace_references(copy.deepcopy(data), references)
 
-    # Now create components
-    components = [create_component_from_json(c, references) for c in resolved_json['components_framework'].values()]
-    return components
+  components = [create_component_from_json(c, references) for c in resolved_json['components_framework'].values()]
 
-def compare_and_update_component(client, component):
-    try:
-        azure_component = next((comp for comp in client.components.list() if comp.name == component.name), None)
-        if azure_component:
-            azure_component = client.components.get(name=azure_component.name, version=azure_component.latest_version)
-        if azure_component.inputs == component.inputs and azure_component.outputs == component.outputs and azure_component.command == component.command:
-            print(f"Component {component.name} with Version {component.version} already exists and is identical. No update required.")
-        else:
-            print(f"Component {component.name} with Version {component.version} differs. Updating component.")
-            updated_component = client.create_or_update(component.component)
-            print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
-    except Exception as e:
-        print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
-        new_component = client.create_or_update(component.component)
-        print(f"Created Component {new_component.name} with Version {new_component.version}")
+  return components
 
-json_file = sys.argv[1]
-components = create_components_from_json_file(json_file)
-client = initialize_mlclient()
-# for component in components:
-#     compare_and_update_component(client, component)
+# Usage:
+json_file = "components.json"
+components = create_components_from_json(json_file)

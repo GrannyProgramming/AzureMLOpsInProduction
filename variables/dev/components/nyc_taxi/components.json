@@ -1,18 +1,18 @@
 {
   "component_filepaths": {
     "base_path": "./data_science/nyc_taxi/src/"
+  },
+  "environments": {
+    "sklearn": {
+      "env": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest"
     },
-    "environments": {
-      "sklearn": {
-        "env": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest"
-      },
-      "pytorch": {
-        "env": "AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest"
-      }
-    },
+    "pytorch": {
+      "env": "AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu@latest"
+    }
+  },
   "resources": {
     "instance_count": 2
-    },
+  },
   "distribution": {
     "mpi": {
       "process_count_per_instance": 1
@@ -21,7 +21,9 @@
       "process_count_per_instance": 1
     },
     "tensorflow": {
-      "process_count_per_instance": {"reference": "resources.instance_count"},
+      "process_count_per_instance": {
+        "reference": "resources.instance_count"
+      },
       "worker_count": 1,
       "parameter_server_count": 0
     }
@@ -29,12 +31,14 @@
   "input_and_output_types": {
     "number": {
       "type": "number",
+      "default": 0.3,
       "optional": true,
       "min": 0,
       "max": 1
     },
     "integer": {
       "type": "integer",
+      "default": 1,
       "optional": true,
       "min": 0,
       "max": 1
@@ -43,9 +47,13 @@
       "type": "boolean",
       "optional": false
     },
-    "string": { 
+    "string": {
       "type": "string",
-      "enum": ["a", "b", "c"],
+      "enum": [
+        "a",
+        "b",
+        "c"
+      ],
       "optional": false
     },
     "uri_file": {
@@ -66,23 +74,35 @@
     }
   },
   "components_framework": {
-    "train":{
+    "train": {
       "name": "train_linear_regression_model",
       "filepath": "train.py",
       "inputs": {
-        "train_data": {"reference": "input_and_output_types.uri_folder"},
-        "test_split_ratio": {"reference": "input_and_output_types.number", "default": "0.2"}
-        }, 
-        "outputs": {
-          "model_output": {"reference": "input_and_output_types.mlflow_model"},
-          "test_data": {"reference": "input_and_output_types.uri_folder"}
+        "train_data": {
+          "reference": "input_and_output_types.uri_folder"
         },
-      "env": {"reference": "environments.pytorch"},
-      "resources": {"reference": "resources.instance_count"},
-      "distribution": {"reference": "distribution.pytorch"}
+        "test_split_ratio": {
+          "reference": "input_and_output_types.number",
+          "default": "0.2"
+        }
+      },
+      "outputs": {
+        "model_output": {
+          "reference": "input_and_output_types.mlflow_model"
+        },
+        "test_data": {
+          "reference": "input_and_output_types.uri_folder"
+        }
+      },
+      "env": {
+        "reference": "environments.pytorch"
+      },
+      "resources": {
+        "reference": "resources.instance_count"
+      },
+      "distribution": {
+        "reference": "distribution.pytorch"
+      }
     }
   }
 }
-
-
-

@@ -23,10 +23,8 @@ def replace_references(data, references):
                     ref_key = value['reference']
                     ref_value = references.get(ref_key, value['reference'])
                     if isinstance(ref_value, str):
-                        # If the referenced value is a string, take the last part of the reference key
                         data[key] = ref_value.split('.')[-1]
                     else:
-                        # If the referenced value is not a string, use it directly
                         data[key] = ref_value
                 else:
                     replace_references(value, references)
@@ -40,45 +38,37 @@ def parse_default_values(component_inputs, references):
     for input_name, input_properties in component_inputs.items():
         if isinstance(input_properties, dict):
             if 'reference' in input_properties:
-                # Find the referenced type and use its default value
                 ref_key = input_properties['reference']
                 default_value = references.get(f'{ref_key}.default', None)
                 if 'default' in input_properties:
-                    # If a 'default' field is also present in the component input, override the referenced default with it
                     default_value = input_properties['default']
             else:
                 default_value = None
-
-            # Add the input properties to the result, including the parsed default value
-            inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
+            inputs_with_defaults[input_name] = {**input_properties, 'default_value': default_value}
         else:
-            # if not a dictionary, get the reference and use its default value
             ref_key = input_properties
             default_value = references.get(f'{ref_key}.default')
-            inputs_with_defaults[input_name] = {'type': input_properties, 'default': default_value}
-    print("INPUTS WITH DEFAULTS:", inputs_with_defaults)
+            inputs_with_defaults[input_name] = {'type': input_properties, 'default_value': default_value}
     return inputs_with_defaults
 
 def create_component_from_json(component, references):
-    print("REFERENCES:", references)
     inputs = parse_default_values(component['inputs'], references)
-    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
+    outputs = {k: references.get(v, None) if isinstance(v, str) else references.get(v['reference'], None) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
-    environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references
+    environment = references[f'environments.{component["env"]["reference"]}.env']
     display_name = ' '.join(word.capitalize() for word in component['name'].split('_'))
     
-    new_component = command(
-        name=component['name'],
-        display_name=display_name,
-        inputs=inputs,
-        outputs=outputs,
-        code=code_filepath,
-        command=command_str,
-        environment=environment
-    )
+    new_component = {
+        'name': component['name'],
+        'display_name': display_name,
+        'inputs': inputs,
+        'outputs': outputs,
+        'code': code_filepath,
+        'command': command_str,
+        'environment': environment
+    }
 
-    print("new_component variable: ", new_component)
     return new_component
 
 def create_components_from_json_file(json_file):

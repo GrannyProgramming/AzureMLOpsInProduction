@@ -38,34 +38,34 @@ def replace_references(data, references):
 
 def create_component_from_json(component, references):
 
+    print("REFERENCES:", references)
+
     inputs = {}
-    
+
     for k, v in component['inputs'].items():
-        # Determine input type
+
         if isinstance(v, str):
-            input_type = references[f'input_and_output_types.{v}.type'] 
-        else:  
+            input_type = references[f'input_and_output_types.{v}.type']
+
+        else:   
             input_type = references[f'input_and_output_types.{v["reference"]}.type']
 
-        # Look up default value   
-        default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+            default_value = references.get(f'components_framework.{component["name"]}.inputs.{k}.default')
+        
+            print(f"Default value for {k}: {default_value}")
 
-        # Handle primitive vs non-primitive types
+        # Try hard-coded default
+        # default_value = "0.2"
+
         if input_type in ["string", "integer", "number", "boolean"]:
         
-        # Primitive type, set default
             inputs[k] = Input(type=input_type, default=default_value)
 
         else:
 
-        # Non-primitive, don't set default
-            inputs[k] = Input(type=input_type)  
+            inputs[k] = Input(type=input_type)
 
-        # Set default separately
-        if default_value:
-            inputs[k]._default = default_value
-
-
+    print("INPUTS:", inputs)
     outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']

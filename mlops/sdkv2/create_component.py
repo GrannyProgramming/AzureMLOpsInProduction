@@ -53,7 +53,7 @@ def parse_default_values(component_inputs, references):
             ref_key = input_properties
             default_value = references.get(f'{ref_key}.default')
             inputs_with_defaults[input_name] = {'type': input_properties, 'default': default_value}
-
+    print("INPUTS WITH DEFAULTS:", inputs_with_defaults)
     return inputs_with_defaults
 
 

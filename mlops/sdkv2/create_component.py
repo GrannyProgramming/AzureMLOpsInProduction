@@ -56,9 +56,6 @@ def parse_default_values(component_inputs, references):
     print("INPUTS WITH DEFAULTS:", inputs_with_defaults)
     return inputs_with_defaults
 
-
-
-
 def create_component_from_json(component, references):
     print("REFERENCES:", references)
     inputs = parse_default_values(component['inputs'], references)
@@ -80,7 +77,6 @@ def create_component_from_json(component, references):
 
     print("new_component variable: ", new_component)
     return new_component
-
 
 def create_components_from_json_file(json_file):
     with open(json_file) as f:
@@ -115,5 +111,5 @@ def compare_and_update_component(client, component):
 json_file = sys.argv[1]
 components = create_components_from_json_file(json_file)
 client = initialize_mlclient()
-# for component in components:
-#     compare_and_update_component(client, component)
+for component in components:
+    compare_and_update_component(client, component)

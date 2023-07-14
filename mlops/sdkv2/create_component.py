@@ -65,7 +65,6 @@ def parse_default_values(component_inputs, references):
 
 
 def create_component_from_json(component, references):
-def create_component_from_json(component, references):
     print("REFERENCES:", references)
 
     # Look up the full properties of each input type from the references

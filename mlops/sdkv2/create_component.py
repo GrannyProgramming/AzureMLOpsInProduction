@@ -37,7 +37,6 @@ def replace_references(data, references):
 
 
 def create_component_from_json(component, references):
-def create_component_from_json(component, references):
     print("REFERENCES:", references)
 
     inputs = {}

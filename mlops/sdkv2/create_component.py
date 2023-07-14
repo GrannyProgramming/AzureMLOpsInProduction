@@ -37,50 +37,29 @@ def replace_references(data, references):
 
 def parse_default_values(component_inputs, references):
     inputs_with_defaults = {}
-    print("component_inputs:", component_inputs)
-    print("references:", references)
     for input_name, input_properties in component_inputs.items():
-        print(f"Processing input '{input_name}' with properties: {input_properties}")
         if isinstance(input_properties, dict):
             if 'default' in input_properties:
                 # If the 'default' field is present in the component input, use it
                 default_value = input_properties['default']
-                print(f"Default value for '{input_name}' found in the component input: {default_value}")
             else:
                 # Otherwise, find the referenced type and use its default value
                 ref_key = input_properties['reference']
                 default_value = references.get(f'{ref_key}.default')
-                print(f"Default value for '{input_name}' found in the references: {default_value}")
-
             # Add the input properties to the result, including the parsed default value
             inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
-            print(f"Final input properties for '{input_name}': {inputs_with_defaults[input_name]}")
         else:
-            # If the input_properties is not a dictionary, just use it as is
             inputs_with_defaults[input_name] = input_properties
-            print(f"Input properties for '{input_name}' is not a dictionary. Using as is: {inputs_with_defaults[input_name]}")
-    print("inputs_with_defaults:", inputs_with_defaults)
+
     return inputs_with_defaults
+
 
 
 
 def create_component_from_json(component, references):
     print("REFERENCES:", references)
-
-    # Look up the full properties of each input type from the references
-    component_inputs = {
-        name: references.get(f'input_and_output_types.{input_type}') 
-        for name, input_type in component['inputs'].items()
-    }
-    print("component_inputs:", component_inputs)
-
-    inputs = parse_default_values(component_inputs, references)
-
-    outputs = {
-        k: Output(type=references.get(v, None)) 
-        if isinstance(v, str) else Output(type=references.get(v['reference'], None)) 
-        for k, v in component['outputs'].items()
-    }
+    inputs = parse_default_values(component['inputs'], references)
+    outputs = {k: Output(type=references.get(v, None)) if isinstance(v, str) else Output(type=references.get(v['reference'], None)) for k, v in component['outputs'].items()}  
     command_str = f'python {component["filepath"]} ' + ' '.join(f"--{name} ${{{{{f'inputs.{name}'}}}}}" for name in component['inputs']) + ' ' + ' '.join(f"--{name} ${{{{{f'outputs.{name}'}}}}}" for name in component['outputs'])
     code_filepath = references['component_filepaths.base_path'] + component['filepath']
     environment = references[f'environments.{component["env"]}.env']  # Use the environment from the references

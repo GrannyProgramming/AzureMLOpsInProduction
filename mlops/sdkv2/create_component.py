@@ -49,7 +49,10 @@ def parse_default_values(component_inputs, references):
             # Add the input properties to the result, including the parsed default value
             inputs_with_defaults[input_name] = {**input_properties, 'default': default_value}
         else:
-            inputs_with_defaults[input_name] = input_properties
+            # if not a dictionary, get the reference and use its default value
+            ref_key = input_properties
+            default_value = references.get(f'{ref_key}.default')
+            inputs_with_defaults[input_name] = {'type': input_properties, 'default': default_value}
 
     return inputs_with_defaults
 

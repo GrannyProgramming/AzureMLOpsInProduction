@@ -42,9 +42,11 @@ We welcome and appreciate any contributions to `AzureMLOpsInProduction`! By part
 
 Remember, the best way to get your work merged is to address an existing issue. Also, always sync your local repository with `upstream` before creating a pull request to avoid merge conflicts. You can find the full guide in the [docs/contribution_guide.md](docs/CONTRIBUTION_GUIDE.md)
 
-We're looking forward to your contributions!
-    [![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
-    [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)  
+We're looking forward to your contributions:
+
+   [![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
+    
+   [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)  
 
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)

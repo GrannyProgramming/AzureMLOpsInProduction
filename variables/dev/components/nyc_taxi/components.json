@@ -74,35 +74,66 @@
     }
   },
   "components_framework": {
-    "train": {
+    "prep": {
+      "name": "prep_taxi_data",
+      "filepath": "prep.py",
+      "inputs": {
+        "raw_data": {"reference": "input_and_output_types.uri_folder"}
+    },
+      "outputs": {
+        "prep_data": {"reference": "input_and_output_types.uri_folder"}
+    }, 
+      "env": {"reference": "environments.sklearn"}
+    },
+    "transform": {
+      "name": "taxi_feature_engineering",
+      "filepath": "transform.py",
+      "inputs": {
+        "prep_data": {"reference": "input_and_output_types.uri_folder"}
+      },
+      "outputs": {
+        "transformed_data": {"reference": "input_and_output_types.uri_folder"}
+      },
+      "env": {"reference": "environments.sklearn"}
+    },
+    "predict": {
+      "name": "predict_taxi_fares",
+      "filepath": "predict.py",
+      "inputs": {
+        "model_input": {"reference": "input_and_output_types.mlflow_model"},
+        "test_data": {"reference": "input_and_output_types.uri_folder"}
+        }, 
+        "outputs": {
+          "predictions": {"reference": "input_and_output_types.uri_folder"}
+        },
+      "env": {"reference": "environments.sklearn"}
+    },
+    "score":{
+      "name": "score_model",
+      "filepath": "score.py",
+      "inputs": {
+        "predictions": {"reference": "input_and_output_types.uri_folder"},
+        "model": {"reference": "input_and_output_types.mlflow_model"}
+        }, 
+        "outputs": {
+          "score_report": {"reference": "input_and_output_types.number"}
+        }, 
+      "env": {"reference": "environments.sklearn"}
+    },
+    "train":{
       "name": "train_linear_regression_model",
       "filepath": "train.py",
       "inputs": {
-        "train_data": {
-          "reference": "input_and_output_types.uri_folder"
+        "train_data": {"reference": "input_and_output_types.uri_folder"},
+        "test_split_ratio": {"reference": "input_and_output_types.number", "default": "0.2"}
+        }, 
+        "outputs": {
+          "model_output": {"reference": "input_and_output_types.mlflow_model"},
+          "test_data": {"reference": "input_and_output_types.uri_folder"}
         },
-        "test_split_ratio": {
-          "reference": "input_and_output_types.number",
-          "default": 0.2
-        }
-      },
-      "outputs": {
-        "model_output": {
-          "reference": "input_and_output_types.mlflow_model"
-        },
-        "test_data": {
-          "reference": "input_and_output_types.uri_folder"
-        }
-      },
-      "env": {
-        "reference": "environments.pytorch"
-      },
-      "resources": {
-        "reference": "resources.instance_count"
-      },
-      "distribution": {
-        "reference": "distribution.pytorch"
-      }
+      "env": {"reference": "environments.pytorch"},
+      "resources": {"reference": "resources.instance_count"},
+      "distribution": {"reference": "distribution.pytorch"}
     }
   }
 }

@@ -7,40 +7,40 @@ There are three main milestones we believe will greatly increase Azure MLOps  re
 
 ## Our current focus:
 
-- [x] **Achieve a flexible and simple baseline. 🎉**
-  - [x] Setting up a wheel file for the gh workflow 
-  - [x] Creating AML Computes 
-    - [x] Extending this by checking compute exists and differentiating between viable computes.
-    - [x] Adding in logic for AKS or/and Kubernetes [#10](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/10)
-  - [x] Creating AML Environments
-    - [x] Scalable script to take one config file and create multipile environments
-    - [x] Extend to create environments for Conda, Docker and Docker Build [#12](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/12)
-    - [x] Check AML pre-existing environment against the JSON config [#11](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/11)
-  - [x] Creating AML Data Assets
-    - [x] Scalable script that identifies multiples data asset types and registers them
-    - [ ] Optional step to create data as mltable, csv etc.,   
-  - [x] Creating AML Components
-    - [x] Scalable JSON that will reduce repition and follow DRY principles
-    - [x] Scalable custom python file that can parse and validate this JSON
-    - [ ] Check pre-existing component configuration beofer creating/updating
-  - [x] Creating AML Pipelines
-    - [x] Scalable pipeline using predefined components 
-    - [x] Defining pipelines within pipelines to add an extra layer of seperation i.e., data pipeline, train pipeline and evaluate pipeline 
-    - [] Parralell pipelines
-  - [ ] Creating AML Deployment
-    - [ ] Scalable endpoints creation based on the users config file, should take into account all options.
-  - [ ] Enabling Automatic Retraining 
-    - [ ] Incorporating Azure Data Drift 
-  - [x] Enabling Monitoring & Testing
-    - [x] Setting Up Action Groups
-      - [ ] Providing relevant documentation to enable User configuration
-    - [x] Setting Up Action Rules
-      - [ ] Providing relevant documentation to enable User configuration
-    - [x] Setting Up Alert Rules 
-      - [x] Providing relevant example Kusto logic for Relevant Alerts  
-      - [ ] Providing relevant documentation to enable User configuration
-    - [ ] Setting Up Azure Dashboard
-       - [ ] Providing relevant example Kusto logic for Relevant Tracking 
+- [🟢] **Achieve a flexible and simple baseline. 🎉**
+  - [🟢] Setting up a wheel file for the gh workflow 
+  - [🟠] Creating AML Computes 
+    - [🟢] Extending this by checking compute exists and differentiating between viable computes.
+    - [🟠] Adding in logic for AKS or/and Kubernetes [#10](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/10)
+  - [🟠] Creating AML Environments
+    - [🟢] Scalable script to take one config file and create multipile environments
+    - [🟠] Extend to create environments for Conda, Docker and Docker Build [#12](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/12)
+    - [🟠] Check AML pre-existing environment against the JSON config [#11](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/11)
+  - [🟠] Creating AML Data Assets
+    - [🟢] Scalable script that identifies multiples data asset types and registers them
+    - [🟠] Optional step to create data as mltable, csv etc.,   
+  - [🟠] Creating AML Components
+    - [🟢] Scalable JSON that will reduce repition and follow DRY principles
+    - [🟢] Scalable custom python file that can parse and validate this JSON
+    - [🔴] Check pre-existing component configuration beofer creating/updating
+  - [🟠] Creating AML Pipelines
+    - [🟢] Scalable pipeline using predefined components 
+    - [🟢] Defining pipelines within pipelines to add an extra layer of seperation i.e., data pipeline, train pipeline and evaluate pipeline 
+    - [🔴] Parralell pipelines
+  - [🔴] Creating AML Deployment
+    - [🔴] Scalable endpoints creation based on the users config file, should take into account all options.
+  - [🔴] Enabling Automatic Retraining 
+    - [🔴] Incorporating Azure Data Drift 
+  - [] Enabling Monitoring & Testing
+    - [🟢] Setting Up Action Groups
+      - [🔴] Providing relevant documentation to enable User configuration
+    - [🟢] Setting Up Action Rules
+      - [🔴] Providing relevant documentation to enable User configuration
+    - [🟢] Setting Up Alert Rules 
+      - [🟢] Providing relevant example Kusto logic for Relevant Alerts  
+      - [🔴] Providing relevant documentation to enable User configuration
+    - [🔴] Setting Up Azure Dashboard
+       - [🔴] Providing relevant example Kusto logic for Relevant Tracking 
 
 
 - [ ] **Incorporate preview features from AML**

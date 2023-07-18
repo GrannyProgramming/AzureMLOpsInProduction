@@ -5,7 +5,8 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)
 
-# 💡 Overview of Azure MLOps In Production (STILL UNDER DEVELOPMENT - EXPECTED WORKING RELEASE END OF AUG23)
+# (STILL UNDER DEVELOPMENT - EXPECTED WORKING RELEASE END OF AUG23)
+# 💡 Overview of Azure MLOps In Production 
 This repository provides a comprehensive, modular, and end-to-end solution for MLOps in Azure. It is based on established pattern architectures and is designed with customization in mind, understanding that every organization has its own unique requirements.
 
 Here's what this repository aims to achieve:

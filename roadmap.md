@@ -13,7 +13,7 @@ There are three main milestones we believe will greatly increase Azure MLOps  re
   - [x] Setting up a wheel file for the gh workflow 
   - [x] Creating AML Computes 
     - [x] Extending this by checking compute exists and differentiating between viable computes.
-    - [x] Adding in logic for AKS or/and Kubernetes [#10](https://github.com/GrannyProgramming/ds-aml-mlops/issues/10)
+    - [x] Adding in logic for AKS or/and Kubernetes [#10](https://github.com/GrannyProgramming/AzureMLOpsInProduction/issues/10)
   - [x] Creating AML Environments
   - [x] Creating AML Data Assets
   - [x] Creating AML Components

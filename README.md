@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue)](#license)
 [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)
 
-# 💡 Overview of AzureMLOpsInProduction
+# 💡 Overview of Azure MLOps In Production
 This repository provides a comprehensive, modular, and end-to-end solution for MLOps in Azure. It is based on established pattern architectures and is designed with customization in mind, understanding that every organization has its own unique requirements.
 
 Here's what this repository aims to achieve:
@@ -29,7 +29,7 @@ With this repository, you should be able to get your MLOps up and running in Azu
 
 # 👥 Contribution
 
-We welcome and appreciate any contributions to `AzureMLOpsInProduction`! By participating in this project, you agree to abide by the [Code of Conduct](/CODE_OF_CONDUCT.md). Here's how you can contribute:
+We welcome and appreciate any contributions to `AzureMLOpsInProduction`! By participating in this project, you agree to abide by the [Code of Conduct](docs/CODE_OF_CONDUCT.md). Here's how you can contribute:
 
 1. **🔍 Check out the Issues**: We use the GitHub issues page to track bugs and features. Check out the [Issues](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues) page if you're looking for ideas on what to work on.
 
@@ -39,12 +39,11 @@ We welcome and appreciate any contributions to `AzureMLOpsInProduction`! By part
 
 4. **✅ Create a Pull Request**: Finally, open a pull request from your forked repo to our main repo. Be sure to follow the PR template and clearly state the changes you've made.
 
-Remember, the best way to get your work merged is to address an existing issue. Also, always sync your local repository with `upstream` before creating a pull request to avoid merge conflicts.
+Remember, the best way to get your work merged is to address an existing issue. Also, always sync your local repository with `upstream` before creating a pull request to avoid merge conflicts. You can find the full guide in the [CONTRIBUTION_GUIDE.MD](docs/CONTRIBUTION_GUIDE.md)
 
 We're looking forward to your contributions!
-
-[![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
-[![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)
+    [![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
+    [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)  
 
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
@@ -102,7 +101,7 @@ Before you start, you need a copy of the repository in your GitHub account. This
 
 1. **Go to the Repository**: 🔎 Navigate to the main page of the repository on GitHub.
 
-2. **Optionally - Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry. Might be useful as new features currently in preview will be incorporated into this repo at a future date.
+2. **Optionally - Star the Repository**: ⭐ Click on the "Star" button for easier reference in the future to this repo, this will navigate you to the top of this page where you can star/favourite this repositry. Might be useful as new features currently in preview will be incorporated into this repo at a future date, information can be found in [the roadmap.md](docs/ROADMAP.md)
 
     [![stars - AzureMLOpsInProduction](https://img.shields.io/github/stars/grannyprogramming/AzureMLOpsInProduction?style=social)](https://github.com/grannyprogramming/AzureMLOpsInProduction)
 

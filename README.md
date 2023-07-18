@@ -32,7 +32,7 @@ With this repository, you should be able to get your MLOps up and running in Azu
 
 We welcome and appreciate any contributions to `AzureMLOpsInProduction`! By participating in this project, you agree to abide by the [Code of Conduct](docs/CODE_OF_CONDUCT.md). Here's how you can contribute:
 
-1. **🔍 Check out the Issues or the roadmap**: We use the GitHub issues page to track bugs and features. Check out the [Issues](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues) page or [Roadmap](docs\ROADMAP.md) if you're looking for ideas on what to work on.
+1. **🔍 Check out the Issues or the roadmap**: We use the GitHub issues page to track bugs and features and the roadmap.md to define the pieces of work for the project. Check out the [Issues](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues) page or [Roadmap](docs\ROADMAP.md) if you're looking for ideas on what to work on.
 
 2. **🍴 Fork the Repo**: Once you've found an issue to work on, start by forking the repo and creating a branch on your local machine.
 

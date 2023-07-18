@@ -45,7 +45,6 @@ Remember, the best way to get your work merged is to address an existing issue. 
 We're looking forward to your contributions:
 
    [![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
-    
    [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)  
 
 # Table of Contents

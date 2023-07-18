@@ -27,6 +27,25 @@ This repository is ready for enterprise implementation. It has been tested and p
 
 With this repository, you should be able to get your MLOps up and running in Azure in just a few hours. So, start exploring and happy coding!
 
+# 👥 Contribution
+
+We welcome and appreciate any contributions to `ds-aml-mlops`! By participating in this project, you agree to abide by the [Code of Conduct](/CODE_OF_CONDUCT.md). Here's how you can contribute:
+
+1. **🔍 Check out the Issues**: We use the GitHub issues page to track bugs and features. Check out the [Issues](https://github.com/grannyprogramming/ds-aml-mlops/issues) page if you're looking for ideas on what to work on.
+
+2. **🍴 Fork the Repo**: Once you've found an issue to work on, start by forking the repo and creating a branch on your local machine.
+
+3. **🛠️ Make Your Changes**: Work on the issue on your forked copy and once you're done, push your changes.
+
+4. **✅ Create a Pull Request**: Finally, open a pull request from your forked repo to our main repo. Be sure to follow the PR template and clearly state the changes you've made.
+
+Remember, the best way to get your work merged is to address an existing issue. Also, always sync your local repository with `upstream` before creating a pull request to avoid merge conflicts.
+
+We're looking forward to your contributions!
+
+[![Contributors](https://img.shields.io/github/contributors/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/graphs/contributors)
+[![issues - ds-aml-mlops](https://img.shields.io/github/issues/grannyprogramming/ds-aml-mlops)](https://github.com/grannyprogramming/ds-aml-mlops/issues)
+
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
    1. [What is MLOps?](#what-is-mlops)

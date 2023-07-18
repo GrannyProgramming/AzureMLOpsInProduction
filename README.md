@@ -47,6 +47,10 @@ We're looking forward to your contributions:
    [![Contributors](https://img.shields.io/github/contributors/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/graphs/contributors)
    [![issues - AzureMLOpsInProduction](https://img.shields.io/github/issues/grannyprogramming/AzureMLOpsInProduction)](https://github.com/grannyprogramming/AzureMLOpsInProduction/issues)  
 
+# ✨ Contributors  
+<td align="center"><a href="https://github.com/grannyprogramming"><img src="https://avatars.githubusercontent.com/u/53883501?v=4" width="100px;" alt=""/><br /><sub><b>Alex McGonigle</b></sub></a><br /></td>
+
+
 # Table of Contents
 1. [Introduction to Azure Machine Learning and MLOps](#introduction-to-azure-machine-learning-and-mlops)
    1. [What is MLOps?](#what-is-mlops)
@@ -74,7 +78,6 @@ MLOps, or DevOps for Machine Learning, brings together the best practices from t
 With Azure Machine Learning, you can implement MLOps practices to automate and manage the lifecycle of your machine learning models. This includes the creation of reusable pipelines, automation of machine learning tasks, continuous integration and delivery (CI/CD) of models, model versioning, and monitoring of model performance.
 
 # Components of MLOps
- deleret
 Here are some of the key components associated with MLOps in Azure:
 
 1. **Data**: The raw material for any machine learning model. The quality and relevance of your data significantly impacts the model's performance.
@@ -259,7 +262,4 @@ Each step in this workflow plays a crucial role in ensuring a successful executi
 # License
 
 Released under [MIT](/LICENSE) by [@grannyprogramming](https://github.com/grannyprogramming).
-
-# ✨ Contributors 
-<td align="center"><a href="https://github.com/grannyprogramming"><img src="https://avatars.githubusercontent.com/u/53883501?v=4" width="100px;" alt=""/><br /><sub><b>Alex McGonigle</b></sub></a><br /></td>
 

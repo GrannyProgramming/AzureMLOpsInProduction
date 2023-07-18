@@ -26,7 +26,7 @@ There are three main milestones we believe will greatly increase Azure MLOps  re
   - [x] Creating AML Pipelines
     - [x] Scalable pipeline using predefined components 
     - [x] Defining pipelines within pipelines to add an extra layer of seperation i.e., data pipeline, train pipeline and evaluate pipeline 
-    - [] Parralell pipelines
+    - [ ] Parralell pipelines
   - [ ] Creating AML Deployment
     - [ ] Scalable endpoints creation based on the users config file, should take into account all options.
   - [ ] Enabling Automatic Retraining 

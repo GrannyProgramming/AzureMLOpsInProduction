@@ -123,5 +123,5 @@ def compare_and_update_component(client, component):
 json_file = sys.argv[1]
 components = create_components_from_json_file(json_file)
 client = initialize_mlclient()
-# for component in components:
-#     compare_and_update_component(client, component)
+for component in components:
+    compare_and_update_component(client, component)

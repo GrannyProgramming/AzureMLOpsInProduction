@@ -1,7 +1,7 @@
 components:
   comp1:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: prepare_taxi_data
+    name: prep_taxi_data
     display_name: PrepTaxiData
     version: 1
     type: command
@@ -16,7 +16,7 @@ components:
 
   comp2:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: predict_taxi_fares
+    name: predict_taxi_fare
     version: 1
     display_name: PredictTaxiFares
     type: command
@@ -33,7 +33,7 @@ components:
 
   comp3:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: score_model
+    name: score_models
     version: 1
     display_name: ScoreModel
     type: command
@@ -51,7 +51,7 @@ components:
 
   comp4:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: train_linear_regression_model
+    name: train_linear_regression_models
     display_name: TrainLinearRegressionModel
     version: 1
     type: command
@@ -68,7 +68,7 @@ components:
 
   comp5:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: taxi_feature_engineering
+    name: taxi_feature_engineerings
     display_name: TaxiFeatureEngineering
     version: 1
     type: command

@@ -46,7 +46,7 @@ for pipeline_config in config['pipelines']:
 def data_pipeline(raw_data: Input):
     """pipeline component with data prep and transformation defined via yaml."""
     prep_node = components['prep_taxi_data'](raw_data=raw_data)
-    transform_node = components['taxi_feature_engineering'](prep_data=prep_node.outputs.prep_data)
+    transform_node = components['taxi_feature_engineering'](clean_data=prep_node.outputs.prep_data)
     return {"train_data": transform_node.outputs.transformed_data}
 
 @pipeline

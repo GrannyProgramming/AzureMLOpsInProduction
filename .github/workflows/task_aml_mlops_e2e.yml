@@ -81,7 +81,7 @@ jobs:
 
       - name: Create Components
         run: | 
-          python3 mlops/sdkv2/create_component.py variables/${{ matrix.environment }}/components/nyc_taxi/components.json
+          python3 mlops/sdkv2/create_component.py variables/${{ matrix.environment }}/components/nyc_taxi/comp_multiple.yml
   
       - name: Create Pipelines
         run: | 

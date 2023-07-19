@@ -235,3 +235,45 @@ with open(result_output, "w") as file:
         print(line)
         file.write(line + "\n")
 ```
+
+## Deployment - Endpoints etc.,
+
+```python
+def _create_or_update_endpoint(
+    endpoint_name: str,
+    local: bool,
+) -> ManagedOnlineEndpoint:
+    aml_client = ml_client.get_ml_client()
+
+    try:
+        endpoint = aml_client.online_endpoints.get(endpoint_name, local=local)
+        return endpoint
+    except:
+        pass
+
+    subscription_id = EnvironmentConfigs.safe_get_config(EnvironmentConfigs.AML_SUBSCRIPTION_ID_CONFIG_NAME)
+    resource_group = EnvironmentConfigs.safe_get_config(EnvironmentConfigs.AML_RESOURCE_GROUP_CONFIG_NAME)
+    mi_name = EnvironmentConfigs.safe_get_config(EnvironmentConfigs.AZURE_MANAGED_IDENTITY_NAME_CONFIG_NAME)
+
+    mi_config = ManagedIdentityConfiguration(
+        resource_id=f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{mi_name}"
+    )
+    endpoint_id = IdentityConfiguration(type="UserAssigned", user_assigned_identities=[mi_config])
+
+    # create an online endpoint
+    endpoint = ManagedOnlineEndpoint(name=endpoint_name, auth_mode="key", identity=endpoint_id)
+
+    # Ensure the endpoint is created
+    poller = aml_client.online_endpoints.begin_create_or_update(endpoint, local=local)
+    total = 0
+    if not local:
+        while not poller.done():
+            time.sleep(POLLING_INTERVAL)
+            total += POLLING_INTERVAL
+            print(f"Endpoint creation/modification ongoing for {total} seconds")
+
+    status = aml_client.online_endpoints.get(name=endpoint_name, local=local)
+    print(f"Completed endpoint creation/modification after ~{total} seconds - status {status.provisioning_state}")
+
+    return endpoint
+```

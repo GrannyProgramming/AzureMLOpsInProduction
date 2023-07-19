@@ -45,21 +45,21 @@ for pipeline_config in config['pipelines']:
 @pipeline
 def data_pipeline(raw_data: Input):
     """pipeline component with data prep and transformation defined via yaml."""
-    prep_node = components['prep_taxi_data'](raw_data=raw_data)
-    transform_node = components['taxi_feature_engineering'](clean_data=prep_node.outputs.prep_data)
+    prep_node = components['prep_taxi_data1'](raw_data=raw_data)
+    transform_node = components['taxi_feature_engineerings'](clean_data=prep_node.outputs.prep_data)
     return {"train_data": transform_node.outputs.transformed_data}
 
 @pipeline
 def train_pipeline(train_data: Input, compute_train_node: str):
-    train_node = components['train_linear_regression_model'](train_data=train_data, test_split_ratio=0.2)
+    train_node = components['train_linear_regression_models'](train_data=train_data, test_split_ratio=0.2)
     train_node.compute = compute_train_node
 
-    predict_node = components['predict_taxi_fares'](
+    predict_node = components['predict_taxi_fare'](
         model_input=train_node.outputs.model_output,
         test_data=train_node.outputs.test_data,
     )
 
-    score_node = components['score_model'](
+    score_node = components['score_models'](
         predictions=predict_node.outputs.predictions,
         model=train_node.outputs.model_output,
     )

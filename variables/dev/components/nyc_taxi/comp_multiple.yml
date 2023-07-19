@@ -1,7 +1,7 @@
 components:
   comp1:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
-    name: prep_taxi_data
+    name: prep_taxi_data1
     display_name: PrepTaxiData
     version: 1
     type: command

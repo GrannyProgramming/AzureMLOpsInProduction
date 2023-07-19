@@ -11,7 +11,7 @@ components:
     outputs:
       prep_data:
         type: uri_folder
-    code: ./prep_src
+    code: ./data_science/nyc_taxi/src/prep.py
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest  
 
   comp2:
@@ -29,7 +29,7 @@ components:
       predictions:
         type: uri_folder
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
-    code: ./predict_src
+    code: ./data_science/nyc_taxi/src/predict.py
 
   comp3:
     $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
@@ -46,7 +46,7 @@ components:
       score_report:
         type: uri_folder
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
-    code: ./score_src
+    code: ./data_science/nyc_taxi/src/score.py
 
 
   comp4:
@@ -63,7 +63,7 @@ components:
         type: mlflow_model
       test_data:
         type: uri_folder
-    code: ./train_src
+    code: ./data_science/nyc_taxi/src/train.py
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
 
   comp5:
@@ -78,5 +78,5 @@ components:
     outputs:
       transformed_data:
         type: uri_folder
-    code: ./transform_src
+    code: ./data_science/nyc_taxi/src/transform.py
     environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest

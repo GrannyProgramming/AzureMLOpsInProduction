@@ -51,7 +51,7 @@ def data_pipeline(raw_data: Input):
 
 @pipeline
 def train_pipeline(train_data: Input, compute_train_node: str):
-    train_node = components['train_linear_regression_models'](train_data=train_data, test_split_ratio=0.2)
+    train_node = components['train_linear_regression_models'](training_data=train_data, test_split_ratio=0.2)
     train_node.compute = compute_train_node
 
     predict_node = components['predict_taxi_fare'](

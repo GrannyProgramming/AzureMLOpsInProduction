@@ -40,7 +40,7 @@ def create_components_from_yaml_file(yaml_file):
         data = yaml.safe_load(f)
 
     # Get the directory name
-    dirname = os.path.dirname(yaml_file)
+    dirname = os.path.basename(os.path.dirname(yaml_file))
 
     components = [create_component_from_yaml(component_data['name'], component_data, dirname) 
                   for component_data in data['components'].values()]

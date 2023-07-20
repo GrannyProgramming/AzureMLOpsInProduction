@@ -1,5 +1,4 @@
 {
-
   "pipelines": [
     {
       "name": "nyc_taxi_pipeline",
@@ -8,11 +7,11 @@
         "raw_data_path": "./dataEngineer/nyc_taxi/data_csv"
       },
       "pipeline_components": [
-        "prep_taxi_data",
-        "taxi_feature_engineering",
-        "train_linear_regression_model",
-        "predict_taxi_fares",
-        "score_model"
+        "prep_taxi_data1",
+        "taxi_feature_engineerings",
+        "train_linear_regression_models",
+        "predict_taxi_fare",
+        "score_models"
       ]
     }
   ]

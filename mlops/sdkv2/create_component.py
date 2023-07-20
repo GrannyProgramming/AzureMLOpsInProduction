@@ -3,8 +3,9 @@ import yaml
 from azure.ai.ml import command
 from azure.ai.ml import Input, Output
 from workflowhelperfunc.workflowhelper import initialize_mlclient
+import os
 
-def create_component_from_yaml(component_name, component_data):
+def create_component_from_yaml(component_name, component_data, tag_value):
     inputs = {}
     for k, v in component_data['inputs'].items():
         input_type = v.get('type', None)
@@ -28,7 +29,8 @@ def create_component_from_yaml(component_name, component_data):
         outputs=outputs,
         code=code_filepath,
         command=command_str,
-        environment=environment
+        environment=environment,
+        tags={"folder": tag_value}
     )
     print(new_component)
     return new_component
@@ -37,10 +39,12 @@ def create_components_from_yaml_file(yaml_file):
     with open(yaml_file, 'r') as f:
         data = yaml.safe_load(f)
 
-    components = [create_component_from_yaml(component_data['name'], component_data) 
+    # Get the directory name
+    dirname = os.path.dirname(yaml_file)
+
+    components = [create_component_from_yaml(component_data['name'], component_data, dirname) 
                   for component_data in data['components'].values()]
     return components
-
 
 def compare_and_update_component(client, component):
     try:

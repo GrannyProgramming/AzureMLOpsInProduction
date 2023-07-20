@@ -82,9 +82,9 @@ jobs:
         run: | 
           python3 mlops/sdkv2/create_component.py variables/${{ matrix.environment }}/components/nyc_taxi/comp_multiple.yml
   
-      - name: Create Pipelines
-        run: | 
-          python3 mlops/sdkv2/create_pipeline.py variables/${{ matrix.environment }}/pipelines/nyc_taxi/pipelines.json
+      # - name: Create Pipelines
+      #   run: | 
+      #     python3 mlops/sdkv2/create_pipeline.py variables/${{ matrix.environment }}/pipelines/nyc_taxi/pipelines.json
           
 
 

@@ -30,7 +30,7 @@ def create_component_from_yaml(component_name, component_data):
         command=command_str,
         environment=environment
     )
-    print(f"Created component {component_name}")
+    print(new_component)
     return new_component
 
 def create_components_from_yaml_file(yaml_file):

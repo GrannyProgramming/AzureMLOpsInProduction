@@ -37,8 +37,10 @@ def create_components_from_yaml_file(yaml_file):
     with open(yaml_file, 'r') as f:
         data = yaml.safe_load(f)
 
-    components = [create_component_from_yaml(component_name, component_data) for component_name, component_data in data['components'].items()]
+    components = [create_component_from_yaml(component_data['name'], component_data) 
+                  for component_data in data['components'].values()]
     return components
+
 
 def compare_and_update_component(client, component):
     try:

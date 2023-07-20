@@ -48,11 +48,12 @@ def compare_and_update_component(client, component):
         if azure_component.inputs == component.inputs and azure_component.outputs == component.outputs and azure_component.command == component.command:
             print(f"Component {component.name} with Version {component.version} already exists and is identical. No update required.")
         else:
-            print(f"Component {component.name} with Version {component.version} differs. Updating component.")
+            print(f"Component {component.name} differs from AML version. Updating component.")
+            print(component.component)
             updated_component = client.create_or_update(component.component)
             print(f"Updated Component {updated_component.name} with Version {updated_component.version}")
     except Exception as e:
-        print(f"Component {component.name} with Version {component.version} does not exist. Creating component.")
+        print(f"Component {component.name} does not exist. Creating component.")
         new_component = client.create_or_update(component.component)
         print(f"Created Component {new_component.name} with Version {new_component.version}")
 

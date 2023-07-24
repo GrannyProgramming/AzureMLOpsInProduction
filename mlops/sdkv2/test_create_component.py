@@ -69,9 +69,6 @@ class TestCreateComponent(unittest.TestCase):
         with self.assertRaises(TypeError):
             create_component_from_yaml('test_component', component_data, 'test_tag')
 
-
-
-
     def test_create_component_from_yaml_invalid_input_type(self):
         with self.assertRaises(AttributeError):
             create_component_from_yaml('test_component', 'invalid_input', 'test_tag')

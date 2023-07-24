@@ -30,10 +30,18 @@ def create_component_from_yaml(component_name, component_data, tag_value):
 def create_components_from_yaml_file(yaml_file):
     with open(yaml_file, 'r') as f:
         data = yaml.safe_load(f)
-
+    
+    # Debug print statement
+    print(data)
+    
     dirname = os.path.basename(os.path.dirname(yaml_file))
-
-    components = [create_component_from_yaml(name, comp, dirname) for name, comp in data['components'].items()]
+    
+    components_data = data.get('components')
+    if components_data is None:
+        print("No 'components' key in data")
+        return []
+    
+    components = [create_component_from_yaml(name, comp, dirname) for name, comp in components_data.items()]
     return components
 
 def compare_and_update_component(client, component):
